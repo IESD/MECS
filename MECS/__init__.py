@@ -22,5 +22,7 @@ def config():
 
     config = ConfigParser()
     config.read(path)
+
+    # Configure logging and return
     logging.config.fileConfig(config)
     return config
