@@ -116,14 +116,12 @@ while (True):
 
     # read from adc channels and print to screen
     #print ("Raw on channel 3: %02f" % adc.read_voltage(3))
-    print ("Voltage on channel 1: %02f" % calcVoltage(adc.read_voltage(1)))
-    print ("Current on channel 2: %02f" % calcCurrent(adc.read_voltage(2)))
-    print ("Current on channel 3: %02f" % calcCurrent(adc.read_voltage(3)))
-    print ("Voltage on channel 4: %02f" % calcVoltage(adc.read_voltage(4)))
-    print ("Current on channel 5: %02f" % calcCurrent(adc.read_voltage(2)))
-    print ("Current on channel 6: %02f" % calcCurrent(adc.read_voltage(3)))
-    print ("Voltage on channel 7: %02f" % calcCurrent(adc.read_voltage(7)))
-    #print ("raw AC Voltage on channel 4: %02f" % adc.read_voltage(4))
+    print ("Voltage on battery (ch1): %02f" % calcVoltage(adc.read_voltage(1)))
+    print ("Current on cooker (ch2): %02f" % calcCurrent(adc.read_voltage(2)))
+    print ("Current on PV (ch3): %02f" % calcCurrent(adc.read_voltage(3)))
+    print ("Voltage on PV?? (ch4): %02f" % calcVoltage(adc.read_voltage(4))) #Check - The  device needs to be moved
+    print ("Current on USB load (ch6): %02f" % calcCurrent(adc.read_voltage(6)))
+    print ("Current on Pi (ch7): %02f" % calcCurrent(adc.read_voltage(7)))
     #print ("RMS no conversion channel 4: %02f" % sampleAC(adc,4))
     #print ("RMS AC Volts on channel 4: %02f" % calcACvolts(adc,4))
     #print ("AC Current on channel 7: %02f" % calcAcCurrent(adc.read_voltage(7))) #20 is because clamp is 20A/V
