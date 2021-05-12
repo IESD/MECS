@@ -16,7 +16,7 @@ import logging
 import pandas as pd
 
 from .. import config
-from .write_output import aggregated_minutely_readings
+from .minutely import aggregated_minutely_readings
 
 conf = config()
 log = logging.getLogger(__name__)
