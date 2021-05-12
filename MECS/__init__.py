@@ -1,7 +1,9 @@
+"""
+Load configuration settings from file and make them available to the project
+"""
+
 import sys
-import os
 import os.path
-import logging
 import logging.config
 from configparser import ConfigParser
 
@@ -26,3 +28,5 @@ def config():
     # Configure logging and return
     logging.config.fileConfig(config)
     return config
+
+conf = config()

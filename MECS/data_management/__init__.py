@@ -15,15 +15,27 @@ import logging
 
 import pandas as pd
 
-from .. import config
-from .minutely import aggregated_minutely_readings
+# conf must be imported first, so logging is configured
+from .. import conf
 
-conf = config()
+from .minutely import aggregated_minutely_readings
+from .security import register
+from .identity import write_identifier
+
 log = logging.getLogger(__name__)
 
 ROOT = os.path.expanduser(conf['MECS']["root_folder"])
 OUTPUT_FOLDER = os.path.join(ROOT, conf['MECS']["output_folder"])
 AGGREGATED_FOLDER = os.path.join(ROOT, conf['MECS']["aggregated_folder"])
+
+def initialise():
+    log.debug("Initialising")
+    write_identifier(conf)
+    register(
+        conf['MECS']['port'],
+        conf['MECS']['username'],
+        conf['MECS']['host']
+    )
 
 def generate():
     try:
@@ -73,5 +85,8 @@ def aggregate():
     # Write the aggregated data
     path = os.path.join(AGGREGATED_FOLDER, f"{df.index[0]}-{df.index[-1]}.json")
     log.debug(f"writing {path}")
-    with open(path, "x") as f:
-        json.dump(df.to_json(), f)
+    try:
+        with open(path, "x") as f:
+            json.dump(df.to_json(), f)
+    except FileExistsError:
+        log.warning(f"{path} already exists, ignoring request")

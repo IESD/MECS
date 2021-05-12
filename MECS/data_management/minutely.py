@@ -14,8 +14,9 @@ import pandas as pd
 
 from .get_input import raw_readings
 
+log = logging.getLogger(__name__)
+
 def aggregated_minutely_readings(delay=1):
-    log = logging.getLogger(__name__)
     data = []
     last_minute = raw_readings()['dt'].replace(second=0, microsecond=0)
     log.info(f"Initialising data collection at {last_minute}")
