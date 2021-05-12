@@ -16,3 +16,9 @@ def write_identifier(conf, force=False):
         log.info(f"New data_acquisition_id based on MAC address: {identifier}")
     else:
         log.info(f"Existing data_acquisition_id: {conf['MECS']['data_acquisition_id']}")
+
+def get_identifier(conf, force=False):
+    if force or ("data_acquisition_id" not in conf['MECS']):
+        return hex(uuid.getnode())
+    else:
+        return conf['MECS']['data_acquisition_id']

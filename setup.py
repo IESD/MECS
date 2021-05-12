@@ -11,6 +11,7 @@ setup(
   ],
   entry_points = """
     [console_scripts]
+    mecs-status = MECS.data_management:status
     mecs-init = MECS.data_management:initialise
     mecs-generate = MECS.data_management:generate
     mecs-aggregate = MECS.data_management:aggregate

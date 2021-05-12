@@ -12,6 +12,7 @@ import glob
 import json
 import os.path
 import logging
+from datetime import datetime
 
 import pandas as pd
 
@@ -20,13 +21,23 @@ from .. import conf, __version__
 
 from .minutely import aggregated_minutely_readings
 from .security import register
-from .identity import write_identifier
+from .identity import write_identifier, get_identifier
 
 log = logging.getLogger(__name__)
 
 ROOT = os.path.expanduser(conf['MECS']["root_folder"])
 OUTPUT_FOLDER = os.path.join(ROOT, conf['MECS']["output_folder"])
 AGGREGATED_FOLDER = os.path.join(ROOT, conf['MECS']["aggregated_folder"])
+
+def status():
+    print()
+    print("*" * 40)
+    print(f"* MECS v{__version__:30} *")
+    print(f"* ID: {get_identifier(conf):32} *")
+    print(f"* DT: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S (UTC)'):32} *")
+    print("*" * 40)
+    print()
+
 
 def initialise():
     log.info(f"MECS v{__version__} initialising")
