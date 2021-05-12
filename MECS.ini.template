@@ -6,6 +6,7 @@ port =
 
 root_folder = ~/.MECS
 output_folder = output
+aggregated_folder = aggregated
 
 
 # LOGGING configuration
