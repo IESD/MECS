@@ -38,7 +38,7 @@ def register(conf):
     if not has_key():
         subprocess.run(['ssh-keygen'])
     else:
-        log.debug(f"Key exists in {ssh_folder}")
+        log.debug(f"SSH key exists in {ssh_folder}")
     if has_key():
         subprocess.run(["ssh-copy-id", f"-p {conf['port']}", f"{conf['username']}@{conf['host']}"], check=True)
 
