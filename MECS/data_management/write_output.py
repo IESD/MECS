@@ -7,18 +7,14 @@ And writing to disk regularly minimises potential data loss
 There is a balance, we might be happy to gather an hour of data before writing to a file.
 """
 
-import json
-import os.path
 from time import sleep
-from collections import defaultdict
 
 import pandas as pd
 
-from get_input import raw_readings
+from .get_input import raw_readings
 
-OUTPUT_FOLDER = "../../output"
 
-def aggregated_minutely_readings():
+def aggregated_minutely_readings(delay=1):
     data = []
     last_minute = raw_readings()['dt'].replace(second=0, microsecond=0)
     while True:
@@ -30,12 +26,4 @@ def aggregated_minutely_readings():
             data = []
             last_minute = readings['dt'].replace(second=0, microsecond=0)
         data.append(readings['data'])
-        sleep(1)
-
-
-for data in aggregated_minutely_readings():
-    filename = data['dt'].strftime("%Y%m%d%H%M.json")
-    data['dt'] = data['dt'].strftime("%Y%m%d%H%M")
-    path = os.path.join(OUTPUT_FOLDER, filename)
-    with open(path, "w") as f:
-        json.dump(data, f)
+        sleep(delay)

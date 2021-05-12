@@ -4,6 +4,10 @@ username =
 host =
 port =
 
+root_folder = ~/.MECS
+output_folder = output
+
+
 # LOGGING configuration
 
 [loggers]

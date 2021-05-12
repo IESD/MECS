@@ -12,5 +12,6 @@ setup(
   entry_points = """
     [console_scripts]
     mecs-init = MECS.initialisation:main
+    mecs-generate = MECS.data_management:generate
     """
 )
