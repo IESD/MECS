@@ -1,7 +1,11 @@
 """
 Data management
 
-These are the primary functions available for the data management system
+These are the primary functions available for the data management system:
+
+status: a simple script to print out some key information such as version, unit identifier and datetime
+
+initialise: This generates an identifier and writes it into the config file, it also attempts to register with a server specified in the config file.
 
 generate: This is the high level source of data, a long-running process that generates a file on disk every minute.
 
