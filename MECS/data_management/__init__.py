@@ -15,7 +15,7 @@ import logging
 
 import pandas as pd
 
-from ..config import config
+from .. import config
 from .write_output import aggregated_minutely_readings
 
 conf = config()

@@ -14,7 +14,7 @@ import subprocess
 import logging
 import uuid
 
-from .config import config, config_file
+from . import config, config_file
 
 conf = config()
 log = logging.getLogger(__name__)
