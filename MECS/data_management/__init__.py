@@ -16,7 +16,7 @@ import logging
 import pandas as pd
 
 # conf must be imported first, so logging is configured
-from .. import conf
+from .. import conf, __version__
 
 from .minutely import aggregated_minutely_readings
 from .security import register
@@ -29,7 +29,7 @@ OUTPUT_FOLDER = os.path.join(ROOT, conf['MECS']["output_folder"])
 AGGREGATED_FOLDER = os.path.join(ROOT, conf['MECS']["aggregated_folder"])
 
 def initialise():
-    log.debug("Initialising")
+    log.info(f"MECS v{__version__} initialising")
     write_identifier(conf)
     register(
         conf['MECS']['port'],

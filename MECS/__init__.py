@@ -6,6 +6,9 @@ import sys
 import os.path
 import logging.config
 from configparser import ConfigParser
+import pkg_resources
+
+__version__ = pkg_resources.get_distribution('MECS').version
 
 def config_file():
     """determine path for file - default or user provided"""
