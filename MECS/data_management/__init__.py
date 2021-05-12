@@ -71,7 +71,7 @@ def aggregate():
     df.sort_index(inplace=True)
 
     # Write the aggregated data
-    write_path = os.path.join(AGGREGATED_FOLDER, f"{df.index[0]}-{df.index[-1]}.json")
+    path = os.path.join(AGGREGATED_FOLDER, f"{df.index[0]}-{df.index[-1]}.json")
     log.debug(f"writing {path}")
-    with open(write_file, "x") as f:
+    with open(path, "x") as f:
         json.dump(df.to_json(), f)
