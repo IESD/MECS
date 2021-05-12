@@ -3,7 +3,7 @@
 import ADCPi
 import time
 import os
-import serial
+#import serial
 import math
 
 """
@@ -32,12 +32,16 @@ def calcCurrent(inval):
 def calcVoltage(inVal):
    return inVal*(30+5.185)/5.185 # Figures from calculation of sensor potential divider and ADC Pi input divider
 
+'''
 def calcCO2(inVal):
    return (inVal) #  TODO - work out factor to convert from raw value
+
+'''
 
 def calcAcCurrent(inVal):
     return 20/2.6*(inVal - 0.056) #Spec says 20A/V, zero calibration by observation - need better way
 
+'''
 def read_uart_co2(port, command):
     co2 = -1 #Note -1 is the error value - can be checked ofr in calling code
     #print(serial.to_bytes(uart_read_hex) #For debugging - print the message sent.#
@@ -54,6 +58,8 @@ def read_uart_co2(port, command):
             co2 = hi*256+low
             #print('CO_2 concentration is : {conc} ppm \n'.format(conc=co2)) # Debug print if needed
     return co2
+'''
+
 
 def sampleAC(adc, channel):
     adc.set_conversion_mode(1)
@@ -93,14 +99,14 @@ def getTempFromVolts(voltage):
 
 # Need this in __init__() if and when you make this a module/class
 
-port = serial.Serial("/dev/serial0", baudrate=9600, timeout=3.0)
+#port = serial.Serial("/dev/serial0", baudrate=9600, timeout=3.0)
 
 # These are possible serial messages to send to the CO2 sensor as per
 # https://github.com/Arduinolibrary/DFRobot_Gravity_UART_Infrared_CO2_Sensor/raw/master/MH-Z16%20CO2%20Datasheet.pdf
 
-uart_read_hex = [0xFF,0x01,0x86,0x00,0x00,0x00,0x00,0x00,0x79]
-uart_calibrate_zero_hex = [0xFF,0x01,0x87,0x00,0x00,0x00,0x00,0x00,0x78] 
-uart_calibrate_span_hex = [0xFF,0x01,0x88,0x07,0xD0,0x00,0x00,0x00,0xA0]
+#uart_read_hex = [0xFF,0x01,0x86,0x00,0x00,0x00,0x00,0x00,0x79]
+#uart_calibrate_zero_hex = [0xFF,0x01,0x87,0x00,0x00,0x00,0x00,0x00,0x78] 
+#uart_calibrate_span_hex = [0xFF,0x01,0x88,0x07,0xD0,0x00,0x00,0x00,0xA0]
 
 
 while (True):
@@ -109,16 +115,18 @@ while (True):
     os.system('clear')
 
     # read from adc channels and print to screen
-    print ("Raw on channel 3: %02f" % adc.read_voltage(3))
+    #print ("Raw on channel 3: %02f" % adc.read_voltage(3))
     print ("Voltage on channel 1: %02f" % calcVoltage(adc.read_voltage(1)))
+    print ("Current on channel 2: %02f" % calcCurrent(adc.read_voltage(2)))
     print ("Current on channel 3: %02f" % calcCurrent(adc.read_voltage(3)))
-    print ("raw AC Voltage on channel 4: %02f" % adc.read_voltage(4))
+    print ("Voltage on channel 4: %02f" % calcVoltage(adc.read_voltage(4)))
+    print ("Current on channel 5: %02f" % calcCurrent(adc.read_voltage(2)))
+    print ("Current on channel 6: %02f" % calcCurrent(adc.read_voltage(3)))
+    print ("Voltage on channel 7: %02f" % calcCurrent(adc.read_voltage(7)))
+    #print ("raw AC Voltage on channel 4: %02f" % adc.read_voltage(4))
     #print ("RMS no conversion channel 4: %02f" % sampleAC(adc,4))
-    print ("RMS AC Volts on channel 4: %02f" % calcACvolts(adc,4))
-    print ("CO2 on channel 5: %02f" % calcCO2(adc.read_voltage(5)))
-    print ("CO2 (v2) on channel 6: %02f" % calcCO2(adc.read_voltage(6)))
-    print ("AC Current on channel 7: %02f" % calcAcCurrent(adc.read_voltage(7))) #20 is because clamp is 20A/V
-    print ('CO_2 concentration from serial sensor is : {conc} ppm'.format(conc=read_uart_co2(port,uart_read_hex)))
+    #print ("RMS AC Volts on channel 4: %02f" % calcACvolts(adc,4))
+    #print ("AC Current on channel 7: %02f" % calcAcCurrent(adc.read_voltage(7))) #20 is because clamp is 20A/V
 
 
    # wait 0.5 seconds before reading the pins again
