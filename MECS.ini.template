@@ -1,12 +1,13 @@
 [MECS]
-
 username =
 host =
-port =
+port = 22
+destination_folder = data
 
 root_folder = ~/.MECS
 output_folder = output
 aggregated_folder = aggregated
+archive_folder = archive
 
 
 # LOGGING configuration

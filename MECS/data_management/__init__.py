@@ -19,7 +19,6 @@ import pandas as pd
 
 # conf must be imported first, so logging is configured
 from .. import conf, __version__
-
 from .minutely import aggregated_minutely_readings
 from .identity import write_identifier, get_identifier
 
@@ -45,36 +44,44 @@ def initialise():
 
 
 def generate():
-    try:
-        os.makedirs(OUTPUT_FOLDER)
-        log.info(f"created folder: {OUTPUT_FOLDER}")
-    except FileExistsError:
-        pass
     log.info(f"Writing data files to {OUTPUT_FOLDER}")
     for data in aggregated_minutely_readings(delay=1):
+        folder = data['dt'].strftime("%Y%m%d")
+        os.makedirs(os.path.join(OUTPUT_FOLDER, folder), exist_ok=True)
         filename = data['dt'].strftime("%Y%m%d%H%M.json")
         data['dt'] = data['dt'].strftime("%Y%m%d%H%M")
-        path = os.path.join(OUTPUT_FOLDER, filename)
+        path = os.path.join(OUTPUT_FOLDER, folder, filename)
         log.debug(f"writing {path}")
         with open(path, "x") as f:
             json.dump(data, f)
 
+
 def aggregate():
-    try:
-        os.makedirs(AGGREGATED_FOLDER)
-        log.info(f"created folder: {AGGREGATED_FOLDER}")
-    except FileExistsError:
-        pass
+    os.makedirs(AGGREGATED_FOLDER, exist_ok=True)
+    # Grab all the folders
+    folders = sorted(glob.glob(os.path.join(OUTPUT_FOLDER, "*")))
+    for folder in folders:
+        df = aggregate_folder(folder)
+        path = os.path.join(AGGREGATED_FOLDER, f"{df.index[0]}-{df.index[-1]}.json")
+        log.debug(f"writing {path}")
+        try:
+            # Write the aggregated data
+            with open(path, "x") as f:
+                json.dump(df.to_json(), f)
+        except FileExistsError:
+            log.warning(f"{path} already exists, ignoring request")
 
+
+
+def aggregate_folder(folder):
     # Grab all the filenames
-    files = sorted(glob.glob(os.path.join(OUTPUT_FOLDER, "*.json")))
-
+    files = sorted(glob.glob(os.path.join(folder, "*.json")))
     if not len(files):
-        log.warning(f"No *.json files found in {OUTPUT_FOLDER}")
+        log.warning(f"No *.json files found in {folder}")
         return
 
     # read them into an array
-    log.info(f"Aggregating {len(files)} files from {OUTPUT_FOLDER} into {AGGREGATED_FOLDER}")
+    log.info(f"Aggregating {len(files)} files from {folder} into {AGGREGATED_FOLDER}")
     result = []
     for filename in files:
         with open(filename, 'r') as f:
@@ -89,11 +96,4 @@ def aggregate():
     df.set_index("dt", inplace=True)
     df.sort_index(inplace=True)
 
-    # Write the aggregated data
-    path = os.path.join(AGGREGATED_FOLDER, f"{df.index[0]}-{df.index[-1]}.json")
-    log.debug(f"writing {path}")
-    try:
-        with open(path, "x") as f:
-            json.dump(df.to_json(), f)
-    except FileExistsError:
-        log.warning(f"{path} already exists, ignoring request")
+    return df
