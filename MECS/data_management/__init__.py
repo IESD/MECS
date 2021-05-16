@@ -4,11 +4,8 @@ Data management
 These are the primary functions available for the data management system:
 
 status: a simple script to print out some key information such as version, unit identifier and datetime
-
-initialise: This generates an identifier and writes it into the config file, it also attempts to register with a server specified in the config file.
-
+initialise: This generates an identifier and writes it into the config file,
 generate: This is the high level source of data, a long-running process that generates a file on disk every minute.
-
 aggregate: This is for preparing data for upload, it should be scheduled to run every hour, it merges the available files into one and saves it in a folder ready for uploading.
 
 """
@@ -24,7 +21,6 @@ import pandas as pd
 from .. import conf, __version__
 
 from .minutely import aggregated_minutely_readings
-from .security import register
 from .identity import write_identifier, get_identifier
 
 log = logging.getLogger(__name__)
@@ -46,11 +42,7 @@ def status():
 def initialise():
     log.info(f"MECS v{__version__} initialising")
     write_identifier(conf)
-    register(
-        conf['MECS']['port'],
-        conf['MECS']['username'],
-        conf['MECS']['host']
-    )
+
 
 def generate():
     try:
