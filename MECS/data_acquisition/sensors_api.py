@@ -5,7 +5,7 @@ import time
 import os
 #import serial
 import math
-
+from aqi import *
 """
 ================================================
 Coded modified from the ABElectronics ADC Pi 
@@ -32,33 +32,9 @@ def calcCurrent(inval):
 def calcVoltage(inVal):
    return inVal*(30+5.185)/5.185 # Figures from calculation of sensor potential divider and ADC Pi input divider
 
-'''
-def calcCO2(inVal):
-   return (inVal) #  TODO - work out factor to convert from raw value
-
-'''
 
 def calcAcCurrent(inVal):
     return 20/2.6*(inVal - 0.056) #Spec says 20A/V, zero calibration by observation - need better way
-
-'''
-def read_uart_co2(port, command):
-    co2 = -1 #Note -1 is the error value - can be checked ofr in calling code
-    #print(serial.to_bytes(uart_read_hex) #For debugging - print the message sent.#
-    port.write(serial.to_bytes(command))
-    while (not(port.in_waiting)):
-        time.sleep(0.1) #Added sleep to allow time to read
-    for x in range(9):
-        ch=port.read()
-        if x ==2:
-            hi=int.from_bytes(ch,byteorder='little')
-        if x == 3:
-            low= int.from_bytes(ch,byteorder='little')
-        if x == 8:
-            co2 = hi*256+low
-            #print('CO_2 concentration is : {conc} ppm \n'.format(conc=co2)) # Debug print if needed
-    return co2
-'''
 
 
 def sampleAC(adc, channel):
@@ -97,6 +73,19 @@ def getTempFromVolts(voltage):
         retTemp = 0 # input must be floating - we can't be near freezing!! 
     return round(retTemp,1) 
 
+
+#The current code for air quality oly works with python2. Under python3 the construct_command function needs to convert the UTF string to bytes.
+def getParticulars():
+    '''cmd_set_sleep(0)
+    cmd_firmware_ver()
+    cmd_set_working_period(PERIOD_CONTINUOUS)
+    cmd_set_mode(MODE_QUERY);
+    for t in range(15):
+        values = cmd_query_data();
+        if values is not None and len(values) == 2:
+            return values'''
+    return [0,0]
+
 # Need this in __init__() if and when you make this a module/class
 
 #port = serial.Serial("/dev/serial0", baudrate=9600, timeout=3.0)
@@ -109,11 +98,32 @@ def getTempFromVolts(voltage):
 #uart_calibrate_span_hex = [0xFF,0x01,0x88,0x07,0xD0,0x00,0x00,0x00,0xA0]
 
 
+
+def raw_readings():
+    """A function to represent gathering data from all the sensors"""
+    partValues = getParticulars()
+    return {
+        "dt": datetime.utcnow(),
+        "data": {
+            "Battery_Voltage_ch1": calcVoltage(adc.read_voltage(1)),
+            "Cooker_Current_ch2": calcCurrent(adc.read_voltage(2)),
+            "PV_Current_ch3": calcCurrent(adc.read_voltage(3)),
+            "PV_Voltage??_ch4": calcVoltage(adc.read_voltage(4)),
+            "USB_LOAD_Current_ch6": calcCurrent(adc.read_voltage(6)),
+            "Pi_Current_ch7": calcCurrent(adc.read_voltage(7)),
+            "Particular_PM2.5" : partValues[0],
+            "Particular_PM10": partValues[1]
+        }
+    }
+
+
+
+
 while (True):
 
     # clear the console
     os.system('clear')
-
+    partValues = getParticulars()
     # read from adc channels and print to screen
     #print ("Raw on channel 3: %02f" % adc.read_voltage(3))
     print ("Voltage on battery (ch1): %02f" % calcVoltage(adc.read_voltage(1)))
@@ -122,6 +132,8 @@ while (True):
     print ("Voltage on PV?? (ch4): %02f" % calcVoltage(adc.read_voltage(4))) #Check - The  device needs to be moved
     print ("Current on USB load (ch6): %02f" % calcCurrent(adc.read_voltage(6)))
     print ("Current on Pi (ch7): %02f" % calcCurrent(adc.read_voltage(7)))
+    print ("Particular_PM2.5: %02f" % partValues[0])
+    print ("Particular_PM10: %02f" % partValues[1])
     #print ("RMS no conversion channel 4: %02f" % sampleAC(adc,4))
     #print ("RMS AC Volts on channel 4: %02f" % calcACvolts(adc,4))
     #print ("AC Current on channel 7: %02f" % calcAcCurrent(adc.read_voltage(7))) #20 is because clamp is 20A/V

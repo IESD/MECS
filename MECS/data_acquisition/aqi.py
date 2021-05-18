@@ -122,7 +122,7 @@ if __name__ == "__main__":
               time.sleep(2)
 
         # open stored data
-        try:
+        '''try:
             with open(JSON_FILE) as json_data:
                 data = json.load(json_data)
         except IOError as e:
@@ -145,4 +145,4 @@ if __name__ == "__main__":
             
         print("Going to sleep for 1 min...")
         cmd_set_sleep(1)
-        time.sleep(60)
+        time.sleep(60)'''
