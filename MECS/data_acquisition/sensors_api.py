@@ -60,13 +60,17 @@ def calcACvolts(adc, channel):
     return AC_conv_factor * rms
 
 def getTempFromVolts(voltage):
+    print ("voltage4Temp %02f" % voltage)
     kelvinToCentigrade = 273
     retTemp = 0
     T0 = 25 + kelvinToCentigrade # Kelvin
-    R0 = 1000 # 1kOhm at 25 deg C
-    beta = 3260
-    rTherm = 240 * (0.5 + (voltage/5)) / (0.5 - (voltage/5)) #Calibrate here!!!! 
+    R0 = 103 # 1000 1kOhm at 25 deg C
+    beta = 3950  #3260
+    #rTherm = 240 * (0.5 + (voltage/5)) / (0.5 - (voltage/5)) #Calibrate here!!!! 
+    rTherm = (220 * voltage) /  (5 -  voltage)
+    print ("rTherm %02f" % rTherm)
     rInf = R0 * math.exp(-beta / T0)
+    print ("rInf %02f" % rInf)
     retTemp = beta / (math.log(rTherm / rInf))
     retTemp -= kelvinToCentigrade
     if retTemp < 5 or retTemp > 100:
@@ -130,6 +134,7 @@ while (True):
     print ("Current on cooker (ch2): %02f" % calcCurrent(adc.read_voltage(2)))
     print ("Current on PV (ch3): %02f" % calcCurrent(adc.read_voltage(3)))
     print ("Voltage on PV?? (ch4): %02f" % calcVoltage(adc.read_voltage(4))) #Check - The  device needs to be moved
+    print ("Temp (ch5) %02f" % getTempFromVolts(adc.read_voltage(5)))
     print ("Current on USB load (ch6): %02f" % calcCurrent(adc.read_voltage(6)))
     print ("Current on Pi (ch7): %02f" % calcCurrent(adc.read_voltage(7)))
     print ("Particular_PM2.5: %02f" % partValues[0])
