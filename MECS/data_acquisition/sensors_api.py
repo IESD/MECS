@@ -25,19 +25,42 @@ adc = ADCPi.ADCPi(bus, 0x68, 0x69, 12)
 
 # change the 2.5 value to be half of the supply voltage.
 _adcpi_input_impedance = 16800 #Input impedance of the ADC - needed when calculating using external voltage dividers
+_min_temp = 5
+_max_temp = 150
 
-
+#######
+# calculate Current from voltage signal from this ACS712 board.
+# Note we are concerned with magnitude, rather than direction, hence using abs
+#######
 def calcCurrent(inval):
-    return ((inval) - 2.624202) / 0.11761066 # Calibration constants by experiment
+    #print('Raw voltage in %02f'%inval)
+    midOffset = 2.5 # 2.624202 # From experiment calibration - nominally Vcc/2, should be 2.5
+    milliVoltPerAmp = 100 # 117.61066 #From experiment calibration - nominally 100 on the +/-20A version
+    return abs((inval - midOffset) * 1000 / milliVoltPerAmp) # Calibration constants by experiment
 
+#####
+# Calculates voltage on input of voltage sensor module described here
+# https://www.electronicshub.org/interfacing-voltage-sensor-with-arduino/#:~:text=The%20Voltage%20Sensor%20is%20a%20simple%20module%20that,in%20this%20project.%20Pins%20of%20the%20Voltage%20Sensor
+# Note that that 7.5k resistor of that module is in parallel with the input impedance of the ADC Pi
+# so that must be incorporated
+#####
 def calcVoltage(inVal):
-   return inVal*(30+5.185)/5.185 # Figures from calculation of sensor potential divider and ADC Pi input divider
+   rTop = 30000
+   rBottom = 7500
+   rEffective = rBottom*_adcpi_input_impedance / (rBottom+_adcpi_input_impedance)
+   return inVal*(rTop+rEffective)/rEffective
 
-
+######
+# Work in progress to use AC current clamp - TODO - needs improvement
+######
 def calcAcCurrent(inVal):
     return 20/2.6*(inVal - 0.056) #Spec says 20A/V, zero calibration by observation - need better way
 
-
+#########
+# This is needed if measuring an AC voltage directly on the ADC Pi channel
+# It is error prone as it relies on sampling the waveform and finding rms value, so
+# smoothing in analogue componentry external is preferred.
+#########
 def sampleAC(adc, channel):
     adc.set_conversion_mode(1)
     readings = []
@@ -66,7 +89,7 @@ def calcACvolts(adc, channel):
 # from voltage
 ########
 def getTempFromVolts(voltage):
-    print ("voltage4Temp %02f" % voltage)
+    #print ("voltage4Temp %02f" % voltage)
     if voltage == 0:
         return 0
     kelvinToCentigrade = 273
@@ -76,15 +99,15 @@ def getTempFromVolts(voltage):
     R0 = 10000 # 10000 1kOhm at 25 deg C - part of thermistor spec
     beta = 3950 # part of thermistor spec
     rVoltDiv = (rBias * _adcpi_input_impedance) / (rBias+_adcpi_input_impedance)
-    rTherm = (rVoltDiv*(5-voltage))/voltage #240 * (0.5 + (voltage/5)) / (0.5 - (voltage/5)) #Calibrate here!!!! 
+    rTherm = (rVoltDiv*(5-voltage))/voltage  
     #rTherm = (220 * voltage) /  (5 -  voltage)
-    print ("rTherm %02f" % rTherm)
+    #print ("rTherm %02f" % rTherm)
     rInf = R0 * math.exp(-beta / T0)
-    print ("rInf %02f" % rInf)
+    #print ("rInf %02f" % rInf)
     retTemp = beta / (math.log(rTherm / rInf))
     retTemp -= kelvinToCentigrade
-    if retTemp < 5 or retTemp > 100:
-        retTemp = 0 # input must be floating - we can't be near freezing!! 
+    if retTemp < _min_temp or retTemp > _max_temp:
+        retTemp = -1 # input must be floating - we can't be near outside this range!! Return error value 
     return round(retTemp,1) 
 
 
