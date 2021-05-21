@@ -5,7 +5,7 @@ import time
 import os
 #import serial
 import math
-from aqi import *
+#from aqi import *
 """
 ================================================
 Coded modified from the ABElectronics ADC Pi 
@@ -24,6 +24,7 @@ bus = i2c_helper.get_smbus()
 adc = ADCPi.ADCPi(bus, 0x68, 0x69, 12)
 
 # change the 2.5 value to be half of the supply voltage.
+_adcpi_input_impedance = 16800 #Input impedance of the ADC - needed when calculating using external voltage dividers
 
 
 def calcCurrent(inval):
@@ -59,15 +60,24 @@ def calcACvolts(adc, channel):
     AC_conv_factor = 181.4
     return AC_conv_factor * rms
 
+#####
+# This function assumes that the external setup is a thermistor between VCC and ADC input, with
+# rBias between the ADC input and ground, forming a voltage divider.  From this, rTherm can be calculated
+# from voltage
+########
 def getTempFromVolts(voltage):
     print ("voltage4Temp %02f" % voltage)
+    if voltage == 0:
+        return 0
     kelvinToCentigrade = 273
     retTemp = 0
-    T0 = 25 + kelvinToCentigrade # Kelvin
-    R0 = 103 # 1000 1kOhm at 25 deg C
-    beta = 3950  #3260
-    #rTherm = 240 * (0.5 + (voltage/5)) / (0.5 - (voltage/5)) #Calibrate here!!!! 
-    rTherm = (220 * voltage) /  (5 -  voltage)
+    rBias = 9970 # calibrate carefully here
+    T0 = 25 + kelvinToCentigrade # 25 deg C in Kelvin
+    R0 = 10000 # 10000 1kOhm at 25 deg C - part of thermistor spec
+    beta = 3950 # part of thermistor spec
+    rVoltDiv = (rBias * _adcpi_input_impedance) / (rBias+_adcpi_input_impedance)
+    rTherm = (rVoltDiv*(5-voltage))/voltage #240 * (0.5 + (voltage/5)) / (0.5 - (voltage/5)) #Calibrate here!!!! 
+    #rTherm = (220 * voltage) /  (5 -  voltage)
     print ("rTherm %02f" % rTherm)
     rInf = R0 * math.exp(-beta / T0)
     print ("rInf %02f" % rInf)
@@ -112,7 +122,7 @@ def raw_readings():
             "Battery_Voltage_ch1": calcVoltage(adc.read_voltage(1)),
             "Cooker_Current_ch2": calcCurrent(adc.read_voltage(2)),
             "PV_Current_ch3": calcCurrent(adc.read_voltage(3)),
-            "PV_Voltage??_ch4": calcVoltage(adc.read_voltage(4)),
+           "PV_Voltage??_ch4": calcVoltage(adc.read_voltage(4)),
             "USB_LOAD_Current_ch6": calcCurrent(adc.read_voltage(6)),
             "Pi_Current_ch7": calcCurrent(adc.read_voltage(7)),
             "Particular_PM2.5" : partValues[0],
@@ -134,11 +144,13 @@ while (True):
     print ("Current on cooker (ch2): %02f" % calcCurrent(adc.read_voltage(2)))
     print ("Current on PV (ch3): %02f" % calcCurrent(adc.read_voltage(3)))
     print ("Voltage on PV?? (ch4): %02f" % calcVoltage(adc.read_voltage(4))) #Check - The  device needs to be moved
-    print ("Temp (ch5) %02f" % getTempFromVolts(adc.read_voltage(5)))
+    print ("Voltage??? (ch5) %02f" % calcVoltage(adc.read_voltage(5)))
     print ("Current on USB load (ch6): %02f" % calcCurrent(adc.read_voltage(6)))
     print ("Current on Pi (ch7): %02f" % calcCurrent(adc.read_voltage(7)))
-    print ("Particular_PM2.5: %02f" % partValues[0])
-    print ("Particular_PM10: %02f" % partValues[1])
+    print ("Temp (ch8) %02f" % getTempFromVolts(adc.read_voltage(8)))
+
+    #print ("Particular_PM2.5: %02f" % partValues[0])
+    #print ("Particular_PM10: %02f" % partValues[1])
     #print ("RMS no conversion channel 4: %02f" % sampleAC(adc,4))
     #print ("RMS AC Volts on channel 4: %02f" % calcACvolts(adc,4))
     #print ("AC Current on channel 7: %02f" % calcAcCurrent(adc.read_voltage(7))) #20 is because clamp is 20A/V
