@@ -1,10 +1,11 @@
 #!/usr/bin/python3
 
-import ADCPi
 import time
 import os
 #import serial
 import math
+
+from . import ADCPi
 #from aqi import *
 """
 ================================================

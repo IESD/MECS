@@ -24,6 +24,9 @@ UNIT_ID = conf.get('MECS', 'unit_id', fallback="unidentified").zfill(5)
 # we store the data under the hardware id and the unit_id
 REMOTE_FOLDER = f"{HARDWARE_ID}/{UNIT_ID}"
 
+# Are we recording fake values?
+FAKE = conf.get('MECS', 'fake_data', fallback=True)
+
 # core elements are absolutely necessary for normal operation
 # if we don't have these, just report and exit
 try:
@@ -76,7 +79,7 @@ def init():
 
 def generate():
     log.info(f"MECS v{__version__} generating data")
-    gen(OUTPUT_FOLDER)
+    gen(OUTPUT_FOLDER, FAKE)
 
 def aggregate():
     log.info(f"MECS v{__version__} aggregating data")

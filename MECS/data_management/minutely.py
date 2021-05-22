@@ -11,10 +11,9 @@ import logging
 import signal
 from time import sleep
 
-
 import pandas as pd
 
-from .get_input import raw_readings
+from .get_input import raw_readings as fake_readings
 
 log = logging.getLogger(__name__)
 
@@ -35,13 +34,16 @@ class GracefulKiller:
         self.kill_now = True
 
 
-def aggregated_minutely_readings(delay=1):
+def aggregated_minutely_readings(fake, delay=1):
+    if not fake:
+        from ..data_acquisition.sensors_api import raw_readings
+
     killer = GracefulKiller()
     data = []
-    last_minute = raw_readings()['dt'].replace(second=0, microsecond=0)
+    last_minute = fake_readings()['dt'].replace(second=0, microsecond=0)
     log.info(f"Initialising data collection at {last_minute}")
     while not killer.kill_now:
-        readings = raw_readings()
+        readings = fake_readings() if fake else raw_readings()
         log.debug(f"reading taken at {readings['dt']}")
         if last_minute != readings['dt'].replace(second=0, microsecond=0):
             result = pd.DataFrame(data).mean().to_dict()
