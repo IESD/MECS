@@ -53,3 +53,21 @@ This is expected to be scheduled via `cron`.
 ```bash
 mecs-aggregate
 ```
+
+To communicate with a server requires `username`, `host` and `port` to be set in configuration file.
+
+In order to register, you also need `destination_root` and `archive_folder` to be set in the configuration file.
+
+Calling `mecs-register` will set up a public key on the server and create the necessary folders on the server and locally.
+
+```bash
+mecs-register
+```
+
+To upload aggregated data to the server
+
+```bash
+mecs-upload
+```
+
+To work correctly, `mecs-upload` requires the same server parameters to be set as for `mecs-register`.
