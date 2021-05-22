@@ -19,16 +19,26 @@ For advanced usage, a configuration file can be specified as the first and only 
 
 ## Usage
 
-To initialise a pi with a unique `data_acquisition_id` and attempt to register with the specified server.
-
-```bash
-mecs-init
-```
-
 To get a readout of the current status
 
 ```bash
 mecs-status
+
+> *********************************************
+> * MECS version: 0.1.0                       *
+> *         conf: /home/graeme/.MECS/MECS.ini *
+> *  HARDWARE_ID: unidentified                *
+> *      UNIT_ID: unidentified                *
+> *           DT: 2021-05-22 09:34:37 (UTC)   *
+> *********************************************
+
+```
+
+To initialise a pi with a unique `HARDWARE_ID` and to set the `UNIT_ID` to a user-specified integer.
+
+```bash
+mecs-init
+> Enter a new Unit ID (currently not set): 1
 ```
 
 To begin a long-running monitoring process which saves data files every minute.

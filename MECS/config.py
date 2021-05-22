@@ -27,16 +27,16 @@ def initialise_identifier(path, conf):
     "Write a unique id based on mac address to the config file"
     log = logging.getLogger(__name__)
     identifier = hex(uuid.getnode())
-    conf.set("MECS", "data_acquisition_id", identifier)
+    conf.set("MECS", "HARDWARE_ID", identifier)
     save_config(path, conf)
-    log.info(f"data_acquisition_id set: {identifier}")
+    log.info(f"HARDWARE_ID set: {identifier}")
 
 def initialise_unit_id(path, conf):
     """Write a user-specified identifier to the config file"""
     log = logging.getLogger(__name__)
     existing_unit_id = conf.getint('MECS', 'unit_id', fallback=False)
     try:
-        requested_unit_id = int(input(f"Unit ID ({existing_unit_id}): "))
+        requested_unit_id = int(input(f"Enter a new Unit ID (currently {existing_unit_id if existing_unit_id else 'not set'}): "))
     except ValueError:
         log.error("Invalid, user_id must be integer")
         exit(1)

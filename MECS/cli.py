@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 ROOT = os.path.expanduser(conf.get('MECS', 'root_folder'))
 DESTINATION_ROOT = conf.get('MECS', 'destination_root')
-HARDWARE_ID = conf.get('MECS', 'data_acquisition_id', fallback="unidentified")
+HARDWARE_ID = conf.get('MECS', 'HARDWARE_ID', fallback="unidentified")
 UNIT_ID = conf.get('MECS', 'unit_id', fallback="unidentified").zfill(5)
 OUTPUT_FOLDER = os.path.join(ROOT, conf.get('MECS', 'output_folder'))
 AGGREGATED_FOLDER = os.path.join(ROOT, conf.get('MECS', 'aggregated_folder'))
@@ -36,7 +36,6 @@ def status():
         "UNIT_ID": UNIT_ID,
         "DT": datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S (UTC)'),
     })
-    # dt = datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S (UTC)')
     l1 = max([len(k) for k in data.keys()])
     l2 = max([len(v) for v in data.values()])
     print()
@@ -44,14 +43,6 @@ def status():
     for k, v in data.items():
         print(f"* {k:>{l1}}: {v:<{l2}} *")
     print("*" * (l1 + l2 + 6))
-
-    # print(f"*        MECS: v{__version__:{l-1}} *")
-    # print(f"*        conf: {args.conf:{l}} *")
-    # print(f"* HARDWARE_ID: {HARDWARE_ID:{l}} *")
-    # print(f"*        UNIT: {UNIT_ID:{l}} *")
-    # print(f"*          DT: {dt:{l}} *")
-    # print("*" * (l+17))
-    # print()
 
 def init():
     log.info(f"MECS v{__version__} initialising")
@@ -72,9 +63,6 @@ def register():
     server.register()
     server.create_remote_folder(HARDWARE_ID)
     server.create_remote_folder(REMOTE_FOLDER)
-    # reg(PORT, USERNAME, HOST)
-    # create_remote_folder(HARDWARE_ID, USERNAME, HOST)
-    # create_remote_folder(REMOTE_FOLDER, USERNAME, HOST)
 
 def upload():
     log.info(f"MECS v{__version__} uploading data")
