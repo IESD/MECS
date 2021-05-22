@@ -68,4 +68,4 @@ class MECSServer:
                 pass
             else:
                 shutil.move(file, os.path.join(archive_folder, fname))
-                log.info(f"Copied {file} to {archive_folder}")
+                log.info(f"Moved {file} to {archive_folder}")
