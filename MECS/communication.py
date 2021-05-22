@@ -9,11 +9,11 @@ import shutil
 log = logging.getLogger(__name__)
 
 class MECSServer:
-    def __init__(self, username, host, port, root):
+    def __init__(self, username, host, port, data_root):
         self.username = username
         self.host = host
         self.port = port
-        self.root = root
+        self.data_root = data_root
 
     def register(self):
         ssh_folder = os.path.expanduser("~/.ssh")
@@ -24,11 +24,11 @@ class MECSServer:
         else:
             log.debug(f"SSH key exists in {ssh_folder}")
         if has_key():
-            log.debug(f"Copying public key to server, just in case")
+            log.debug(f"Sending public key to server")
             subprocess.run(["ssh-copy-id", f"-p {self.port}", f"{self.username}@{self.host}"], check=True)
 
     def create_remote_folder(self, folder_name):
-        subprocess.run(["ssh", f"{self.username}@{self.host}:{self.port}", f"mkdir -p {self.root}/{folder_name}"])
+        subprocess.run(["ssh", f"-p {self.port}", f"{self.username}@{self.host}", f"mkdir -p {self.data_root}/{folder_name}"])
 
     def copy_to_server(self, file, destination):
         log.info(f"attempting to copy {file} to {destination} on {self.host}")
