@@ -58,6 +58,6 @@ class MECSServer:
             log.info("No files to upload")
         for file in files:
             path, fname = os.path.split(file)
-            destination_file = os.path.join(destination_folder, fname)
+            destination_file = os.path.join(self.data_root, destination_folder, fname)
             self.copy_to_server(file, destination_file)
             shutil.move(file, os.path.join(archive_folder, fname))
