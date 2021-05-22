@@ -8,7 +8,9 @@ There is a balance, we might be happy to gather an hour of data before writing t
 """
 
 import logging
+import signal
 from time import sleep
+
 
 import pandas as pd
 
@@ -16,11 +18,29 @@ from .get_input import raw_readings
 
 log = logging.getLogger(__name__)
 
+# adapted from https://stackoverflow.com/a/31464349/1083707
+# This just allws us to log the end of data generation
+class GracefulKiller:
+    def __init__(self):
+        self.kill_now = False
+        signal.signal(signal.SIGINT, self.exit_gracefully1)
+        signal.signal(signal.SIGTERM, self.exit_gracefully2)
+
+    def exit_gracefully1(self,signum, frame):
+        log.info("PROCESS INTERRUPTED!")
+        self.kill_now = True
+
+    def exit_gracefully2(self,signum, frame):
+        log.info("PROCESS TERMINATED!")
+        self.kill_now = True
+
+
 def aggregated_minutely_readings(delay=1):
+    killer = GracefulKiller()
     data = []
     last_minute = raw_readings()['dt'].replace(second=0, microsecond=0)
     log.info(f"Initialising data collection at {last_minute}")
-    while True:
+    while not killer.kill_now:
         readings = raw_readings()
         log.debug(f"reading taken at {readings['dt']}")
         if last_minute != readings['dt'].replace(second=0, microsecond=0):
@@ -32,3 +52,4 @@ def aggregated_minutely_readings(delay=1):
             last_minute = readings['dt'].replace(second=0, microsecond=0)
         data.append(readings['data'])
         sleep(delay)
+    log.info("Infinite loop was ended gracefully :)")
