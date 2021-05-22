@@ -43,7 +43,7 @@ class MECSServer:
             log.info(f"folder {folder_name} created on server")
 
     def copy_to_server(self, file, destination):
-        subprocess.run(["scp", file, f"{self.username}@{self.host}:{destination}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+        result = subprocess.run(["scp", file, f"{self.username}@{self.host}:{destination}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
         if result.returncode:
             log.warning("A problem occurred when attempting to copy a file to server")
             log.error(result.stderr)
