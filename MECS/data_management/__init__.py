@@ -3,8 +3,6 @@ Data management
 
 These are the primary functions available for the data management system:
 
-status: a simple script to print out some key information such as version, unit identifier and datetime
-initialise: This generates an identifier and writes it into the config file,
 generate: This is the high level source of data, a long-running process that generates a file on disk every minute.
 aggregate: This is for preparing data for upload, it should be scheduled to run every hour, it merges the available files into one and saves it in a folder ready for uploading.
 
@@ -13,64 +11,44 @@ import glob
 import json
 import os.path
 import logging
-from datetime import datetime
 
 import pandas as pd
 
 # conf must be imported first, so logging is configured
-from .. import conf, __version__
 from .minutely import aggregated_minutely_readings
-from .identity import write_identifier, get_identifier
+
 
 log = logging.getLogger(__name__)
 
-ROOT = os.path.expanduser(conf['MECS']["root_folder"])
-OUTPUT_FOLDER = os.path.join(ROOT, conf['MECS']["output_folder"])
-AGGREGATED_FOLDER = os.path.join(ROOT, conf['MECS']["aggregated_folder"])
-
-def status():
-    print()
-    print("*" * 40)
-    print(f"* MECS v{__version__:30} *")
-    print(f"* ID: {get_identifier(conf):32} *")
-    print(f"* DT: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S (UTC)'):32} *")
-    print("*" * 40)
-    print()
-
-
-def initialise():
-    log.info(f"MECS v{__version__} initialising")
-    write_identifier(conf)
-
-
-def generate():
-    log.info(f"Writing data files to {OUTPUT_FOLDER}")
+def generate(output_folder):
+    """This one is long-running, infinitely generating data until it is stopped"""
+    log.info(f"Writing data files to {output_folder}")
     for data in aggregated_minutely_readings(delay=1):
         folder = data['dt'].strftime("%Y%m%d")
-        os.makedirs(os.path.join(OUTPUT_FOLDER, folder), exist_ok=True)
+        os.makedirs(os.path.join(output_folder, folder), exist_ok=True)
         filename = data['dt'].strftime("%Y%m%d%H%M.json")
         data['dt'] = data['dt'].strftime("%Y%m%d%H%M")
-        path = os.path.join(OUTPUT_FOLDER, folder, filename)
+        path = os.path.join(output_folder, folder, filename)
         log.debug(f"writing {path}")
         with open(path, "x") as f:
             json.dump(data, f)
 
 
-def aggregate():
-    os.makedirs(AGGREGATED_FOLDER, exist_ok=True)
+def aggregate(source_folder, destination_folder):
+    os.makedirs(destination_folder, exist_ok=True)
     # Grab all the folders
-    folders = sorted(glob.glob(os.path.join(OUTPUT_FOLDER, "*")))
+    folders = sorted(glob.glob(os.path.join(source_folder, "*")))
     for folder in folders:
         df = aggregate_folder(folder)
-        path = os.path.join(AGGREGATED_FOLDER, f"{df.index[0]}-{df.index[-1]}.json")
-        log.debug(f"writing {path}")
+        # path = os.path.join(destination_folder, f"{df.index[0]}-{df.index[-1]}.json")
+        day = df.index[0][:8]
+        path = os.path.join(destination_folder, f"{day}.json")
         try:
-            # Write the aggregated data
-            with open(path, "x") as f:
+            with open(path, "w") as f:
+                log.info(f"writing to {path}")
                 json.dump(df.to_json(), f)
         except FileExistsError:
             log.warning(f"{path} already exists, ignoring request")
-
 
 
 def aggregate_folder(folder):
@@ -79,9 +57,9 @@ def aggregate_folder(folder):
     if not len(files):
         log.warning(f"No *.json files found in {folder}")
         return
+    log.debug(f"{len(files)} *.json files found in {folder}")
 
     # read them into an array
-    log.info(f"Aggregating {len(files)} files from {folder} into {AGGREGATED_FOLDER}")
     result = []
     for filename in files:
         with open(filename, 'r') as f:
