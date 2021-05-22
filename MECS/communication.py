@@ -8,6 +8,8 @@ import shutil
 
 log = logging.getLogger(__name__)
 
+class UploadFailed(Exception): pass
+
 class MECSServer:
     def __init__(self, username, host, port, data_root):
         self.username = username
@@ -47,6 +49,7 @@ class MECSServer:
         if result.returncode:
             log.warning("A problem occurred when attempting to copy a file to server")
             log.error(result.stderr)
+            raise UploadFailed
         else:
             log.info(f"Copied {file} to {destination} on {self.host}")
 
@@ -59,5 +62,9 @@ class MECSServer:
         for file in files:
             path, fname = os.path.split(file)
             destination_file = os.path.join(self.data_root, destination_folder, fname)
-            self.copy_to_server(file, destination_file)
-            shutil.move(file, os.path.join(archive_folder, fname))
+            try:
+                self.copy_to_server(file, destination_file)
+            except UploadFailed
+                pass
+            else:
+                shutil.move(file, os.path.join(archive_folder, fname))
