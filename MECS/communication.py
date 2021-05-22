@@ -64,7 +64,7 @@ class MECSServer:
             destination_file = os.path.join(self.data_root, destination_folder, fname)
             try:
                 self.copy_to_server(file, destination_file)
-            except UploadFailed
+            except UploadFailed:
                 pass
             else:
                 shutil.move(file, os.path.join(archive_folder, fname))
