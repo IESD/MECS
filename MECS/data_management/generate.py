@@ -21,7 +21,7 @@ def generate(output_folder, get_data):
         folder = data['dt'].strftime("%Y%m%d")
         os.makedirs(os.path.join(output_folder, folder), exist_ok=True)
         filename = data['dt'].strftime("%Y%m%d%H%M.json")
-        data['dt'] = data['dt'].strftime("%Y%m%d%H%M")
+        data['dt'] = data['dt'].isoformat()
         path = os.path.join(output_folder, folder, filename)
         log.debug(f"writing {path}")
         with open(path, "x") as f:

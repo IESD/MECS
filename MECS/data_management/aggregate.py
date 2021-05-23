@@ -15,23 +15,15 @@ log = logging.getLogger(__name__)
 
 def aggregate(source_folder, destination_folder):
     os.makedirs(destination_folder, exist_ok=True)
-    # Grab all the folders
     folders = sorted(glob.glob(os.path.join(source_folder, "*")))
     for folder in folders:
         df = aggregate_folder(folder)
-        # path = os.path.join(destination_folder, f"{df.index[0]}-{df.index[-1]}.json")
-        day = df.index[0][:8]
+        day = df.index[0].strftime("%Y%m%d")
         path = os.path.join(destination_folder, f"{day}.json")
-        try:
-            with open(path, "w") as f:
-                log.info(f"writing to {path}")
-                df.to_json(f)
-        except FileExistsError:
-            log.warning(f"{path} already exists, ignoring request")
-
+        log.info(f"writing to {path}")
+        df.to_json(path, orient="split", date_format="iso")
 
 def aggregate_folder(folder):
-    # Grab all the filenames
     files = sorted(glob.glob(os.path.join(folder, "*.json")))
     if not len(files):
         log.warning(f"No *.json files found in {folder}")
@@ -50,6 +42,7 @@ def aggregate_folder(folder):
     df = pd.DataFrame(result)
 
     # add the datetime index and sort
+    df['dt'] = pd.to_datetime(df['dt'])
     df.set_index("dt", inplace=True)
     df.sort_index(inplace=True)
 
