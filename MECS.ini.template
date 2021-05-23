@@ -9,7 +9,7 @@ aggregated_folder = aggregated
 archive_folder = archive
 
 [loggers]
-keys = root
+keys = root, MECS
 
 [handlers]
 keys = console
@@ -18,8 +18,13 @@ keys = console
 keys = generic
 
 [logger_root]
+handlers = console
+
+[logger_MECS]
 level = DEBUG
 handlers = console
+qualname = MECS
+propagate = 0
 
 [handler_console]
 class = StreamHandler
