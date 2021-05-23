@@ -3,7 +3,8 @@
 from datetime import datetime
 from random import random
 
-def raw_readings():
+
+def fake_readings():
     """A function to represent gathering data from all the sensors"""
     return {
         "dt": datetime.utcnow(),

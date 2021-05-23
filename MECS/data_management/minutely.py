@@ -1,10 +1,8 @@
 """
-grab data and write it to files
-
-here we generate one file per minute
-Obviously we want to minimise the data kept in memory
-And writing to disk regularly minimises potential data loss
-There is a balance, we might be happy to gather an hour of data before writing to a file.
+A generator function with an infinite loop.
+We grab data continuously, with the given delay
+Accumulate readings for a minute
+Yield the average data at the end of each minute
 """
 
 import logging
@@ -13,37 +11,39 @@ from time import sleep
 
 import pandas as pd
 
-from .get_input import raw_readings as fake_readings
-
 log = logging.getLogger(__name__)
+
+def readings(fake):
+    if not fake:
+        from ..data_acquisition.sensors_api import raw_readings
+        return raw_readings
+    from .fake_input import fake_readings
+    return fake_readings
 
 # adapted from https://stackoverflow.com/a/31464349/1083707
 # This just allws us to log the end of data generation
 class GracefulKiller:
     def __init__(self):
         self.kill_now = False
-        signal.signal(signal.SIGINT, self.exit_gracefully1)
-        signal.signal(signal.SIGTERM, self.exit_gracefully2)
+        signal.signal(signal.SIGINT, self.interrupt)
+        signal.signal(signal.SIGTERM, self.terminate)
 
-    def exit_gracefully1(self,signum, frame):
+    def interrupt(self,signum, frame):
         log.info("PROCESS INTERRUPTED!")
         self.kill_now = True
 
-    def exit_gracefully2(self,signum, frame):
+    def terminate(self,signum, frame):
         log.info("PROCESS TERMINATED!")
         self.kill_now = True
 
 
-def aggregated_minutely_readings(fake, delay=1):
-    if not fake:
-        from ..data_acquisition.sensors_api import raw_readings
-
+def aggregated_minutely_readings(get_readings, delay=1):
     killer = GracefulKiller()
     data = []
-    last_minute = fake_readings()['dt'].replace(second=0, microsecond=0)
+    last_minute = get_readings()['dt'].replace(second=0, microsecond=0)
     log.info(f"Initialising data collection at {last_minute}")
     while not killer.kill_now:
-        readings = fake_readings() if fake else raw_readings()
+        readings = get_readings()
         log.debug(f"reading taken at {readings['dt']}")
         if last_minute != readings['dt'].replace(second=0, microsecond=0):
             result = pd.DataFrame(data).mean().to_dict()
