@@ -25,7 +25,7 @@ def aggregate(source_folder, destination_folder):
         try:
             with open(path, "w") as f:
                 log.info(f"writing to {path}")
-                json.dump(df.to_json(), f)
+                df.to_json(f)
         except FileExistsError:
             log.warning(f"{path} already exists, ignoring request")
 
