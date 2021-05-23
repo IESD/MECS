@@ -10,14 +10,13 @@ import os.path
 import json
 import logging
 
-from .minutely import aggregated_minutely_readings, readings
+from .minutely import aggregated_minutely_readings
 
 log = logging.getLogger(__name__)
 
-def generate(output_folder, fake):
+def generate(output_folder, get_data):
     """A long-running process, infinitely generating data until it is stopped"""
-    log.info(f"Writing {'fake' if fake else 'real'} data files to {output_folder}")
-    get_data = readings(fake)
+    log.info(f"Writing data files to {output_folder}")
     for data in aggregated_minutely_readings(get_data, delay=1):
         folder = data['dt'].strftime("%Y%m%d")
         os.makedirs(os.path.join(output_folder, folder), exist_ok=True)
