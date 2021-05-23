@@ -7,6 +7,7 @@ from collections import OrderedDict
 from . import __version__
 from .config import args, conf, initialise_identifier, initialise_unit_id, NoOptionError
 from .communication import MECSServer
+from .plot import plot_all
 from .data_management.minutely import readings
 from .data_management.generate import generate as gen
 from .data_management.aggregate import aggregate as agg
@@ -36,6 +37,7 @@ try:
     ROOT = os.path.expanduser(conf.get('MECS', 'root_folder'))
     OUTPUT_FOLDER = os.path.join(ROOT, conf.get('MECS', 'output_folder'))
     AGGREGATED_FOLDER = os.path.join(ROOT, conf.get('MECS', 'aggregated_folder'))
+    PLOTTING_FOLDER = os.path.join(ROOT, conf.get('MECS', 'plotting_folder', fallback="plots"))
 except NoOptionError as exc:
     log.warning(f"Missing option '{exc.option}' in section [{exc.section}] of config file {args.conf}")
     exit(1)
@@ -120,4 +122,5 @@ def test():
         print(f"* {k:>{l1}}: {v:<{l2}} *")
     print("*" * (l1 + l2 + 6))
 
-    # print(get_readings())
+def plot():
+    plot_all(ARCHIVE_FOLDER, PLOTTING_FOLDER)

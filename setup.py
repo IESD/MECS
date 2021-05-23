@@ -2,12 +2,13 @@ from setuptools import setup, find_packages
 
 setup(
   name='MECS',
-  version="0.1.1",
+  version="0.2.0",
   packages=find_packages(),
   include_package_data=True,
   install_requires=[
     'numpy',
     'pandas',
+    'matplotlib',
     'smbus',
     'pyserial',
   ],
@@ -20,5 +21,6 @@ setup(
     mecs-register = MECS.cli:register
     mecs-upload = MECS.cli:upload
     mecs-test = MECS.cli:test
+    mecs-plot = MECS.cli:plot
     """
 )
