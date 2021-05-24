@@ -1,14 +1,16 @@
 #!/usr/bin/python3
 
-import ADCPi
 import time
 import os
 #import serial
 import math
+from datetime import datetime
+
+from . import ADCPi
 #from aqi import *
 """
 ================================================
-Coded modified from the ABElectronics ADC Pi 
+Coded modified from the ABElectronics ADC Pi
 
 Requires python 3 smbus to be installed
 ================================================
@@ -77,7 +79,7 @@ def sampleAC(adc, channel):
     rms = math.sqrt(sq_avg)
     adc.set_conversion_mode(0)
     return rms
-    
+
 def calcACvolts(adc, channel):
     rms = sampleAC(adc,channel)
     AC_conv_factor = 181.4
@@ -99,7 +101,7 @@ def getTempFromVolts(voltage):
     R0 = 10000 # 10000 1kOhm at 25 deg C - part of thermistor spec
     beta = 3950 # part of thermistor spec
     rVoltDiv = (rBias * _adcpi_input_impedance) / (rBias+_adcpi_input_impedance)
-    rTherm = (rVoltDiv*(5-voltage))/voltage  
+    rTherm = (rVoltDiv*(5-voltage))/voltage
     #rTherm = (220 * voltage) /  (5 -  voltage)
     #print ("rTherm %02f" % rTherm)
     rInf = R0 * math.exp(-beta / T0)
@@ -107,8 +109,8 @@ def getTempFromVolts(voltage):
     retTemp = beta / (math.log(rTherm / rInf))
     retTemp -= kelvinToCentigrade
     if retTemp < _min_temp or retTemp > _max_temp:
-        retTemp = -1 # input must be floating - we can't be near outside this range!! Return error value 
-    return round(retTemp,1) 
+        retTemp = -1 # input must be floating - we can't be near outside this range!! Return error value
+    return round(retTemp,1)
 
 
 #The current code for air quality oly works with python2. Under python3 the construct_command function needs to convert the UTF string to bytes.
@@ -131,7 +133,7 @@ def getParticulars():
 # https://github.com/Arduinolibrary/DFRobot_Gravity_UART_Infrared_CO2_Sensor/raw/master/MH-Z16%20CO2%20Datasheet.pdf
 
 #uart_read_hex = [0xFF,0x01,0x86,0x00,0x00,0x00,0x00,0x00,0x79]
-#uart_calibrate_zero_hex = [0xFF,0x01,0x87,0x00,0x00,0x00,0x00,0x00,0x78] 
+#uart_calibrate_zero_hex = [0xFF,0x01,0x87,0x00,0x00,0x00,0x00,0x00,0x78]
 #uart_calibrate_span_hex = [0xFF,0x01,0x88,0x07,0xD0,0x00,0x00,0x00,0xA0]
 
 
@@ -154,30 +156,30 @@ def raw_readings():
     }
 
 
+if __name__ == "__main__":
+
+    while (True):
+
+        # clear the console
+        os.system('clear')
+        partValues = getParticulars()
+        # read from adc channels and print to screen
+        #print ("Raw on channel 3: %02f" % adc.read_voltage(3))
+        print ("Voltage on battery (ch1): %02f" % calcVoltage(adc.read_voltage(1)))
+        print ("Current on cooker (ch2): %02f" % calcCurrent(adc.read_voltage(2)))
+        print ("Current on PV (ch3): %02f" % calcCurrent(adc.read_voltage(3)))
+        print ("Voltage on PV?? (ch4): %02f" % calcVoltage(adc.read_voltage(4))) #Check - The  device needs to be moved
+        print ("Voltage??? (ch5) %02f" % calcVoltage(adc.read_voltage(5)))
+        print ("Current on USB load (ch6): %02f" % calcCurrent(adc.read_voltage(6)))
+        print ("Current on Pi (ch7): %02f" % calcCurrent(adc.read_voltage(7)))
+        print ("Temp (ch8) %02f" % getTempFromVolts(adc.read_voltage(8)))
+
+        #print ("Particular_PM2.5: %02f" % partValues[0])
+        #print ("Particular_PM10: %02f" % partValues[1])
+        #print ("RMS no conversion channel 4: %02f" % sampleAC(adc,4))
+        #print ("RMS AC Volts on channel 4: %02f" % calcACvolts(adc,4))
+        #print ("AC Current on channel 7: %02f" % calcAcCurrent(adc.read_voltage(7))) #20 is because clamp is 20A/V
 
 
-while (True):
-
-    # clear the console
-    os.system('clear')
-    partValues = getParticulars()
-    # read from adc channels and print to screen
-    #print ("Raw on channel 3: %02f" % adc.read_voltage(3))
-    print ("Voltage on battery (ch1): %02f" % calcVoltage(adc.read_voltage(1)))
-    print ("Current on cooker (ch2): %02f" % calcCurrent(adc.read_voltage(2)))
-    print ("Current on PV (ch3): %02f" % calcCurrent(adc.read_voltage(3)))
-    print ("Voltage on PV?? (ch4): %02f" % calcVoltage(adc.read_voltage(4))) #Check - The  device needs to be moved
-    print ("Voltage??? (ch5) %02f" % calcVoltage(adc.read_voltage(5)))
-    print ("Current on USB load (ch6): %02f" % calcCurrent(adc.read_voltage(6)))
-    print ("Current on Pi (ch7): %02f" % calcCurrent(adc.read_voltage(7)))
-    print ("Temp (ch8) %02f" % getTempFromVolts(adc.read_voltage(8)))
-
-    #print ("Particular_PM2.5: %02f" % partValues[0])
-    #print ("Particular_PM10: %02f" % partValues[1])
-    #print ("RMS no conversion channel 4: %02f" % sampleAC(adc,4))
-    #print ("RMS AC Volts on channel 4: %02f" % calcACvolts(adc,4))
-    #print ("AC Current on channel 7: %02f" % calcAcCurrent(adc.read_voltage(7))) #20 is because clamp is 20A/V
-
-
-   # wait 0.5 seconds before reading the pins again
-    time.sleep(5)
+       # wait 0.5 seconds before reading the pins again
+        time.sleep(5)

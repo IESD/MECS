@@ -1,0 +1,54 @@
+import os.path
+import logging.config
+import argparse
+import uuid
+from configparser import ConfigParser, NoOptionError
+
+def load_config(path):
+    """load configuration from file"""
+    if not os.path.exists(path):
+        print(f"Error: configuration file {path} not found")
+        exit(1)
+    config = ConfigParser()
+    config.read(path)
+    # Configure logging and return
+    logging.config.fileConfig(config)
+    return config
+
+def save_config(path, conf):
+    """save configuration to file"""
+    if not os.path.exists(path):
+        print(f"Error: configuration file {path} not found")
+        exit(1)
+    with open(path, 'w') as f:
+        conf.write(f)
+
+def initialise_identifier(path, conf):
+    "Write a unique id based on mac address to the config file"
+    log = logging.getLogger(__name__)
+    identifier = hex(uuid.getnode())
+    conf.set("MECS", "HARDWARE_ID", identifier)
+    save_config(path, conf)
+    log.info(f"HARDWARE_ID set: {identifier}")
+
+def initialise_unit_id(path, conf):
+    """Write a user-specified identifier to the config file"""
+    log = logging.getLogger(__name__)
+    existing_unit_id = conf.getint('MECS', 'unit_id', fallback=False)
+    try:
+        requested_unit_id = int(input(f"Enter a new Unit ID (currently {existing_unit_id if existing_unit_id else 'not set'}): "))
+    except ValueError:
+        log.error("Invalid, user_id must be integer")
+        exit(1)
+    confirm = f"Change unit_id from {existing_unit_id}? (y/n) "
+    if existing_unit_id and requested_unit_id != existing_unit_id and input(confirm).lower() != "y":
+        return
+    conf['MECS']['unit_id'] = str(requested_unit_id)
+    save_config(path, conf)
+    log.info(f"unit_id set: {requested_unit_id}")
+
+# The parser accepts an optional configuration file argument
+parser = argparse.ArgumentParser(epilog="For more information see https://github.com/IESD/MECS", description='MECS monitoring system command-line tools')
+parser.add_argument('-c', '--conf', default=os.path.expanduser("~/.MECS/MECS.ini"), help='configuration file (default ~/.MECS/MECS.ini)')
+args = parser.parse_args()
+conf = load_config(args.conf)
