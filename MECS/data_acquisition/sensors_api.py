@@ -125,19 +125,6 @@ def getParticulars():
             return values'''
     return [0,0]
 
-# Need this in __init__() if and when you make this a module/class
-
-#port = serial.Serial("/dev/serial0", baudrate=9600, timeout=3.0)
-
-# These are possible serial messages to send to the CO2 sensor as per
-# https://github.com/Arduinolibrary/DFRobot_Gravity_UART_Infrared_CO2_Sensor/raw/master/MH-Z16%20CO2%20Datasheet.pdf
-
-#uart_read_hex = [0xFF,0x01,0x86,0x00,0x00,0x00,0x00,0x00,0x79]
-#uart_calibrate_zero_hex = [0xFF,0x01,0x87,0x00,0x00,0x00,0x00,0x00,0x78]
-#uart_calibrate_span_hex = [0xFF,0x01,0x88,0x07,0xD0,0x00,0x00,0x00,0xA0]
-
-
-
 def raw_readings():
     """A function to represent gathering data from all the sensors"""
     partValues = getParticulars()
@@ -150,36 +137,18 @@ def raw_readings():
            "PV_Voltage??_ch4": calcVoltage(adc.read_voltage(4)),
             "USB_LOAD_Current_ch6": calcCurrent(adc.read_voltage(6)),
             "Pi_Current_ch7": calcCurrent(adc.read_voltage(7)),
+            "Temp_ch8": getTempFromVolts(adc.read_voltage(8)),
             "Particular_PM2.5" : partValues[0],
             "Particular_PM10": partValues[1]
         }
     }
 
 
-if __name__ == "__main__":
-
+if __name__=='__main__':
     while (True):
-
         # clear the console
         os.system('clear')
-        partValues = getParticulars()
-        # read from adc channels and print to screen
-        #print ("Raw on channel 3: %02f" % adc.read_voltage(3))
-        print ("Voltage on battery (ch1): %02f" % calcVoltage(adc.read_voltage(1)))
-        print ("Current on cooker (ch2): %02f" % calcCurrent(adc.read_voltage(2)))
-        print ("Current on PV (ch3): %02f" % calcCurrent(adc.read_voltage(3)))
-        print ("Voltage on PV?? (ch4): %02f" % calcVoltage(adc.read_voltage(4))) #Check - The  device needs to be moved
-        print ("Voltage??? (ch5) %02f" % calcVoltage(adc.read_voltage(5)))
-        print ("Current on USB load (ch6): %02f" % calcCurrent(adc.read_voltage(6)))
-        print ("Current on Pi (ch7): %02f" % calcCurrent(adc.read_voltage(7)))
-        print ("Temp (ch8) %02f" % getTempFromVolts(adc.read_voltage(8)))
+        print(raw_readings())
 
-        #print ("Particular_PM2.5: %02f" % partValues[0])
-        #print ("Particular_PM10: %02f" % partValues[1])
-        #print ("RMS no conversion channel 4: %02f" % sampleAC(adc,4))
-        #print ("RMS AC Volts on channel 4: %02f" % calcACvolts(adc,4))
-        #print ("AC Current on channel 7: %02f" % calcAcCurrent(adc.read_voltage(7))) #20 is because clamp is 20A/V
-
-
-       # wait 0.5 seconds before reading the pins again
-        time.sleep(5)
+        # wait 2 seconds before reading the pins again
+        time.sleep(2)
