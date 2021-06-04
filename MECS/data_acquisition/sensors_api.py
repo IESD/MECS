@@ -6,7 +6,8 @@ import os
 import math
 from datetime import datetime
 
-from . import ADCPi
+import ADCPi	# Uncomment for testing in command prompt
+#from . import ADCPi
 #from aqi import *
 """
 ================================================
@@ -113,6 +114,22 @@ def getTempFromVolts(voltage):
     return round(retTemp,1)
 
 
+
+####
+# Code snippet added by Henrik 2021-05-28
+# Code snippet modified by Henrik 2021-06-02
+# This function converts LM35 voltage readings  to temprature 
+# Output voltage signal is given by 10mV/C*T
+####
+def getTempFromLM35(mVolts):
+   lm35_scale_factor = 10 # Linear scale factor 10mV/C
+   conv_to_volts = 1000   # Convert to volts 1000mV per 1 Volts
+   temp = (mVolts/lm35_scale_factor)*conv_to_volts
+
+   # Add debugging/logging code here
+
+   return round(temp,3)
+
 #The current code for air quality oly works with python2. Under python3 the construct_command function needs to convert the UTF string to bytes.
 def getParticulars():
     '''cmd_set_sleep(0)
@@ -134,15 +151,16 @@ def raw_readings():
             "Battery_Voltage_ch1": calcVoltage(adc.read_voltage(1)),
             "Cooker_Current_ch2": calcCurrent(adc.read_voltage(2)),
             "PV_Current_ch3": calcCurrent(adc.read_voltage(3)),
-           "PV_Voltage??_ch4": calcVoltage(adc.read_voltage(4)),
+            "PV_Voltage??_ch4": calcVoltage(adc.read_voltage(4)),
             "USB_LOAD_Current_ch6": calcCurrent(adc.read_voltage(6)),
             "Pi_Current_ch7": calcCurrent(adc.read_voltage(7)),
             "Temp_ch8": getTempFromVolts(adc.read_voltage(8)),
+            #"Raw read_ch8": adc.read_voltage(8),
+            #"Temp_ch8": getTempFromLM35(adc.read_voltage(8)),
             "Particular_PM2.5" : partValues[0],
             "Particular_PM10": partValues[1]
         }
     }
-
 
 if __name__=='__main__':
     while (True):
