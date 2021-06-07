@@ -1,14 +1,5 @@
 #!/usr/bin/python3
 
-import time
-import os
-import sds011 # package needed for air quality. See below for installation 
-import math
-from datetime import datetime
-
-import ADCPi	# Uncomment for testing in command prompt
-#from . import ADCPi
-#from aqi import *
 """
 ================================================
 Coded modified from the ABElectronics ADC Pi
@@ -22,17 +13,24 @@ change this value if you have changed the address selection jumpers
 Sample rate can be 12,14, 16 or 18
 """
 
+import time
+import os
+import math
+from datetime import datetime
+
+import sds011 # package needed for air quality. See below for installation
+import ADCPi
+
 i2c_helper = ADCPi.ABEHelpers()
 bus = i2c_helper.get_smbus()
 adc = ADCPi.ADCPi(bus, 0x68, 0x69, 12)
 
-# change the 2.5 value to be half of the supply voltage.
 _adcpi_input_impedance = 16800 #Input impedance of the ADC - needed when calculating using external voltage dividers
 _min_temp = 5
 _max_temp = 150
 
 
-#python 3 interface to the SDS011 air particulate density sensor. Initialise the particulate sensor .
+#Initialise the SDS011 air particulate density sensor.
 sensor = sds011.SDS011("/dev/ttyUSB0", use_query_mode=True)
 
 #######
@@ -40,7 +38,6 @@ sensor = sds011.SDS011("/dev/ttyUSB0", use_query_mode=True)
 # Note we are concerned with magnitude, rather than direction, hence using abs
 #######
 def calcCurrent(inval):
-    #print('Raw voltage in %02f'%inval)
     midOffset = 2.5 # 2.624202 # From experiment calibration - nominally Vcc/2, should be 2.5
     milliVoltPerAmp = 100 # 117.61066 #From experiment calibration - nominally 100 on the +/-20A version
     return abs((inval - midOffset) * 1000 / milliVoltPerAmp) # Calibration constants by experiment
@@ -54,14 +51,14 @@ def calcCurrent(inval):
 def calcVoltage(inVal):
    rTop = 30000
    rBottom = 7500
-   rEffective = rBottom*_adcpi_input_impedance / (rBottom+_adcpi_input_impedance)
-   return inVal*(rTop+rEffective)/rEffective
+   rEffective = rBottom * _adcpi_input_impedance / (rBottom + _adcpi_input_impedance)
+   return inVal * (rTop + rEffective) / rEffective
 
 ######
 # Work in progress to use AC current clamp - TODO - needs improvement
 ######
 def calcAcCurrent(inVal):
-    return 20/2.6*(inVal - 0.056) #Spec says 20A/V, zero calibration by observation - need better way
+    return 20 / 2.6 * (inVal-0.056) #Spec says 20A/V, zero calibration by observation - need better way
 
 #########
 # This is needed if measuring an AC voltage directly on the ADC Pi channel
@@ -106,7 +103,7 @@ def getTempFromVolts(voltage):
     R0 = 10000 # 10000 1kOhm at 25 deg C - part of thermistor spec
     beta = 3950 # part of thermistor spec
     rVoltDiv = (rBias * _adcpi_input_impedance) / (rBias+_adcpi_input_impedance)
-    rTherm = (rVoltDiv*(5-voltage))/voltage
+    rTherm = (rVoltDiv * (5-voltage)) / voltage
     #rTherm = (220 * voltage) /  (5 -  voltage)
     #print ("rTherm %02f" % rTherm)
     rInf = R0 * math.exp(-beta / T0)
@@ -115,20 +112,20 @@ def getTempFromVolts(voltage):
     retTemp -= kelvinToCentigrade
     if retTemp < _min_temp or retTemp > _max_temp:
         retTemp = -1 # input must be floating - we can't be near outside this range!! Return error value
-    return round(retTemp,1)
+    return round(retTemp, 1)
 
 
 
 ####
 # Code snippet added by Henrik 2021-05-28
 # Code snippet modified by Henrik 2021-06-02
-# This function converts LM35 voltage readings  to temprature 
+# This function converts LM35 voltage readings  to temprature
 # Output voltage signal is given by 10mV/C*T
 ####
 def getTempFromLM35(mVolts):
    lm35_scale_factor = 10 # Linear scale factor 10mV/C
    conv_to_volts = 1000   # Convert to volts 1000mV per 1 Volts
-   temp = (mVolts/lm35_scale_factor)*conv_to_volts
+   temp = (mVolts/lm35_scale_factor) * conv_to_volts
 
    # Add debugging/logging code here
 
@@ -149,7 +146,7 @@ def getParticulars():
         sensor.sleep(sleep=False)
         time.sleep(5)
 
-    return (0,0)
+    return (0, 0)
 
 def raw_readings():
     """A function to represent gathering data from all the sensors"""
@@ -170,12 +167,3 @@ def raw_readings():
             "Particular_PM10": partValues[1]
         }
     }
-
-if __name__=='__main__':
-    while (True):
-        # clear the console
-        os.system('clear')
-        print(raw_readings())
-
-        # wait 2 seconds before reading the pins again
-        time.sleep(2)
