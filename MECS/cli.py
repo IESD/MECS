@@ -59,6 +59,25 @@ else:
     server = MECSServer(USERNAME, HOST, PORT, DESTINATION_ROOT)
 
 
+def pretty_print(dict, heading=True):
+    """
+    Utility function for printing data to console
+    Requires a dict-like containing the data
+    Defaults to treating the first element as a heading
+    So its best to use an OrderedDict
+    """
+    l1 = max([len(k) for k in dict.keys()])
+    l2 = max([len(str(v)) for v in dict.values()])
+    print()
+    print("*" * (l1 + l2 + 6))
+    for k, v in dict.items():
+        print(f"* {k:>{l1}}: {v:<{l2}} *")
+        if heading:
+            print("*" * (l1 + l2 + 6))
+            heading = False
+    print("*" * (l1 + l2 + 6))
+
+
 def status():
     """a simple script to print out some key information"""
     data = OrderedDict({
@@ -70,13 +89,7 @@ def status():
         "FAKE": str(FAKE),
         "Server": f"{USERNAME}@{HOST}:{PORT}" if server else "Not configured"
     })
-    l1 = max([len(k) for k in data.keys()])
-    l2 = max([len(v) for v in data.values()])
-    print()
-    print("*" * (l1 + l2 + 6))
-    for k, v in data.items():
-        print(f"* {k:>{l1}}: {v:<{l2}} *")
-    print("*" * (l1 + l2 + 6))
+    pretty_print(data)
 
 def init():
     log.info(f"MECS v{__version__} initialising")
@@ -110,17 +123,26 @@ def upload():
 
 def test():
     data = readings(FAKE)()
-    l1 = max([len(k) for k in data['data'].keys()])
-    l2 = max([len(str(v)) for v in data['data'].values()])
-    dt_string = data['dt'].strftime("%Y-%m-%d %H:%M:%S")
-    l2 = max(l2, len(dt_string))
-    print()
-    print("*" * (l1 + l2 + 6))
-    print(f"* {'dt':>{l1}}: {dt_string:<{l2}} *")
-    print("*" * (l1 + l2 + 6))
-    for k, v in data['data'].items():
-        print(f"* {k:>{l1}}: {v:<{l2}} *")
-    print("*" * (l1 + l2 + 6))
+    output = OrderedDict(data['data'])
+    output['dt'] = data['dt'].strftime("%Y-%m-%d %H:%M:%S")
+    output.move_to_end('dt', last=False)
+    pretty_print(output)
+
+def test2():
+    import time
+    readings_func = readings(FAKE)
+    try:
+        while(True):
+            data = readings_func()
+            output = OrderedDict(data['data'])
+            output['dt'] = data['dt'].strftime("%Y-%m-%d %H:%M:%S")
+            output.move_to_end('dt', last=False)
+            os.system('clear')
+            pretty_print(output)
+            time.sleep(1)
+    except KeyboardInterrupt:
+        pass
+
 
 def plot():
     plot_all(ARCHIVE_FOLDER, PLOTTING_FOLDER)

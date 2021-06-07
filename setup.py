@@ -21,6 +21,7 @@ setup(
     mecs-register = MECS.cli:register
     mecs-upload = MECS.cli:upload
     mecs-test = MECS.cli:test
+    mecs-test2 = MECS.cli:test2
     mecs-plot = MECS.cli:plot
     """
 )
