@@ -66,6 +66,20 @@ def calcAcCurrent(inVal):
 # It is error prone as it relies on sampling the waveform and finding rms value, so
 # smoothing in analogue componentry external is preferred.
 #########
+
+def sampleRMS(adc, channel, n=1000):
+    """
+    A more pythonic version of the below function
+    Though if we want speed then we should consider using numpy for this
+    """
+    adc.set_conversion_mode(1)
+    readings = [adc.read_voltage(channel)**2 for i in range(n)]
+    adc.set_conversion_mode(0)
+    mean_reading = sum(readings) / len(readings)
+    squared = [(r-mean_reading)**2 for r in readings]
+    mean_squared = sum(squared) / len(squared)
+    return math.sqrt(mean_squared)
+
 def sampleAC(adc, channel):
     adc.set_conversion_mode(1)
     readings = []
