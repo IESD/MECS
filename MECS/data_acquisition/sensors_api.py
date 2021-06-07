@@ -2,7 +2,7 @@
 
 import time
 import os
-#import serial
+import sds011 # package needed for air quality. See below for installation 
 import math
 from datetime import datetime
 
@@ -30,6 +30,10 @@ adc = ADCPi.ADCPi(bus, 0x68, 0x69, 12)
 _adcpi_input_impedance = 16800 #Input impedance of the ADC - needed when calculating using external voltage dividers
 _min_temp = 5
 _max_temp = 150
+
+
+#python 3 interface to the SDS011 air particulate density sensor. Initialise the particulate sensor .
+sensor = sds011.SDS011("/dev/ttyUSB0", use_query_mode=True)
 
 #######
 # calculate Current from voltage signal from this ACS712 board.
@@ -131,16 +135,21 @@ def getTempFromLM35(mVolts):
    return round(temp,3)
 
 #The current code for air quality oly works with python2. Under python3 the construct_command function needs to convert the UTF string to bytes.
+#The following module works with python3. Command: git clone https://github.com/ikalchev/py-sds011.git
+# cd py-sds011/
+# pip3 install -e .
+#
 def getParticulars():
-    '''cmd_set_sleep(0)
-    cmd_firmware_ver()
-    cmd_set_working_period(PERIOD_CONTINUOUS)
-    cmd_set_mode(MODE_QUERY);
-    for t in range(15):
-        values = cmd_query_data();
-        if values is not None and len(values) == 2:
-            return values'''
-    return [0,0]
+
+    for t in range(10):
+        values = sensor.query()
+        if values is not None and  len(values) == 2:
+            return values
+        sensor.sleep()
+        sensor.sleep(sleep=False)
+        time.sleep(5)
+
+    return (0,0)
 
 def raw_readings():
     """A function to represent gathering data from all the sensors"""
