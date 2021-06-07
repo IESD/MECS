@@ -25,9 +25,13 @@ i2c_helper = ADCPi.ABEHelpers()
 bus = i2c_helper.get_smbus()
 adc = ADCPi.ADCPi(bus, 0x68, 0x69, 12)
 
-_adcpi_input_impedance = 16800 #Input impedance of the ADC - needed when calculating using external voltage dividers
-_min_temp = 5
-_max_temp = 150
+INPUT_IMPEDANCE = 16800 #Input impedance of the ADC - needed when calculating using external voltage dividers
+MIN_TEMP = 5
+MAX_TEMP = 150
+
+R_TOP = 30000
+R_BOTTOM = 7500
+R_EFFECTIVE = R_BOTTOM * INPUT_IMPEDANCE / (R_BOTTOM + INPUT_IMPEDANCE)
 
 
 #Initialise the SDS011 air particulate density sensor.
@@ -49,10 +53,7 @@ def calcCurrent(inval):
 # so that must be incorporated
 #####
 def calcVoltage(inVal):
-   rTop = 30000
-   rBottom = 7500
-   rEffective = rBottom * _adcpi_input_impedance / (rBottom + _adcpi_input_impedance)
-   return inVal * (rTop + rEffective) / rEffective
+   return inVal * (R_TOP + R_EFFECTIVE) / R_EFFECTIVE
 
 ######
 # Work in progress to use AC current clamp - TODO - needs improvement
@@ -102,7 +103,7 @@ def getTempFromVolts(voltage):
     T0 = 25 + kelvinToCentigrade # 25 deg C in Kelvin
     R0 = 10000 # 10000 1kOhm at 25 deg C - part of thermistor spec
     beta = 3950 # part of thermistor spec
-    rVoltDiv = (rBias * _adcpi_input_impedance) / (rBias+_adcpi_input_impedance)
+    rVoltDiv = (rBias * INPUT_IMPEDANCE) / (rBias+INPUT_IMPEDANCE)
     rTherm = (rVoltDiv * (5-voltage)) / voltage
     #rTherm = (220 * voltage) /  (5 -  voltage)
     #print ("rTherm %02f" % rTherm)
@@ -110,7 +111,7 @@ def getTempFromVolts(voltage):
     #print ("rInf %02f" % rInf)
     retTemp = beta / (math.log(rTherm / rInf))
     retTemp -= kelvinToCentigrade
-    if retTemp < _min_temp or retTemp > _max_temp:
+    if retTemp < MIN_TEMP or retTemp > MAX_TEMP:
         retTemp = -1 # input must be floating - we can't be near outside this range!! Return error value
     return round(retTemp, 1)
 
