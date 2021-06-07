@@ -73,7 +73,7 @@ def sampleRMS(adc, channel, n=1000):
     Though if we want speed then we should consider using numpy for this
     """
     adc.set_conversion_mode(1)
-    readings = [adc.read_voltage(channel)**2 for i in range(n)]
+    readings = [adc.read_voltage(channel) for i in range(n)]
     adc.set_conversion_mode(0)
     mean_reading = sum(readings) / len(readings)
     squared = [(r-mean_reading)**2 for r in readings]
