@@ -12,8 +12,6 @@ from .data_management.minutely import readings
 from .data_management.generate import generate as gen
 from .data_management.aggregate import aggregate as agg
 
-
-
 log = logging.getLogger(__name__)
 
 # No confirmation that we can communicate with server yet
@@ -121,11 +119,18 @@ def upload():
     log.info(f"MECS v{__version__} uploading data")
     server.upload(AGGREGATED_FOLDER, REMOTE_FOLDER, ARCHIVE_FOLDER)
 
-def test():
-    data = readings(FAKE)()
+
+def _prepare_output(data):
+    """internal function to reorganise data into an ordered dict for printing"""
     output = OrderedDict(data['data'])
     output['dt'] = data['dt'].strftime("%Y-%m-%d %H:%M:%S")
     output.move_to_end('dt', last=False)
+    return output
+
+
+def test():
+    data = readings(FAKE)()
+    output = _prepare_output(data)
     pretty_print(output)
 
 def test2():
@@ -134,12 +139,10 @@ def test2():
     try:
         while(True):
             data = readings_func()
-            output = OrderedDict(data['data'])
-            output['dt'] = data['dt'].strftime("%Y-%m-%d %H:%M:%S")
-            output.move_to_end('dt', last=False)
+            output = _prepare_output(data)
             os.system('clear')
             pretty_print(output)
-            time.sleep(1)
+            time.sleep(0.1)
     except KeyboardInterrupt:
         pass
 
