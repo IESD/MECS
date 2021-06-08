@@ -1,3 +1,6 @@
+"""
+plotting raw data as images using matplotlib
+"""
 import logging
 import glob
 import os.path

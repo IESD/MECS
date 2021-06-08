@@ -1,3 +1,7 @@
+"""
+MECS configuration handling
+"""
+
 import os.path
 import logging.config
 import argparse

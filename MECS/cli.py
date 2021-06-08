@@ -1,3 +1,7 @@
+"""
+MECS command line interface scripts
+"""
+
 import os
 from datetime import datetime
 import logging
@@ -27,6 +31,7 @@ UNIT_ID = conf.get('MECS', 'unit_id', fallback="unidentified").zfill(5)
 REMOTE_FOLDER = f"{HARDWARE_ID}/{UNIT_ID}"
 
 # Are we recording fake values?
+# TODO: set the default to False so that configuration makes more sense?
 FAKE = conf.getboolean('MECS', 'fake_data', fallback=True)
 
 # core elements are absolutely necessary for normal operation

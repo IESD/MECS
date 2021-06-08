@@ -1,4 +1,6 @@
-"""Establishing connection with server, writing ssh public key"""
+"""
+Securely registering and communicating with server
+"""
 
 import os
 import logging
