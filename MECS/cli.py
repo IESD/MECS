@@ -11,6 +11,7 @@ from collections import OrderedDict
 from . import __version__
 from .config import args, conf, initialise_identifier, initialise_unit_id, NoOptionError
 from .communication import MECSServer
+from .mobile_network import connection
 from .plot import plot_all
 from .data_management.minutely import readings
 from .data_management.generate import generate as gen
@@ -151,6 +152,11 @@ def test2():
     except KeyboardInterrupt:
         pass
 
-
 def plot():
     plot_all(ARCHIVE_FOLDER, PLOTTING_FOLDER)
+
+def test_connection():
+    log.info(f"MECS v{__version__} testing connection")
+    with connection(timeout=3600) as conn:
+        log.info("working with connection")
+    log.info("completed test")
