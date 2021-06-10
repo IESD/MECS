@@ -40,15 +40,10 @@ class MECSBoard:
         self.R_TOP = self.config['ADCPi'].getint('r_top')
         self.R_BOTTOM = self.config['ADCPi'].getint('r_bottom')
         self.R_EFFECTIVE = self.R_BOTTOM * self.INPUT_IMPEDANCE / (self.R_BOTTOM + self.INPUT_IMPEDANCE)
-
-        # Not sure what to do with these, I guess they are defaults?
-        self.midOffset = 2.5 # nominally Vcc/2, should be 2.5
-        self.milliVoltPerAmp = 100 # nominally 100 on the +/-20A version
-
-        # # Alternative calibration constants by experiment
-        # # If present, perhaps these overide the defaults?
-        # self.midOffset = 2.624202
-        # self.milliVoltPerAmp = 117.61066
+        # nominally Vcc/2, defaults to 2.5 unless a value is configured
+        self.midOffset = self.config['ADCPi'].getint('midOffset', fallback=2.5)
+        # default = nominally 100 on the +/-20A version unless a value is configured
+        self.milliVoltPerAmp = self.config['ADCPi'].getint('milliVoltPerAmp', fallback=100)
 
         # Thermistor configuration?
         self.MIN_TEMP = self.config['thermistor'].getint('min_temperature')
