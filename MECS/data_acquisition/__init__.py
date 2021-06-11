@@ -33,8 +33,7 @@ class MECSBoard:
 
         # Initialise the SDS011 air particulate density sensor.
         self.particulate_sensor = SDS011(self.config['SDS011'].getint('serial_port'), use_query_mode=True)
-        # Turn it off (to avoid draining power?)
-        self.particulate_sensor.sleep()
+        self.particulate_sensor.sleep() # Turn it off (to avoid draining power?)
 
         # ADCPi calibration information
         self.INPUT_IMPEDANCE = self.config['ADCPi'].getint('input_impedance')
