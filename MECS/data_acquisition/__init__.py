@@ -9,6 +9,7 @@ kelvinToCentigrade = 273
 
 # TODO: test with numpy for speed improvements
 def rms(readings):
+    """A utility function for calculating RMS values for an array"""
     mean_reading = sum(readings) / len(readings)
     squared_diff = [(r-mean_reading)**2 for r in readings]
     mean_squared = sum(squared_diff) / len(squared_diff)
@@ -69,7 +70,7 @@ class MECSBoard:
         return abs((raw_voltage - self.midOffset) * 1000 / self.milliVoltPerAmp)
 
 
-    # TODO: I haven't pulled this one apart because I'm not sure what its doing
+    # TODO: I haven't pulled this one apart so much because I'm not sure what its doing
     def getThermistor(self, channel):
         raw_voltage = self.adc.read_voltage(channel)
         if raw_voltage == 0:
