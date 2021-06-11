@@ -114,11 +114,10 @@ class MECSBoard:
         # we should check if we can pass recognisably invalid data through to the server
         return (None, None)
 
-
     def getRMSvoltage(self, channel, N):
-        adc.set_conversion_mode(1)
-        readings = [adc.read_voltage(channel) for i in range(N)]
-        adc.set_conversion_mode(0)
+        self.adc.set_conversion_mode(1)
+        readings = [self.adc.read_voltage(channel) for i in range(N)]
+        self.adc.set_conversion_mode(0)
         return rms(readings)
 
 
