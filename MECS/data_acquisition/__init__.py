@@ -81,6 +81,18 @@ class MECSBoard:
             # TODO: Isn't -1 degrees possible if the unit is in a cold place? We need clear error data to propagate to the server
         return round(retTemp, 1)
 
+    ####
+    # Code snippet added by Henrik 2021-05-28
+    # Code snippet modified by Henrik 2021-06-02
+    # This function converts LM35 voltage readings to temperature
+    # Output voltage signal is given by 10mV/C*T
+    ####
+    def getLM35(self, channel):
+        mVolts = self.adc.read_voltage(channel)
+        lm35_scale_factor = 10 # Linear scale factor 10mV/C
+        temp = (mVolts/lm35_scale_factor) * 1000
+        return round(temp, 3)
+
 
     def getParticulates(self):
 
