@@ -51,10 +51,10 @@ except NoOptionError as exc:
 # Server setup could be placed in a different config section?
 try:
     ARCHIVE_FOLDER = os.path.join(ROOT, conf.get('MECS', 'archive_folder'))
-    DESTINATION_ROOT = conf.get('MECS', 'destination_root')
-    USERNAME = conf.get('MECS', 'username')
-    HOST = conf.get('MECS', 'host')
-    PORT = conf.get('MECS', 'port')
+    DESTINATION_ROOT = conf.get('MECS-SERVER', 'destination_root')
+    USERNAME = conf.get('MECS-SERVER', 'username')
+    HOST = conf.get('MECS-SERVER', 'host')
+    PORT = conf.get('MECS-SERVER', 'port')
 except NoOptionError as exc:
     log.warning(args.conf)
     log.warning(exc)

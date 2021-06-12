@@ -1,12 +1,14 @@
 [MECS]
-username =
-host =
-port = 22
-destination_root = data
 root_folder = ~/.MECS
 output_folder = output
 aggregated_folder = aggregated
 archive_folder = archive
+
+[MECS-SERVER]
+username =
+host =
+port = 22
+destination_root = data
 
 [loggers]
 keys = root, MECS
