@@ -9,8 +9,8 @@ import subprocess
 import uuid
 from collections import OrderedDict
 
-from . import __version__
-from .config import args, conf, initialise_unit_id, NoOptionError
+from . import __version__, update_mecs
+from .config import args, conf, initialise_unit_id, NoOptionError, NoSectionError
 from .communication import MECSServer
 from .mobile_network import connection
 from .plot import plot_all
@@ -36,15 +36,24 @@ REMOTE_FOLDER = f"{HARDWARE_ID}/{UNIT_ID}"
 # TODO: set the default to False so that configuration makes more sense?
 FAKE = conf.getboolean('MECS', 'fake_data', fallback=True)
 
+
+# Are we installing in development mode or as a full install
+FULL_INSTALL = conf.getboolean('git', 'install', fallback=False)
+
+
 # core elements are absolutely necessary for normal operation
 # if we don't have these, just report and exit
 try:
+    GIT_PATH = os.path.expanduser(conf.get('git', 'source_folder'))
     ROOT = os.path.expanduser(conf.get('MECS', 'root_folder'))
     OUTPUT_FOLDER = os.path.join(ROOT, conf.get('MECS', 'output_folder'))
     AGGREGATED_FOLDER = os.path.join(ROOT, conf.get('MECS', 'aggregated_folder'))
     PLOTTING_FOLDER = os.path.join(ROOT, conf.get('MECS', 'plotting_folder', fallback="plots"))
 except NoOptionError as exc:
     log.warning(f"Missing option '{exc.option}' in section [{exc.section}] of config file {args.conf}")
+    exit(1)
+except NoSectionError as exc:
+    log.warning(f"Missing section '{exc.section}' in config file {args.conf}")
     exit(1)
 
 # if uploading to a server, these are also required
@@ -160,3 +169,6 @@ def test_connection():
     with connection(timeout=3600) as conn:
         log.info("working with connection")
     log.info("completed test")
+
+def update():
+    update_mecs(GIT_PATH, FULL_INSTALL)

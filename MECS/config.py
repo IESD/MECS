@@ -6,7 +6,7 @@ import os.path
 import logging.config
 import argparse
 import uuid
-from configparser import ConfigParser, NoOptionError
+from configparser import ConfigParser, NoOptionError, NoSectionError
 
 def load_config(path):
     """load configuration from file"""

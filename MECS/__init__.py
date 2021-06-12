@@ -7,5 +7,16 @@ It includes packages for:
 """
 
 import pkg_resources
+import subprocess
+import os
 
 __version__ = pkg_resources.get_distribution('MECS').version
+
+def update_mecs(path, full=False):
+    """This function will:
+        pull the latest commits from github and
+        run setup.py to reinstall the software
+    """
+    os.chdir(path)
+    subprocess.run(["git", "pull", "origin", "master"])
+    subprocess.run(["python", "setup.py", "install" if full else "develop"])
