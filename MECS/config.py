@@ -27,14 +27,6 @@ def save_config(path, conf):
     with open(path, 'w') as f:
         conf.write(f)
 
-def initialise_identifier(path, conf):
-    "Write a unique id based on mac address to the config file"
-    log = logging.getLogger(__name__)
-    identifier = hex(uuid.getnode())
-    conf.set("MECS", "HARDWARE_ID", identifier)
-    save_config(path, conf)
-    log.info(f"HARDWARE_ID set: {identifier}")
-
 def initialise_unit_id(path, conf):
     """Write a user-specified identifier to the config file"""
     log = logging.getLogger(__name__)

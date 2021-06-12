@@ -6,10 +6,11 @@ import os
 from datetime import datetime
 import logging
 import subprocess
+import uuid
 from collections import OrderedDict
 
 from . import __version__
-from .config import args, conf, initialise_identifier, initialise_unit_id, NoOptionError
+from .config import args, conf, initialise_unit_id, NoOptionError
 from .communication import MECSServer
 from .mobile_network import connection
 from .plot import plot_all
@@ -23,7 +24,7 @@ log = logging.getLogger(__name__)
 server = False
 
 # HARDWARE_ID should probably just be calculated every time?
-HARDWARE_ID = conf.get('MECS', 'HARDWARE_ID', fallback="unidentified")
+HARDWARE_ID = hex(uuid.getnode())
 
 # UNIT_ID can be unset but is required for upload as it determines the folder
 UNIT_ID = conf.get('MECS', 'unit_id', fallback="unidentified").zfill(5)
@@ -97,7 +98,6 @@ def status():
 
 def init():
     log.info(f"MECS v{__version__} initialising")
-    initialise_identifier(args.conf, conf)
     initialise_unit_id(args.conf, conf)
 
 def generate():
