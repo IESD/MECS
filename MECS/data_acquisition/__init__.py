@@ -2,6 +2,7 @@ import logging
 import os
 from configparser import ConfigParser, NoOptionError
 from datetime import datetime
+import math
 
 from .ADCPi import ABEHelpers, ADCPi
 from .sds011.SDS011 import SDS011, serial
