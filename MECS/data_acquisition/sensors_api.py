@@ -18,12 +18,12 @@ import os
 import math
 from datetime import datetime
 
-import sds011 # package needed for air quality. See below for installation
-import ADCPi
+from .sds011 import import SDS011
+from .ADCPi import ADCPi, ABEHelpers
 
-i2c_helper = ADCPi.ABEHelpers()
+i2c_helper = ABEHelpers()
 bus = i2c_helper.get_smbus()
-adc = ADCPi.ADCPi(bus, 0x68, 0x69, 12)
+adc = ADCPi(bus, 0x68, 0x69, 12)
 
 INPUT_IMPEDANCE = 16800 #Input impedance of the ADC - needed when calculating using external voltage dividers
 MIN_TEMP = 5
@@ -35,7 +35,7 @@ R_EFFECTIVE = R_BOTTOM * INPUT_IMPEDANCE / (R_BOTTOM + INPUT_IMPEDANCE)
 
 
 #Initialise the SDS011 air particulate density sensor.
-sensor = sds011.SDS011("/dev/ttyUSB0", use_query_mode=True)
+sensor = SDS011("/dev/ttyUSB0", use_query_mode=True)
 
 #######
 # calculate Current from voltage signal from this ACS712 board.
