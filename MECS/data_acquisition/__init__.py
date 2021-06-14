@@ -37,6 +37,10 @@ class MECSBoard:
         self.config = ConfigParser()
         self.config.read(calibration_file_path)
 
+        # Initialise the SDS011 air particulate density sensor.
+        self.particulate_sensor = SDS011(self.config['SDS011'].getint('serial_port'), use_query_mode=True)
+        self.particulate_sensor.sleep() # Turn it off (to avoid draining power?)
+
         # Initialise the analogue to digital converter interface
         bus = ABEHelpers().get_smbus()
         if not bus:
@@ -44,9 +48,6 @@ class MECSBoard:
             exit(1)
         self.adc = ADCPi(bus, rate=self.config['ADCPi'].getint('bit_rate'))
 
-        # Initialise the SDS011 air particulate density sensor.
-        self.particulate_sensor = SDS011(self.config['SDS011'].getint('serial_port'), use_query_mode=True)
-        self.particulate_sensor.sleep() # Turn it off (to avoid draining power?)
 
         # ADCPi calibration information
         self.INPUT_IMPEDANCE = self.config['ADCPi'].getint('input_impedance')
