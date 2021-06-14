@@ -1,8 +1,8 @@
 from configparser import ConfigParser, NoOptionError
 from datetime import datetime
 
-from ADCPi import ABEHelpers, ADCPi
-from sds011 import SDS011
+from .ADCPi import ABEHelpers, ADCPi
+from .sds011 import SDS011
 
 # proper constants
 kelvinToCentigrade = 273
@@ -125,6 +125,7 @@ class MECSBoard:
 
         # we should check if we can pass recognisably invalid data through to the server
         return (None, None)
+
 
     def getRMSvoltage(self, channel, N):
         self.adc.set_conversion_mode(1)
