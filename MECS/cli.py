@@ -157,7 +157,7 @@ def test2():
             output = _prepare_output(data)
             os.system('clear')
             pretty_print(output)
-            time.sleep(0.1)
+            time.sleep(2)
     except KeyboardInterrupt:
         pass
 
