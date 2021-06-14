@@ -79,7 +79,7 @@ def get_readings_function(FAKE):
         return fake_readings
     calibration = os.path.expanduser(conf.get('data-acquisition', 'calibration_file'))
     board = MECSBoard(calibration)
-    return board.raw_readings
+    return board.readings
 
 
 def pretty_print(dict, heading=True):
