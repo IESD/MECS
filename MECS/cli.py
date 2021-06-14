@@ -12,11 +12,12 @@ from collections import OrderedDict
 from . import __version__, update_mecs
 from .config import args, conf, initialise_unit_id, NoOptionError, NoSectionError
 from .communication import MECSServer
-from .mobile_network import connection
-from .plot import plot_all
-from .data_management.minutely import readings
+from .data_acquisition import MECSBoard
+from .data_management import fake_readings
 from .data_management.generate import generate as gen
 from .data_management.aggregate import aggregate as agg
+from .mobile_network import connection
+from .plot import plot_all
 
 log = logging.getLogger(__name__)
 
@@ -34,8 +35,7 @@ REMOTE_FOLDER = f"{HARDWARE_ID}/{UNIT_ID}"
 
 # Are we recording fake values?
 # TODO: set the default to False so that configuration makes more sense?
-FAKE = conf.getboolean('MECS', 'fake_data', fallback=True)
-
+FAKE = conf.getboolean('data-acquisition', 'fake_data', fallback=False)
 
 # Are we installing in development mode or as a full install
 FULL_INSTALL = conf.getboolean('git', 'install', fallback=False)
@@ -71,6 +71,15 @@ except NoOptionError as exc:
 else:
     # We can later check the truthyness of this
     server = MECSServer(USERNAME, HOST, PORT, DESTINATION_ROOT)
+
+
+def get_readings_function(FAKE):
+    if FAKE:
+        log.warning("Generating FAKE data")
+        return fake_readings
+    calibration = os.path.expanduser(conf.get('data-acquisition', 'calibration_file'))
+    board = MECSBoard(calibration)
+    return board.raw_readings
 
 
 def pretty_print(dict, heading=True):
@@ -111,7 +120,7 @@ def init():
 
 def generate():
     log.info(f"MECS v{__version__} generating{' fake' if FAKE else ''} data")
-    gen(OUTPUT_FOLDER, readings(FAKE))
+    gen(OUTPUT_FOLDER, get_readings_function(FAKE))
 
 def aggregate():
     log.info(f"MECS v{__version__} aggregating data")
@@ -145,14 +154,14 @@ def _prepare_output(data):
 
 def test():
     log.info(f"MECS v{__version__} testing data")
-    data = readings(FAKE)()
+    data = get_readings_function(FAKE)()
     output = _prepare_output(data)
     pretty_print(output)
 
 def test2():
     log.info(f"MECS v{__version__} testing data continuously")
     import time
-    readings_func = readings(FAKE)
+    readings_func = get_readings_function(FAKE)
     try:
         while(True):
             data = readings_func()

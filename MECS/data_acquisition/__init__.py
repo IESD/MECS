@@ -1,8 +1,13 @@
+import logging
+import os
 from configparser import ConfigParser, NoOptionError
 from datetime import datetime
 
 from .ADCPi import ABEHelpers, ADCPi
 from .sds011 import SDS011
+
+
+log = logging.getLogger(__name__)
 
 # proper constants
 kelvinToCentigrade = 273
@@ -25,11 +30,19 @@ class MECSBoard:
         """Initialise the instance with a calibration file
         Calculates all the constants
         """
+        if not os.path.exists(calibration_file_path):
+            log.error(f"configuration file {calibration_file_path} not found")
+            exit(1)
+        log.info(f"loading calibration data from {calibration_file_path}")
         self.config = ConfigParser()
         self.config.read(calibration_file_path)
 
         # Initialise the analogue to digital converter interface
-        self.adc = ADCPi.ADCPi(ADCPi.ABEHelpers().get_smbus(), rate=self.config['ADCPi'].getint('bit_rate'))
+        bus = ABEHelpers().get_smbus()
+        if not bus:
+            log.error("ABEHelpers().get_smbus() returned None")
+            exit(1)
+        self.adc = ADCPi(bus, rate=self.config['ADCPi'].getint('bit_rate'))
 
         # Initialise the SDS011 air particulate density sensor.
         self.particulate_sensor = SDS011(self.config['SDS011'].getint('serial_port'), use_query_mode=True)
