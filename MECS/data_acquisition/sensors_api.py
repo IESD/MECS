@@ -18,8 +18,15 @@ import os
 import math
 from datetime import datetime
 
-from .sds011.SDS011 import SDS011
+from .sds011.SDS011 import SDS011, serial
 from .ADCPi import ADCPi, ABEHelpers
+
+#Initialise the SDS011 air particulate density sensor.
+try:
+    sensor = SDS011("/dev/ttyUSB0", use_query_mode=True)
+except serial.serialutil.SerialException as exc:
+    print(exc)
+    sensor = False
 
 i2c_helper = ABEHelpers()
 bus = i2c_helper.get_smbus()
@@ -34,8 +41,6 @@ R_BOTTOM = 7500
 R_EFFECTIVE = R_BOTTOM * INPUT_IMPEDANCE / (R_BOTTOM + INPUT_IMPEDANCE)
 
 
-#Initialise the SDS011 air particulate density sensor.
-sensor = SDS011("/dev/ttyUSB0", use_query_mode=True)
 
 #######
 # calculate Current from voltage signal from this ACS712 board.
@@ -152,10 +157,12 @@ def getTempFromLM35(mVolts):
 # pip3 install -e .
 #
 def getParticulars():
+    if not sensor:
+        return (0, 0)
 
     for t in range(10):
         values = sensor.query()
-        if values is not None and  len(values) == 2:
+        if values is not None and len(values) == 2:
             return values
         sensor.sleep()
         sensor.sleep(sleep=False)
