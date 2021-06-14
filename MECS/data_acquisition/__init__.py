@@ -4,7 +4,7 @@ from configparser import ConfigParser, NoOptionError
 from datetime import datetime
 
 from .ADCPi import ABEHelpers, ADCPi
-from .sds011 import SDS011
+from .sds011.SDS011 import SDS011
 
 
 log = logging.getLogger(__name__)
