@@ -146,7 +146,7 @@ def upload():
 
 def _prepare_output(data):
     """internal function to reorganise data into an ordered dict for printing"""
-    output = OrderedDict(data['data'])
+    output = OrderedDict({k: str(v) for k, v in data['data'].items()})
     output['dt'] = data['dt'].strftime("%Y-%m-%d %H:%M:%S")
     output.move_to_end('dt', last=False)
     return output
