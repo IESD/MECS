@@ -144,11 +144,13 @@ def _prepare_output(data):
 
 
 def test():
+    log.info(f"MECS v{__version__} testing data")
     data = readings(FAKE)()
     output = _prepare_output(data)
     pretty_print(output)
 
 def test2():
+    log.info(f"MECS v{__version__} testing data continuously")
     import time
     readings_func = readings(FAKE)
     try:
@@ -171,4 +173,5 @@ def test_connection():
     log.info("completed test")
 
 def update():
+    log.info(f"MECS v{__version__} updating installation")
     update_mecs(GIT_PATH, FULL_INSTALL)
