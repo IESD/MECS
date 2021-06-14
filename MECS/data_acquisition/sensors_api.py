@@ -18,7 +18,7 @@ import os
 import math
 from datetime import datetime
 
-from .sds011 import import SDS011
+from .sds011 import SDS011
 from .ADCPi import ADCPi, ABEHelpers
 
 i2c_helper = ABEHelpers()
