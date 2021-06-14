@@ -114,6 +114,8 @@ class MECSBoard:
 
 
     def getParticulates(self):
+        if not self.particulate_sensor:
+            return (None, None)
 
         # Wake the sensor up
         self.particulate_sensor.sleep(sleep=False)
