@@ -17,15 +17,20 @@ import time
 import os
 import math
 from datetime import datetime
+import logging
 
 from .sds011.SDS011 import SDS011, serial
 from .ADCPi import ADCPi, ABEHelpers
 
+log = logging.getLogger(__name__)
+
+
 #Initialise the SDS011 air particulate density sensor.
 try:
+    log.debug("trying to connect to /dev/ttyUSB0")
     sensor = SDS011("/dev/ttyUSB0", use_query_mode=True)
 except serial.serialutil.SerialException as exc:
-    print(exc)
+    log.error(exc)
     sensor = False
 
 i2c_helper = ABEHelpers()
