@@ -54,24 +54,24 @@ class MECSBoard:
 
 
         # ADCPi calibration information
-        self.INPUT_IMPEDANCE = self.config['ADCPi'].getint('input_impedance')
-        self.R_TOP = self.config['ADCPi'].getint('r_top')
-        self.R_BOTTOM = self.config['ADCPi'].getint('r_bottom')
+        self.INPUT_IMPEDANCE = self.config['ADCPi'].getfloat('input_impedance')
+        self.R_TOP = self.config['ADCPi'].getfloat('r_top')
+        self.R_BOTTOM = self.config['ADCPi'].getfloat('r_bottom')
         self.R_EFFECTIVE = self.R_BOTTOM * self.INPUT_IMPEDANCE / (self.R_BOTTOM + self.INPUT_IMPEDANCE)
         # nominally Vcc/2, defaults to 2.5 unless a value is configured
-        self.midOffset = self.config['ADCPi'].getint('midOffset', fallback=2.5)
+        self.midOffset = self.config['ADCPi'].getfloat('midOffset', fallback=2.5)
         # default = nominally 100 on the +/-20A version unless a value is configured
-        self.milliVoltPerAmp = self.config['ADCPi'].getint('milliVoltPerAmp', fallback=100)
+        self.milliVoltPerAmp = self.config['ADCPi'].getfloat('milliVoltPerAmp', fallback=100)
 
         # Thermistor configuration?
-        self.MIN_TEMP = self.config['thermistor'].getint('min_temperature')
-        self.MAX_TEMP = self.config['thermistor'].getint('max_temperature')
+        self.MIN_TEMP = self.config['thermistor'].getfloat('min_temperature')
+        self.MAX_TEMP = self.config['thermistor'].getfloat('max_temperature')
 
-        self.beta = self.config['thermistor'].getint('beta') # part of thermistor spec
-        R0 = self.config['thermistor'].getint('r_0') # 10000 1kOhm at 25 deg C - part of thermistor spec
-        T0 = self.config['thermistor'].getint('t_0') + kelvinToCentigrade # convert 25 C to Kelvin
+        self.beta = self.config['thermistor'].getfloat('beta') # part of thermistor spec
+        R0 = self.config['thermistor'].getfloat('r_0') # 10000 1kOhm at 25 deg C - part of thermistor spec
+        T0 = self.config['thermistor'].getfloat('t_0') + kelvinToCentigrade # convert 25 C to Kelvin
 
-        rBias = self.config['thermistor'].getint('r_bias') # calibrate carefully here
+        rBias = self.config['thermistor'].getfloat('r_bias') # calibrate carefully here
         self.rInf = R0 * math.exp(-self.beta / T0)
         self.rVoltDiv = (rBias*self.INPUT_IMPEDANCE) / (rBias+self.INPUT_IMPEDANCE)
 
