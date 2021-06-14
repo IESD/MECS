@@ -4,8 +4,7 @@ from configparser import ConfigParser, NoOptionError
 from datetime import datetime
 
 from .ADCPi import ABEHelpers, ADCPi
-from .sds011.SDS011 import SDS011
-
+from .sds011.SDS011 import SDS011, serial
 
 log = logging.getLogger(__name__)
 
@@ -38,8 +37,13 @@ class MECSBoard:
         self.config.read(calibration_file_path)
 
         # Initialise the SDS011 air particulate density sensor.
-        self.particulate_sensor = SDS011(self.config['SDS011'].get('serial_port'), use_query_mode=True)
-        self.particulate_sensor.sleep() # Turn it off (to avoid draining power?)
+        try:
+            self.particulate_sensor = SDS011(self.config['SDS011'].get('serial_port'), use_query_mode=True)
+            self.particulate_sensor.sleep() # Turn it off (to avoid draining power?)
+        except serial.serialutil.SerialException as exc:
+            log.warning(f"Particulate sensor not found at {self.config['SDS011'].get('serial_port')}")
+            log.error(exc)
+            self.particulate_sensor = None
 
         # Initialise the analogue to digital converter interface
         bus = ABEHelpers().get_smbus()
