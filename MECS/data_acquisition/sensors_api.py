@@ -1,14 +1,18 @@
 #!/usr/bin/python3
 
+# Import general libraires
 import time
 import os
 #import serial
 import math
 from datetime import datetime
 
-import ADCPi	# Uncomment for testing in command prompt
-#from . import ADCPi
+# Import specific libraries
+from w1thermsensor import W1ThermSensor, Unit
+import ADCPi	# Uncomment for testing / comment for checkin
+#from . import ADCPi #Comment for testing
 #from aqi import *
+
 """
 ================================================
 Coded modified from the ABElectronics ADC Pi
@@ -21,25 +25,49 @@ change this value if you have changed the address selection jumpers
 
 Sample rate can be 12,14, 16 or 18
 """
-
+_bitrate=16
+_sample_fsd=2**(_bitrate-1)
 i2c_helper = ADCPi.ABEHelpers()
 bus = i2c_helper.get_smbus()
-adc = ADCPi.ADCPi(bus, 0x68, 0x69, 12)
+adc = ADCPi.ADCPi(bus, 0x68, 0x69, _bitrate)
 
 # change the 2.5 value to be half of the supply voltage.
 _adcpi_input_impedance = 16800 #Input impedance of the ADC - needed when calculating using external voltage dividers
 _min_temp = 5
 _max_temp = 150
+#Below are default calibration consts for the two current x-ducers.  Working towards better calibration here
+_sensor_cals = {'ACS712':{'midOff':2.5,'mVperAmp':66},'HXS20-NP':{'midOff':2.5,'mVperAmp':31.25}}
+_channel_zeros = {}
+_cal_samples = 10
+
+def calibrateCurrentSensors():
+    retCode = 0
+    return retCode
+
+def calibrateZeroReading(channel):
+    _channel_zeros[channel] = getAveReadings(channel)
+
+def getAveReadings(channel):
+   tot_volts = 0
+   tot_raw = 0
+   for i in range(_cal_samples):
+       tot_volts += adc.read_voltage(channel)
+       tot_raw += adc.read_raw(channel)
+   ave_volts = tot_volts/_cal_samples
+   ave_raw = tot_raw/_cal_samples
+   return (ave_volts,ave_raw)
 
 #######
 # calculate Current from voltage signal from this ACS712 board.
 # Note we are concerned with magnitude, rather than direction, hence using abs
 #######
-def calcCurrent(inval):
+def calcCurrent(inval,sensorType='ACS712'):
+    midOffset=_sensor_cals[sensorType]['midOff']
+    milliVoltPerAmp=_sensor_cals[sensorType]['mVperAmp']
     #print('Raw voltage in %02f'%inval)
-    midOffset = 2.5 # 2.624202 # From experiment calibration - nominally Vcc/2, should be 2.5
-    milliVoltPerAmp = 100 # 117.61066 #From experiment calibration - nominally 100 on the +/-20A version
-    return abs((inval - midOffset) * 1000 / milliVoltPerAmp) # Calibration constants by experiment
+    #midOffset = midOff # 2.624202 # From experiment calibration - nominally Vcc/2, should be 2.5
+    #milliVoltPerAmp = mv # 117.61066 #From experiment calibration - nominally 100 on the +/-20A version
+    return (inval - midOffset) * 1000 / milliVoltPerAmp # Calibration constants by experiment
 
 #####
 # Calculates voltage on input of voltage sensor module described here
@@ -54,6 +82,20 @@ def calcVoltage(inVal):
    return inVal*(rTop+rEffective)/rEffective
 
 ######
+
+###
+# Added by Henrik on 2021-06-07
+# Calculates the voltage based on ADC Pi input voltage calculator
+# describe here https://www.abelectronics.co.uk/tools/adc-pi-input-calc#
+# Precision resistors are required for more accurate voltages
+###
+
+def calcVoltageInSeries(inval,resistor_val):
+    voltage_multiplier = (resistor_val+_adcpi_input_impedance)/_adcpi_input_impedance # Based on 25 volt maximum input voltage and 68.1k ohm resistor
+    actual_voltage = inval*voltage_multiplier
+
+    return actual_voltage
+
 # Work in progress to use AC current clamp - TODO - needs improvement
 ######
 def calcAcCurrent(inVal):
@@ -113,12 +155,8 @@ def getTempFromVolts(voltage):
         retTemp = -1 # input must be floating - we can't be near outside this range!! Return error value
     return round(retTemp,1)
 
-
-
 ####
-# Code snippet added by Henrik 2021-05-28
-# Code snippet modified by Henrik 2021-06-02
-# This function converts LM35 voltage readings  to temprature 
+# This function converts LM35 voltage readings  to temprature
 # Output voltage signal is given by 10mV/C*T
 ####
 def getTempFromLM35(mVolts):
@@ -129,6 +167,21 @@ def getTempFromLM35(mVolts):
    # Add debugging/logging code here
 
    return round(temp,3)
+
+###
+# Configure DS18b20 temperature sensor
+###
+temp_sensor = W1ThermSensor()
+#sensor = W1ThermSensor(Sensor.DS18B20)
+#sensor.set_resolution(12)
+
+###
+# This code snippet returns the DS18b20 temperature
+def getTempFromDS18b20():
+    temp_in_celsius = temp_sensor.get_temperature()
+
+    return round(temp_in_celsius,2)
+###
 
 #The current code for air quality oly works with python2. Under python3 the construct_command function needs to convert the UTF string to bytes.
 def getParticulars():
@@ -148,25 +201,37 @@ def raw_readings():
     return {
         "dt": datetime.utcnow(),
         "data": {
-            "Battery_Voltage_ch1": calcVoltage(adc.read_voltage(1)),
-            "Cooker_Current_ch2": calcCurrent(adc.read_voltage(2)),
-            "PV_Current_ch3": calcCurrent(adc.read_voltage(3)),
-            "PV_Voltage??_ch4": calcVoltage(adc.read_voltage(4)),
-            "USB_LOAD_Current_ch6": calcCurrent(adc.read_voltage(6)),
-            "Pi_Current_ch7": calcCurrent(adc.read_voltage(7)),
-            "Temp_ch8": getTempFromVolts(adc.read_voltage(8)),
-            #"Raw read_ch8": adc.read_voltage(8),
+            #"Battery_Voltage_ch1": calcVoltage(adc.read_voltage(1)),
+	    #"Raw_Battery_Voltage_ch1": adc.read_voltage(1),
+            "Battery_Voltage_ch1": calcVoltageInSeries(adc.read_voltage(1),91000),
+            "PV_Voltage_ch2": calcVoltageInSeries(adc.read_voltage(2),91000),
+            "Load_Voltage_ch3": calcVoltageInSeries(adc.read_voltage(3),91000),
+            "Battery_current_ch4": calcCurrent(adc.read_voltage(4)),
+            "PV_Current_ch5": calcCurrent(adc.read_voltage(5)),
+            "Pi_Current_raw" : adc.read_raw(6),
+            "Pi_Current_ch6": calcCurrent(adc.read_voltage(6)),
+            "USB_Load_raw" : adc.read_raw(7),
+            "USB_Load_curr_sens_v" : adc.read_voltage(7),
+            "USB_Load_Current_ch7": calcCurrent(adc.read_voltage(7),'HXS20-NP'),
+            "Main_Load_Current_ch8": calcCurrent(adc.read_voltage(8)),
             #"Temp_ch8": getTempFromLM35(adc.read_voltage(8)),
             "Particular_PM2.5" : partValues[0],
-            "Particular_PM10": partValues[1]
+            "Particular_PM10": partValues[1],
+            "Temp_DS18b20": getTempFromDS18b20()
         }
     }
 
 if __name__=='__main__':
+    import pprint
+    calibrateZeroReading(7)
+    _sensor_cals['HXS20-NP']['midOff'] = _channel_zeros[7][0]
     while (True):
         # clear the console
+        r = raw_readings()
         os.system('clear')
-        print(raw_readings())
+        time.sleep(0.1)
+        print('fsd=',_sample_fsd,'; mid=',_sample_fsd/2)
+        pprint.pprint(r)
 
         # wait 2 seconds before reading the pins again
-        time.sleep(2)
+        time.sleep(1)
