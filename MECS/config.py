@@ -1,8 +1,12 @@
+"""
+MECS configuration handling
+"""
+
 import os.path
 import logging.config
 import argparse
 import uuid
-from configparser import ConfigParser, NoOptionError
+from configparser import ConfigParser, NoOptionError, NoSectionError
 
 def load_config(path):
     """load configuration from file"""
@@ -13,6 +17,8 @@ def load_config(path):
     config.read(path)
     # Configure logging and return
     logging.config.fileConfig(config)
+    log = logging.getLogger(__name__)
+    log.info(f"Configuration loaded from {path}")
     return config
 
 def save_config(path, conf):
@@ -22,14 +28,6 @@ def save_config(path, conf):
         exit(1)
     with open(path, 'w') as f:
         conf.write(f)
-
-def initialise_identifier(path, conf):
-    "Write a unique id based on mac address to the config file"
-    log = logging.getLogger(__name__)
-    identifier = hex(uuid.getnode())
-    conf.set("MECS", "HARDWARE_ID", identifier)
-    save_config(path, conf)
-    log.info(f"HARDWARE_ID set: {identifier}")
 
 def initialise_unit_id(path, conf):
     """Write a user-specified identifier to the config file"""

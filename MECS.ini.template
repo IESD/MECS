@@ -1,12 +1,22 @@
+[data-acquisition]
+calibration_file = ~/.MECS/calibration.ini
+
 [MECS]
-username =
-host =
-port = 22
-destination_root = data
 root_folder = ~/.MECS
 output_folder = output
 aggregated_folder = aggregated
 archive_folder = archive
+
+[MECS-SERVER]
+username =
+host =
+port = 22
+destination_root = data
+
+[git]
+source_folder =
+install = False
+
 
 [loggers]
 keys = root, MECS
