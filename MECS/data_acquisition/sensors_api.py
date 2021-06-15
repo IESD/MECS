@@ -1,18 +1,4 @@
 #!/usr/bin/python3
-
-# Import general libraires
-import time
-import os
-#import serial
-import math
-from datetime import datetime
-
-# Import specific libraries
-from w1thermsensor import W1ThermSensor, Unit
-import ADCPi	# Uncomment for testing / comment for checkin
-#from . import ADCPi #Comment for testing
-#from aqi import *
-
 """
 ================================================
 Coded modified from the ABElectronics ADC Pi
@@ -25,28 +11,62 @@ change this value if you have changed the address selection jumpers
 
 Sample rate can be 12,14, 16 or 18
 """
-_bitrate=16
-_sample_fsd=2**(_bitrate-1)
-i2c_helper = ADCPi.ABEHelpers()
-bus = i2c_helper.get_smbus()
-adc = ADCPi.ADCPi(bus, 0x68, 0x69, _bitrate)
+import time
+import os
+import math
+from datetime import datetime
+import logging
 
-# change the 2.5 value to be half of the supply voltage.
-_adcpi_input_impedance = 16800 #Input impedance of the ADC - needed when calculating using external voltage dividers
-_min_temp = 5
-_max_temp = 150
+#Libraries for specific sensors
+from .sds011.SDS011 import SDS011, serial
+from .ADCPi import ADCPi, ABEHelpers
+from w1thermsensor import W1ThermSensor, Unit
+#import ADCPi	# Uncomment for testing / comment for checkin
+
+log = logging.getLogger(__name__)
+
+
+#Initialise the SDS011 air particulate density sensor.
+try:
+    log.debug("trying to connect to /dev/ttyUSB0")
+    sensor = SDS011("/dev/ttyUSB0", use_query_mode=True)
+except serial.serialutil.SerialException as exc:
+    log.error(exc)
+    sensor = False
+
+i2c_helper = ABEHelpers()
+bus = i2c_helper.get_smbus()
+adc = ADCPi(bus, 0x68, 0x69, 12)
+
+INPUT_IMPEDANCE = 16800 #Input impedance of the ADC - needed when calculating using external voltage dividers
+MIN_TEMP = 5
+MAX_TEMP = 150
+
+R_TOP = 30000
+R_BOTTOM = 7500
+R_EFFECTIVE = R_BOTTOM * INPUT_IMPEDANCE / (R_BOTTOM + INPUT_IMPEDANCE)
+
 #Below are default calibration consts for the two current x-ducers.  Working towards better calibration here
 _sensor_cals = {'ACS712':{'midOff':2.5,'mVperAmp':66},'HXS20-NP':{'midOff':2.5,'mVperAmp':31.25}}
 _channel_zeros = {}
 _cal_samples = 10
 
+###
+# Stub for calibration of all sensors code
+###
 def calibrateCurrentSensors():
     retCode = 0
     return retCode
 
+###
+# calibrate the zero of given channel to be the average reading on that channel when called
+###
 def calibrateZeroReading(channel):
     _channel_zeros[channel] = getAveReadings(channel)
 
+###
+# find an average reading on given channel when called
+###
 def getAveReadings(channel):
    tot_volts = 0
    tot_raw = 0
@@ -76,10 +96,7 @@ def calcCurrent(inval,sensorType='ACS712'):
 # so that must be incorporated
 #####
 def calcVoltage(inVal):
-   rTop = 30000
-   rBottom = 7500
-   rEffective = rBottom*_adcpi_input_impedance / (rBottom+_adcpi_input_impedance)
-   return inVal*(rTop+rEffective)/rEffective
+   return inVal * (R_TOP + R_EFFECTIVE) / R_EFFECTIVE
 
 ######
 
@@ -99,13 +116,27 @@ def calcVoltageInSeries(inval,resistor_val):
 # Work in progress to use AC current clamp - TODO - needs improvement
 ######
 def calcAcCurrent(inVal):
-    return 20/2.6*(inVal - 0.056) #Spec says 20A/V, zero calibration by observation - need better way
+    return 20 / 2.6 * (inVal-0.056) #Spec says 20A/V, zero calibration by observation - need better way
 
 #########
 # This is needed if measuring an AC voltage directly on the ADC Pi channel
 # It is error prone as it relies on sampling the waveform and finding rms value, so
 # smoothing in analogue componentry external is preferred.
 #########
+
+def sampleRMS(adc, channel, n=1000):
+    """
+    A more pythonic version of the below function
+    Though if we want speed then we should consider using numpy for this
+    """
+    adc.set_conversion_mode(1)
+    readings = [adc.read_voltage(channel) for i in range(n)]
+    adc.set_conversion_mode(0)
+    mean_reading = sum(readings) / len(readings)
+    squared = [(r-mean_reading)**2 for r in readings]
+    mean_squared = sum(squared) / len(squared)
+    return math.sqrt(mean_squared)
+
 def sampleAC(adc, channel):
     adc.set_conversion_mode(1)
     readings = []
@@ -143,26 +174,28 @@ def getTempFromVolts(voltage):
     T0 = 25 + kelvinToCentigrade # 25 deg C in Kelvin
     R0 = 10000 # 10000 1kOhm at 25 deg C - part of thermistor spec
     beta = 3950 # part of thermistor spec
-    rVoltDiv = (rBias * _adcpi_input_impedance) / (rBias+_adcpi_input_impedance)
-    rTherm = (rVoltDiv*(5-voltage))/voltage
+    rVoltDiv = (rBias * INPUT_IMPEDANCE) / (rBias+INPUT_IMPEDANCE)
+    rTherm = (rVoltDiv * (5-voltage)) / voltage
     #rTherm = (220 * voltage) /  (5 -  voltage)
     #print ("rTherm %02f" % rTherm)
     rInf = R0 * math.exp(-beta / T0)
     #print ("rInf %02f" % rInf)
     retTemp = beta / (math.log(rTherm / rInf))
     retTemp -= kelvinToCentigrade
-    if retTemp < _min_temp or retTemp > _max_temp:
+    if retTemp < MIN_TEMP or retTemp > MAX_TEMP:
         retTemp = -1 # input must be floating - we can't be near outside this range!! Return error value
-    return round(retTemp,1)
+    return round(retTemp, 1)
 
 ####
+# Code snippet added by Henrik 2021-05-28
+# Code snippet modified by Henrik 2021-06-02
 # This function converts LM35 voltage readings  to temprature
 # Output voltage signal is given by 10mV/C*T
 ####
 def getTempFromLM35(mVolts):
    lm35_scale_factor = 10 # Linear scale factor 10mV/C
    conv_to_volts = 1000   # Convert to volts 1000mV per 1 Volts
-   temp = (mVolts/lm35_scale_factor)*conv_to_volts
+   temp = (mVolts/lm35_scale_factor) * conv_to_volts
 
    # Add debugging/logging code here
 
@@ -184,16 +217,23 @@ def getTempFromDS18b20():
 ###
 
 #The current code for air quality oly works with python2. Under python3 the construct_command function needs to convert the UTF string to bytes.
+#The following module works with python3. Command: git clone https://github.com/ikalchev/py-sds011.git
+# cd py-sds011/
+# pip3 install -e .
+#
 def getParticulars():
-    '''cmd_set_sleep(0)
-    cmd_firmware_ver()
-    cmd_set_working_period(PERIOD_CONTINUOUS)
-    cmd_set_mode(MODE_QUERY);
-    for t in range(15):
-        values = cmd_query_data();
+    if not sensor:
+        return (0, 0)
+
+    for t in range(10):
+        values = sensor.query()
         if values is not None and len(values) == 2:
-            return values'''
-    return [0,0]
+            return values
+        sensor.sleep()
+        sensor.sleep(sleep=False)
+        time.sleep(5)
+
+    return (0, 0)
 
 def raw_readings():
     """A function to represent gathering data from all the sensors"""
