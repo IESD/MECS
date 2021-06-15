@@ -1,3 +1,6 @@
+[data-acquisition]
+calibration_file = ~/.MECS/calibration.ini
+
 [MECS]
 root_folder = ~/.MECS
 output_folder = output
@@ -9,6 +12,11 @@ username =
 host =
 port = 22
 destination_root = data
+
+[git]
+source_folder =
+install = False
+
 
 [loggers]
 keys = root, MECS
