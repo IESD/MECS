@@ -34,9 +34,10 @@ except serial.serialutil.SerialException as exc:
     log.error(exc)
     sensor = False
 
+BITRATE = 16
 i2c_helper = ABEHelpers()
 bus = i2c_helper.get_smbus()
-adc = ADCPi(bus, 0x68, 0x69, 12)
+adc = ADCPi(bus, 0x68, 0x69, BITRATE)
 
 INPUT_IMPEDANCE = 16800 #Input impedance of the ADC - needed when calculating using external voltage dividers
 MIN_TEMP = 5
