@@ -180,7 +180,7 @@ class MECSBoard:
         PM2_5, PM10 = self.getParticulates()
         result['PM2.5'] = PM2_5
         result['PM10'] = PM10
-	try:
+        try:
             result['temperature'] = round(self.temp_sensor.get_temperature(), 2)
         except ResetValueError, SensorNotReadyError as exc:
             log.error(exc)
