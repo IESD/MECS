@@ -89,10 +89,16 @@ class MECSBoard:
             log.warning(f"Particulate sensor not found at {self.config['SDS011'].get('serial_port')}")
             self.particulate_sensor = None
 
-        # TODO: Check if it is configured?
-        # What happens if the sensor isn't there?
-        self.temp_sensor = W1ThermSensor()
-
+        try:
+            self.temp_sensor = W1ThermSensor()
+        except KernelModuleLoadError as exc:
+            log.error(exc)
+            log.warning(f"Either the kernel does not have the required one wire modules, or they can't be loaded : temp sensor unavailable")
+            self.temp_sensor = None
+        except NoSensorFoundError as exc:
+            log.error(exc)
+            log.warning(f"No temp sensor found on the gpio one-wire interface")
+            self.temp_sensor = None
 
     ####
     # Code snippet added by Henrik 2021-05-28
@@ -174,7 +180,13 @@ class MECSBoard:
         PM2_5, PM10 = self.getParticulates()
         result['PM2.5'] = PM2_5
         result['PM10'] = PM10
-        result['temperature'] = round(self.temp_sensor.get_temperature(), 2)
+	try:
+            result['temperature'] = round(self.temp_sensor.get_temperature(), 2)
+        except ResetValueError, SensorNotReadyError as exc:
+            log.error(exc)
+            log.warn(f"Sensor is not ready to be read")
+            result['temperature'] = None
+
         return {
             "dt": datetime.utcnow(),
             "data": result
