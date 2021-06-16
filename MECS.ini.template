@@ -1,6 +1,13 @@
 [data-acquisition]
 calibration_file = ~/.MECS/calibration.ini
 
+[board]
+type = DC
+
+[ADCPi]
+bit_rate = 16
+input_impedance = 16800
+
 [MECS]
 root_folder = ~/.MECS
 output_folder = output
