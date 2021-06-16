@@ -145,12 +145,10 @@ class MECSBoard:
 
 
     def getRMSSample(self, channel, N):
-        self.getSample(channel, N)
-        return rms(readings)
+        return rms(self.getSample(channel, N))
 
     def getAverageSample(self, channel, N):
-        self.getSample(channel, N)
-        return sum(readings)/N
+        return sum(self.getSample(channel, N))/N
 
     def calibrate(self, N):
         for sensor in self.analogue_sensors:
