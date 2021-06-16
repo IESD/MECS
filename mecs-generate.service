@@ -1,0 +1,14 @@
+[Unit]
+Description=mecs-generate daemon
+After=network.target
+
+[Service]
+ExecStart=mecs-generate
+WorkingDirectory=/home/pi/
+StandardOutput=inherit
+StandardError=inherit
+Restart=always
+User=pi
+
+[Install]
+WantedBy=multi-user.target
