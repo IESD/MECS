@@ -10,7 +10,7 @@ import uuid
 from collections import OrderedDict
 
 from . import __version__, update_mecs, MECSError
-from .config import args, conf, initialise_unit_id, NoOptionError, NoSectionError
+from .config import args, conf, initialise_unit_id, NoOptionError, NoSectionError, save_config
 from .communication import MECSServer
 from .data_acquisition import MECSBoard
 from .data_management import fake_readings
@@ -199,5 +199,18 @@ def update():
 
 def calibrate():
     log.info(f"MECS v{__version__} calibrating current sensors")
+
     board = get_board()
-    board.calibrate(CALIBRATION_SAMPLES)
+    new_conf = board.calibrate(CALIBRATION_SAMPLES)
+
+    for sensor in board.analogue_sensors:
+        print(sensor)
+
+    confirm = f"Overwrite existing configuration? (y/n) "
+    if input(confirm).lower() != "y":
+        return
+
+    backup_path = f"{CALIBRATION}.bkp"
+    log.info(f"Making backup of config at {backup_path}")
+    save_config(backup_path, conf)
+    save_config(CALIBRATION, new_conf)
