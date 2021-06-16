@@ -47,6 +47,6 @@ def initialise_unit_id(path, conf):
 
 # The parser accepts an optional configuration file argument
 parser = argparse.ArgumentParser(epilog="For more information see https://github.com/IESD/MECS", description='MECS monitoring system command-line tools')
-parser.add_argument('-c', '--conf', default=os.path.expanduser("~/MECS.ini"), help='configuration file (default ~/.MECS/MECS.ini)')
+parser.add_argument('-c', '--conf', default=os.path.expanduser("/home/pi/MECS.ini"), help='configuration file (default ~/.MECS/MECS.ini)')
 args = parser.parse_args()
 conf = load_config(args.conf)
