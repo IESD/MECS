@@ -43,7 +43,10 @@ class ADCSensor:
         return (raw - self.zero_point) * self.sensitivity
 
     def __repr__(self):
-        return f"ADCSensor({self.label!r}, channel={self.channel!r}, type={self.type!r})"
+        if self.type == "current":
+            return f"ADCSensor({self.label!r}, channel={self.channel!r}, type={self.type!r}, zero_point={self.zero_point})"
+        else:
+            return f"ADCSensor({self.label!r}, channel={self.channel!r}, type={self.type!r})"
 
 
 class MECSBoard:
@@ -134,11 +137,27 @@ class MECSBoard:
         return (None, None)
 
 
-    def getRMSvoltage(self, channel, N):
+    def getSample(self, channel, N):
         self.adc.set_conversion_mode(1)
         readings = [self.adc.read_voltage(channel) for i in range(N)]
         self.adc.set_conversion_mode(0)
+        return readings
+
+
+    def getRMSSample(self, channel, N):
+        self.getSample(channel, N)
         return rms(readings)
+
+    def getAverageSample(self, channel, N):
+        self.getSample(channel, N)
+        return sum(readings)/N
+
+    def calibrate(self, N):
+        for sensor in self.analogue_sensors:
+            if sensor.type == "current":
+                sensor.zero_point = getAverageSample(sensor.channel, N)
+                log.info(f"Calibrating zero_point: {sensor}")
+
 
 
     def readings(self):

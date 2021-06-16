@@ -25,5 +25,6 @@ setup(
     mecs-plot = MECS.cli:plot
     mecs-test-connection = MECS.cli:test_connection
     mecs-update = MECS.cli:update
+    mecs-calibrate = MECS.cli:calibrate
     """
 )

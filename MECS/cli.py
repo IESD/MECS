@@ -72,20 +72,23 @@ else:
     # We can later check the truthyness of this
     server = MECSServer(USERNAME, HOST, PORT, DESTINATION_ROOT)
 
+CALIBRATION = os.path.expanduser(conf.get('data-acquisition', 'calibration_file'))
+
+def get_board():
+    bit_rate = conf.getint('ADCPi', 'bit_rate')
+    input_impedance = conf.getfloat('ADCPi', 'input_impedance')
+    try:
+        return MECSBoard(bit_rate, input_impedance, CALIBRATION)
+    except MECSError as exc:
+        log.error(exc)
+        log.error("Exiting, could not create MECSBoard")
+        exit(1)
 
 def get_readings_function(FAKE):
     if FAKE:
         log.warning("Generating FAKE data")
         return fake_readings
-    calibration = os.path.expanduser(conf.get('data-acquisition', 'calibration_file'))
-    bit_rate = conf.getint('ADCPi', 'bit_rate')
-    input_impedance = conf.getfloat('ADCPi', 'input_impedance')
-    try:
-        board = MECSBoard(bit_rate, input_impedance, calibration)
-    except MECSError as exc:
-        log.error(exc)
-        log.error("Exiting, could not create MECSBoard")
-        exit(1)
+    board = get_board()
     return board.readings
 
 
@@ -191,3 +194,8 @@ def test_connection():
 def update():
     log.info(f"MECS v{__version__} updating installation")
     update_mecs(GIT_PATH, FULL_INSTALL)
+
+def calibrate():
+    log.info(f"MECS v{__version__} calibrating current sensors")
+    board = get_board()
+    board.calibrate(10)
