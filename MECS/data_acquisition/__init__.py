@@ -155,7 +155,7 @@ class MECSBoard:
     def calibrate(self, N):
         for sensor in self.analogue_sensors:
             if sensor.type == "current":
-                sensor.zero_point = getAverageSample(sensor.channel, N)
+                sensor.zero_point = self.getAverageSample(sensor.channel, N)
                 log.info(f"Calibrating zero_point: {sensor}")
 
 
