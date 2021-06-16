@@ -24,4 +24,4 @@ def update_mecs(path, full=False):
     """
     os.chdir(path)
     subprocess.run(["git", "pull", "origin", "master"])
-    subprocess.run(["python", "setup.py", "install" if full else "develop"])
+    subprocess.run(["python3", "setup.py", "install" if full else "develop"])
