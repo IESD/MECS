@@ -3,6 +3,7 @@ calibration_file = ~/.MECS/calibration.ini
 
 [board]
 type = DC
+calibration_samples = 25
 
 [ADCPi]
 bit_rate = 16

@@ -73,6 +73,8 @@ else:
     server = MECSServer(USERNAME, HOST, PORT, DESTINATION_ROOT)
 
 CALIBRATION = os.path.expanduser(conf.get('data-acquisition', 'calibration_file'))
+CALIBRATION_SAMPLES = conf.getint('board', 'calibration_samples', fallback=25)
+
 
 def get_board():
     bit_rate = conf.getint('ADCPi', 'bit_rate')
@@ -198,4 +200,4 @@ def update():
 def calibrate():
     log.info(f"MECS v{__version__} calibrating current sensors")
     board = get_board()
-    board.calibrate(10)
+    board.calibrate(CALIBRATION_SAMPLES)
