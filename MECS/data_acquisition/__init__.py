@@ -82,7 +82,7 @@ class MECSBoard:
             self.particulate_sensor.sleep() # Turn it off (to avoid draining power?)
         except serial.serialutil.SerialException as exc:
             log.error(exc)
-            raise MissingSensor(f"Particulate sensor not found at {self.config['SDS011'].get('serial_port')}")
+            log.warning(f"Particulate sensor not found at {self.config['SDS011'].get('serial_port')}")
             self.particulate_sensor = None
 
 
