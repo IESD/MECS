@@ -35,6 +35,7 @@ except serial.serialutil.SerialException as exc:
     sensor = False
 
 BITRATE = 16
+_sample_fsd = 2**(BITRATE-1)
 i2c_helper = ABEHelpers()
 bus = i2c_helper.get_smbus()
 adc = ADCPi(bus, 0x68, 0x69, BITRATE)
@@ -109,7 +110,7 @@ def calcVoltage(inVal):
 ###
 
 def calcVoltageInSeries(inval,resistor_val):
-    voltage_multiplier = (resistor_val+_adcpi_input_impedance)/_adcpi_input_impedance # Based on 25 volt maximum input voltage and 68.1k ohm resistor
+    voltage_multiplier = (resistor_val+INPUT_IMPEDANCE)/INPUT_IMPEDANCE # Based on 25 volt maximum input voltage and 68.1k ohm resistor
     actual_voltage = inval*voltage_multiplier
 
     return actual_voltage
