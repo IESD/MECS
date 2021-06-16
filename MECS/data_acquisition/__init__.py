@@ -156,7 +156,7 @@ class MECSBoard:
             if sensor.type == "current":
                 sensor.zero_point = self.getAverageSample(sensor.channel, N)
                 log.info(f"Calibrating zero_point: {sensor}")
-                new_conf.set(sensor.label, "zero_point", sensor.zero_point)
+                new_conf.set(sensor.label, "zero_point", str(sensor.zero_point))
         return new_conf
 
 
