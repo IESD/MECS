@@ -34,7 +34,7 @@ class ADCSensor:
             resistance = calibration.getfloat('resistance')
             self.sensitivity = (impedance + resistance) / resistance
         elif self.type == "current":
-            self.sensitivity = calibration.getfloat('milliVoltPerAmp') / 1000
+            self.sensitivity = 1000 / calibration.getfloat('milliVoltPerAmp')
         else:
             raise UnknownType(f"{self} type should be 'current' or 'voltage' only")
         log.info(f"{self} registered")
