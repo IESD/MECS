@@ -1,18 +1,22 @@
-[ADCPi]
-bit_rate = 12
-input_impedance = 16800
-r_top = 30000
-r_bottom = 7500
-midOffset = 2.624202
+[battery_voltage]
+protocol = adc
+channel = 1
+type = voltage
+zero_point = 0
+resistance = 91000
+
+[usb_load_current]
+protocol = adc
+channel = 7
+type = current
+zero_point = 2.624202
 milliVoltPerAmp = 117.61066
 
-[thermistor]
-min_temperature = 5
-max_temperature = 150
-r_0 = 10000
-t_0 = 25
-r_bias = 9970
-beta = 3950
-
-[SDS011]
+[particulates]
+protocol = serial
+type = SDS011
 serial_port = /dev/ttyUSB0
+
+[temperature]
+protocol = GPIO
+type = DS18B20
