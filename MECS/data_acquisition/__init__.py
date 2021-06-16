@@ -8,6 +8,7 @@ from .. import MECSConfigError, MECSHardwareError
 
 from .ADCPi import ABEHelpers, ADCPi
 from .sds011.SDS011 import SDS011, serial
+from w1thermsensor import W1ThermSensor
 
 
 log = logging.getLogger(__name__)
@@ -87,6 +88,10 @@ class MECSBoard:
             log.error(exc)
             log.warning(f"Particulate sensor not found at {self.config['SDS011'].get('serial_port')}")
             self.particulate_sensor = None
+
+        # TODO: Check if it is configured?
+        # What happens if the sensor isn't there?
+        self.temp_sensor = W1ThermSensor()
 
 
     ####
@@ -169,7 +174,7 @@ class MECSBoard:
         PM2_5, PM10 = self.getParticulates()
         result['PM2.5'] = PM2_5
         result['PM10'] = PM10
-        result['temperature'] = None
+        result['temperature'] = round(self.temp_sensor.get_temperature(), 2)
         return {
             "dt": datetime.utcnow(),
             "data": result

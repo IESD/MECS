@@ -11,6 +11,7 @@ setup(
     'matplotlib',
     'smbus',
     'pyserial',
+    'w1thermsensor',
   ],
   entry_points = """
     [console_scripts]
