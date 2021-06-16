@@ -182,7 +182,7 @@ class MECSBoard:
         result['PM10'] = PM10
         try:
             result['temperature'] = round(self.temp_sensor.get_temperature(), 2)
-        except ResetValueError, SensorNotReadyError as exc:
+        except (ResetValueError, SensorNotReadyError) as exc:
             log.error(exc)
             log.warn(f"Sensor is not ready to be read")
             result['temperature'] = None
