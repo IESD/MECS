@@ -78,8 +78,8 @@ def get_readings_function(FAKE):
         log.warning("Generating FAKE data")
         return fake_readings
     calibration = os.path.expanduser(conf.get('data-acquisition', 'calibration_file'))
-    bit_rate = conf.get('ADCPi', 'bit_rate')
-    input_impedance = conf.get('ADCPi', 'input_impedance')
+    bit_rate = conf.getint('ADCPi', 'bit_rate')
+    input_impedance = conf.getfloat('ADCPi', 'input_impedance')
     try:
         board = MECSBoard(bit_rate, input_impedance, calibration)
     except MECSError as exc:
