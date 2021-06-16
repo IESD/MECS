@@ -23,9 +23,6 @@ def load_config(path):
 
 def save_config(path, conf):
     """save configuration to file"""
-    if not os.path.exists(path):
-        print(f"Error: configuration file {path} not found")
-        exit(1)
     with open(path, 'w') as f:
         conf.write(f)
 
