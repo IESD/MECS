@@ -4,13 +4,16 @@ from configparser import ConfigParser, NoOptionError
 from datetime import datetime
 import math
 
+from .. import MECSConfigError, MECSHardwareError
+
 from .ADCPi import ABEHelpers, ADCPi
 from .sds011.SDS011 import SDS011, serial
 
+
 log = logging.getLogger(__name__)
 
-# proper constants
-kelvinToCentigrade = 273
+class UnknownType(MECSConfigError): pass
+class MissingSensor(MECSHardwareError): pass
 
 # TODO: test with numpy for speed improvements
 def rms(readings):
@@ -25,17 +28,22 @@ class ADCSensor:
     def __init__(self, label, calibration, impedance):
         self.label = label
         self.channel = calibration.getint('channel')
+        self.type = calibration.get('type')
         self.zero_point = calibration.getfloat('zero_point')
-        if calibration.get('type') == "voltage":
+        if self.type == "voltage":
             resistance = calibration.getfloat('resistance')
             self.sensitivity = (impedance + resistance) / resistance
-        else:
+        elif self.type == "current":
             self.sensitivity = calibration.getfloat('milliVoltPerAmp') / 1000
-
+        else:
+            raise UnknownType(f"{self} type should be 'current' or 'voltage' only")
+        log.info(f"{self} registered")
 
     def correct(self, raw):
         return (raw - self.zero_point) * self.sensitivity
 
+    def __repr__(self):
+        return f"ADCSensor({self.label!r}, channel={self.channel!r}, type={self.type!r})"
 
 
 class MECSBoard:
@@ -48,8 +56,7 @@ class MECSBoard:
         Calculates all the constants
         """
         if not os.path.exists(calibration_file_path):
-            log.error(f"configuration file {calibration_file_path} not found")
-            exit(1)
+            raise MECSConfigError(f"configuration file {calibration_file_path} not found")
         log.info(f"loading calibration data from {calibration_file_path}")
         self.config = ConfigParser()
         self.config.read(calibration_file_path)
@@ -57,20 +64,25 @@ class MECSBoard:
         # Initialise the analogue to digital converter interface
         bus = ABEHelpers().get_smbus()
         if not bus:
-            log.error("ABEHelpers().get_smbus() returned None")
-            exit(1)
+            log.warning(f"ABEHelpers().get_smbus() returned {bus}")
+            raise MECSHardwareError("No ADC bus detected")
+
         self.adc = ADCPi(bus, rate=bit_rate)
 
         # ADCPi calibration information
-        self.analogue_sensors = [ADCSensor(section, self.config[section], input_impedance) for section in self.config if self.config.get(section, 'protocol', fallback=False) == "adc"]
+        try:
+            self.analogue_sensors = [ADCSensor(section, self.config[section], input_impedance) for section in self.config if self.config.get(section, 'protocol', fallback=False) == "adc"]
+        except UnknownType as exc:
+            log.error(exc)
+            exit(1)
 
         # Initialise the SDS011 air particulate density sensor.
         try:
             self.particulate_sensor = SDS011(self.config['SDS011'].get('serial_port'), use_query_mode=True)
             self.particulate_sensor.sleep() # Turn it off (to avoid draining power?)
         except serial.serialutil.SerialException as exc:
-            log.warning(f"Particulate sensor not found at {self.config['SDS011'].get('serial_port')}")
             log.error(exc)
+            raise MissingSensor(f"Particulate sensor not found at {self.config['SDS011'].get('serial_port')}")
             self.particulate_sensor = None
 
 

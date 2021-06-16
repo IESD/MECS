@@ -12,6 +12,11 @@ import os
 
 __version__ = pkg_resources.get_distribution('MECS').version
 
+class MECSError(Exception): pass
+class MECSConfigError(MECSError): pass
+class MECSHardwareError(MECSError): pass
+
+
 def update_mecs(path, full=False):
     """This function will:
         pull the latest commits from github and

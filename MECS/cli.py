@@ -9,7 +9,7 @@ import subprocess
 import uuid
 from collections import OrderedDict
 
-from . import __version__, update_mecs
+from . import __version__, update_mecs, MECSError
 from .config import args, conf, initialise_unit_id, NoOptionError, NoSectionError
 from .communication import MECSServer
 from .data_acquisition import MECSBoard
@@ -80,7 +80,12 @@ def get_readings_function(FAKE):
     calibration = os.path.expanduser(conf.get('data-acquisition', 'calibration_file'))
     bit_rate = conf.get('ADCPi', 'bit_rate')
     input_impedance = conf.get('ADCPi', 'input_impedance')
-    board = MECSBoard(bit_rate, input_impedance, calibration)
+    try:
+        board = MECSBoard(bit_rate, input_impedance, calibration)
+    except MECSError as exc:
+        log.error(exc)
+        log.error("Exiting, could not create MECSBoard")
+        exit(1)
     return board.readings
 
 
