@@ -30,7 +30,7 @@ class ADCSensor:
             resistance = calibration.getfloat('resistance')
             self.sensitivity = (impedance + resistance) / resistance
         else:
-            self.sensitivity = calibration.getfloat('milliVoltPerAmp') / 1000
+            self.sensitivity = 1000 / calibration.getfloat('milliVoltPerAmp')
 
 
     def correct(self, raw):
