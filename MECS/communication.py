@@ -58,6 +58,7 @@ class MECSServer:
 
     def upload(self, source_folder, destination_folder, archive_folder):
         """This pushes all the aggregated data up to the server and then archives the data"""
+        os.makedirs(destination_folder, exist_ok=True)
         files = sorted(glob.glob(os.path.join(source_folder, "*.json")))
         if not files:
             log.info("No files to upload")
