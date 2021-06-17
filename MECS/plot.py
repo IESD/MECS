@@ -14,7 +14,7 @@ def plot_file(data_path, image_path):
     log.debug(f"Loading data from {data_path}")
     df = pd.read_json(data_path, orient="split")
     cols = df.columns
-    fig, axes = plt.subplots(4, 2, figsize=(14, 8))
+    fig, axes = plt.subplots(4, 3, figsize=(14, 8))
     for i, (c, ax) in enumerate(zip(cols, axes.flatten())):
         log.debug(f"Plotting {c}")
         ax.plot(df[c], label=c, lw=1, color=f"C{i}")
