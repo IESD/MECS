@@ -7,6 +7,7 @@ import os.path
 
 import pandas as pd
 from matplotlib import pyplot as plt
+import matplotlib.dates as mdates
 
 log = logging.getLogger(__name__)
 
@@ -15,9 +16,12 @@ def plot_file(data_path, image_path):
     df = pd.read_json(data_path, orient="split")
     cols = df.columns
     fig, axes = plt.subplots(4, 3, figsize=(14, 8))
+    fig.suptitle(f"MECS data for file {data_path}")
     for i, (c, ax) in enumerate(zip(cols, axes.flatten())):
         log.debug(f"Plotting {c}")
         ax.plot(df[c], label=c, lw=1, color=f"C{i}")
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+        ax.tick_params(axis='x', labelrotation=45)
         ax.legend()
     plt.tight_layout()
     log.info(f"Creating {image_path}")
