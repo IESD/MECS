@@ -5,17 +5,12 @@ MECS command line interface scripts
 import os
 from datetime import datetime
 import logging
-import subprocess
 import uuid
 from collections import OrderedDict
 
 from . import __version__, update_mecs, MECSError
 from .config import args, conf, initialise_unit_id, NoOptionError, NoSectionError, save_config
 from .communication import MECSServer
-from .data_management import fake_readings
-from .data_management.generate import generate as gen
-from .data_management.aggregate import aggregate as agg
-from .mobile_network import connection
 from .plot import plot_all
 
 log = logging.getLogger(__name__)
@@ -89,6 +84,7 @@ def get_board():
 
 def get_readings_function(FAKE):
     if FAKE:
+        from .data_management import fake_readings
         log.warning("Generating FAKE data")
         return fake_readings
     board = get_board()
@@ -133,10 +129,12 @@ def init():
 
 def generate():
     log.info(f"MECS v{__version__} generating{' fake' if FAKE else ''} data")
+    from .data_management.generate import generate as gen
     gen(OUTPUT_FOLDER, get_readings_function(FAKE))
 
 def aggregate():
     log.info(f"MECS v{__version__} aggregating data")
+    from .data_management.aggregate import aggregate as agg
     agg(OUTPUT_FOLDER, AGGREGATED_FOLDER)
 
 def register():
