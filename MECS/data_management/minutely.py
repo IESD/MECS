@@ -13,13 +13,6 @@ import pandas as pd
 
 log = logging.getLogger(__name__)
 
-def readings(fake):
-    if not fake:
-        from ..data_acquisition.sensors_api import raw_readings
-        return raw_readings
-    from .fake_input import fake_readings
-    return fake_readings
-
 # adapted from https://stackoverflow.com/a/31464349/1083707
 # This just allws us to log the end of data generation
 class GracefulKiller:
