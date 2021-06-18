@@ -5,15 +5,10 @@ Its pretty simple
 """
 import os
 import time
-import logging
 import pprint
 
 # we only really need the MECSBoard class
 from MECS.data_acquisition import MECSBoard
-
-# optionally initialise logging to see the log messages
-log = logging.getLogger(__name__)
-logging.basicConfig(level=logging.DEBUG)
 
 # initialise the board
 board = MECSBoard(16, 16800, "/home/pi/calibration.ini")
