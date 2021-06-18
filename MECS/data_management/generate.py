@@ -22,7 +22,6 @@ def generate(output_folder, get_data):
         os.makedirs(os.path.join(output_folder, folder), exist_ok=True)
         filename = data['dt'].strftime("%Y%m%d%H%M.json")
         path = os.path.join(output_folder, folder, filename)
-        log.debug(f"writing {path}")
         if data['dt'].minute == 0:
             log.info(f"writing {path}")
         else:
