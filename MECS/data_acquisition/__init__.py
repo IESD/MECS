@@ -75,7 +75,7 @@ class MECSBoard:
 
         # ADCPi calibration information
         try:
-            self.analogue_sensors = [ADCSensor(section, self.config[section], input_impedance) for section in self.config if self.config.get(section, 'protocol', fallback=False) == "adc"]
+            self.analogue_sensors = {section: ADCSensor(section, self.config[section], input_impedance) for section in self.config if self.config.get(section, 'protocol', fallback=False) == "adc"}
         except UnknownType as exc:
             log.error(exc)
             exit(1)
@@ -158,24 +158,29 @@ class MECSBoard:
     def getRMSSample(self, channel, N):
         return rms(self.getSample(channel, N))
 
+
     def getAverageSample(self, channel, N):
         return sum(self.getSample(channel, N))/N
 
+
     def calibrate(self, N):
         new_conf = self.config
-        for sensor in self.analogue_sensors:
+        for label, sensor in self.analogue_sensors.items():
             if sensor.type == "current":
                 sensor.zero_point = self.getAverageSample(sensor.channel, N)
                 log.info(f"Calibrating zero_point: {sensor}")
                 new_conf.set(sensor.label, "zero_point", str(sensor.zero_point))
         return new_conf
 
+    def analogue_reading(self, label):
+        sensor = self.analogue_sensors[label]
+        return sensor.correct(self.adc.read_voltage(sensor.channel))
 
     def readings(self):
         """Bring all the data together into a neat packet with a timestamp"""
         result = {
-            a.label: a.correct(self.adc.read_voltage(a.channel))
-            for a in self.analogue_sensors
+            sensor.label: sensor.correct(self.adc.read_voltage(sensor.channel))
+            for sensor in self.analogue_sensors.values()
         }
         PM2_5, PM10 = self.getParticulates()
         result['PM2.5'] = PM2_5
