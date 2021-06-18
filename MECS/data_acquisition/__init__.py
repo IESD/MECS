@@ -38,7 +38,7 @@ class ADCSensor:
             self.sensitivity = 1000 / calibration.getfloat('milliVoltPerAmp')
         else:
             raise UnknownType(f"{self} type should be 'current' or 'voltage' only")
-        log.info(f"{self} registered")
+        log.debug(f"{self} registered")
 
     def correct(self, raw):
         return (raw - self.zero_point) * self.sensitivity
