@@ -1,20 +1,21 @@
 """
-This is an example of how to use the MECS library without the cli tooling
+The CLI scripts are convenient but inflexible
+This is an example of how to use the MECSBoard directly
+Its pretty simple
 """
 import logging
+import pprint
 
-# we only need the MECSBoard class
+# we only really need the MECSBoard class
 from MECS.data_acquisition import MECSBoard
 
-# initialise logging to see the log messages
+# optionally initialise logging to see the log messages
 log = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 
 # initialise the board
 board = MECSBoard(16, 16800, "/home/pi/calibration.ini")
-
-# get some readings and log them
-readings = board.readings()
-log.info(f"readings taken at {readings['dt']}")
-for key, value in readings['data'].items():
-    log.info(f"{key}: {value}")
+while(True):
+    os.system('clear')
+    pprint.pprint(board.readings())
+    time.sleep(0.1)
