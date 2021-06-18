@@ -15,5 +15,6 @@ board = MECSBoard(16, 16800, "/home/pi/calibration.ini")
 
 # get some readings and log them
 readings = board.readings()
-for key, value in readings.items():
+log.info(f"readings taken at {readings['dt']}")
+for key, value in readings['data'].items():
     log.info(f"{key}: {value}")
