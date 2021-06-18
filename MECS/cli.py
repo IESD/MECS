@@ -14,9 +14,6 @@ from .communication import MECSServer
 
 log = logging.getLogger(__name__)
 
-log.info("imports complete")
-
-
 # No confirmation that we can communicate with server yet
 server = False
 
@@ -71,8 +68,6 @@ else:
 
 CALIBRATION = os.path.expanduser(conf.get('data-acquisition', 'calibration_file'))
 CALIBRATION_SAMPLES = conf.getint('board', 'calibration_samples', fallback=25)
-
-log.info("config data extracted")
 
 def get_board():
     from .data_acquisition import MECSBoard
