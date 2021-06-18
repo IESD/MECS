@@ -18,6 +18,7 @@ logging.basicConfig(level=logging.DEBUG)
 # initialise the board
 board = MECSBoard(16, 16800, "/home/pi/calibration.ini")
 while(True):
+    readings = board.readings()
     os.system('clear')
-    pprint.pprint(board.readings())
+    pprint.pprint(readings)
     time.sleep(0.1)
