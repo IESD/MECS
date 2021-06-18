@@ -3,6 +3,7 @@ The CLI scripts are convenient but inflexible
 This is an example of how to use the MECSBoard directly
 Its pretty simple
 """
+import os
 import logging
 import pprint
 
