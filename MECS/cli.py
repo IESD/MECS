@@ -70,6 +70,7 @@ else:
 CALIBRATION = os.path.expanduser(conf.get('data-acquisition', 'calibration_file'))
 CALIBRATION_SAMPLES = conf.getint('board', 'calibration_samples', fallback=25)
 
+log.info("imports complete and config data extracted")
 
 def get_board():
     from .data_acquisition import MECSBoard
