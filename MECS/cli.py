@@ -192,7 +192,7 @@ def calibrate():
     board = get_board()
     new_conf = board.calibrate(CALIBRATION_SAMPLES)
 
-    for sensor in board.analogue_sensors:
+    for sensor in board.analogue_sensors.values():
         print(sensor)
 
     confirm = f"Overwrite existing configuration? (y/n) "
