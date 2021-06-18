@@ -187,12 +187,6 @@ def test2():
 def plot():
     plot_all(ARCHIVE_FOLDER, PLOTTING_FOLDER)
 
-def test_connection():
-    log.info(f"MECS v{__version__} testing connection")
-    with connection(timeout=3600) as conn:
-        log.info("working with connection")
-    log.info("completed test")
-
 def update():
     log.info(f"MECS v{__version__} updating installation")
     update_mecs(GIT_PATH, FULL_INSTALL)
