@@ -12,7 +12,6 @@ from collections import OrderedDict
 from . import __version__, update_mecs, MECSError
 from .config import args, conf, initialise_unit_id, NoOptionError, NoSectionError, save_config
 from .communication import MECSServer
-from .data_acquisition import MECSBoard
 from .data_management import fake_readings
 from .data_management.generate import generate as gen
 from .data_management.aggregate import aggregate as agg
@@ -77,6 +76,7 @@ CALIBRATION_SAMPLES = conf.getint('board', 'calibration_samples', fallback=25)
 
 
 def get_board():
+    from .data_acquisition import MECSBoard
     bit_rate = conf.getint('ADCPi', 'bit_rate')
     input_impedance = conf.getfloat('ADCPi', 'input_impedance')
     try:
