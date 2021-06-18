@@ -4,6 +4,7 @@ This is an example of how to use the MECSBoard directly
 Its pretty simple
 """
 import os
+import time
 import logging
 import pprint
 
