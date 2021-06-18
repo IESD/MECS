@@ -14,9 +14,6 @@ from .communication import MECSServer
 
 log = logging.getLogger(__name__)
 
-# No confirmation that we can communicate with server yet
-server = False
-
 # HARDWARE_ID should probably just be calculated every time?
 HARDWARE_ID = hex(uuid.getnode())
 
@@ -50,9 +47,8 @@ except NoSectionError as exc:
     log.warning(f"Missing section '{exc.section}' in config file {args.conf}")
     exit(1)
 
-# if uploading to a server, these are also required
-# Server setup could be placed in a different config section?
 try:
+    # these are required for uploading to a server
     ARCHIVE_FOLDER = os.path.join(ROOT, conf.get('MECS', 'archive_folder'))
     DESTINATION_ROOT = conf.get('MECS-SERVER', 'destination_root')
     USERNAME = conf.get('MECS-SERVER', 'username')
@@ -62,6 +58,7 @@ except NoOptionError as exc:
     log.warning(args.conf)
     log.warning(exc)
     log.warning("required for server upload")
+    server = False
 else:
     # We can later check the truthyness of this
     server = MECSServer(USERNAME, HOST, PORT, DESTINATION_ROOT)
