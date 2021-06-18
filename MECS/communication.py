@@ -47,7 +47,7 @@ class MECSServer:
             log.info(f"folder {folder_name} created on server")
 
     def copy_to_server(self, file, destination):
-        result = subprocess.run(["scp", file, f"{self.username}@{self.host}:{destination}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+        result = subprocess.run(["scp", "-C", file, f"{self.username}@{self.host}:{destination}"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
         if result.returncode:
             log.warning("A problem occurred when attempting to copy a file to server")
             log.error(result.stderr)
@@ -58,6 +58,7 @@ class MECSServer:
 
     def upload(self, source_folder, destination_folder, archive_folder):
         """This pushes all the aggregated data up to the server and then archives the data"""
+        self.create_remote_folder(destination_folder)
         os.makedirs(archive_folder, exist_ok=True)
         files = sorted(glob.glob(os.path.join(source_folder, "*.json")))
         if not files:
