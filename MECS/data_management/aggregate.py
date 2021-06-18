@@ -56,8 +56,13 @@ def aggregate_folder(folder):
     # read them into an array
     result = []
     for filename in files:
-        with open(filename, 'r') as f:
-            data = json.load(f)
+        try:
+            with open(filename, 'r') as f:
+                data = json.load(f)
+        except json.decoder.JSONDecodeError as exc:
+            log.warning(exc)
+            log.warning(f"skipping {filename}")
+            continue
         result.append(data)
         # TODO: move file into temporary folder ready for deletion/archive?
 
