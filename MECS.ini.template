@@ -22,6 +22,7 @@ port = 22
 destination_root = data
 
 [git]
+branch = master
 source_folder =
 install = False
 

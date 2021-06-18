@@ -44,6 +44,7 @@ FULL_INSTALL = conf.getboolean('git', 'install', fallback=False)
 # if we don't have these, just report and exit
 try:
     GIT_PATH = os.path.expanduser(conf.get('git', 'source_folder'))
+    GIT_BRANCH = os.path.expanduser(conf.get('git', 'branch'))
     ROOT = os.path.expanduser(conf.get('MECS', 'root_folder'))
     OUTPUT_FOLDER = os.path.join(ROOT, conf.get('MECS', 'output_folder'))
     AGGREGATED_FOLDER = os.path.join(ROOT, conf.get('MECS', 'aggregated_folder'))
@@ -189,7 +190,7 @@ def plot():
 
 def update():
     log.info(f"MECS v{__version__} updating installation")
-    update_mecs(GIT_PATH, FULL_INSTALL)
+    update_mecs(GIT_PATH, GIT_BRANCH, full=FULL_INSTALL)
 
 def calibrate():
     log.info(f"MECS v{__version__} calibrating current sensors")
