@@ -11,7 +11,6 @@ from collections import OrderedDict
 from . import __version__, update_mecs, MECSError
 from .config import args, conf, initialise_unit_id, NoOptionError, NoSectionError, save_config
 from .communication import MECSServer
-from .plot import plot_all
 
 log = logging.getLogger(__name__)
 
@@ -188,6 +187,7 @@ def test2():
         pass
 
 def plot():
+    from .plot import plot_all
     plot_all(ARCHIVE_FOLDER, PLOTTING_FOLDER)
 
 def update():
