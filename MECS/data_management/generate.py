@@ -24,5 +24,9 @@ def generate(output_folder, get_data):
         data['dt'] = data['dt'].isoformat()
         path = os.path.join(output_folder, folder, filename)
         log.debug(f"writing {path}")
+        if data['dt'].minute == 0:
+            log.info(f"writing {path}")
+        else:
+            log.debug(f"writing {path}")
         with open(path, "x") as f:
             json.dump(data, f)
