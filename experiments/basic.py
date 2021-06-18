@@ -1,11 +1,19 @@
-import os.path
+"""
+This is an example of how to use the MECS library without the cli tooling
+"""
+import logging
 
+# we only need the MECSBoard class
 from MECS.data_acquisition import MECSBoard
 
-bit_rate = 16
-impedance = 16800
-calibration = os.path.expanduser("~/calibration.ini")
+# initialise logging to see the log messages
+log = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 
-board = MECSBoard(bit_rate, impedance, calibration)
+# initialise the board
+board = MECSBoard(16, 16800, "/home/pi/calibration.ini")
 
-print(board.readings())
+# get some readings and log them
+readings = board.readings()
+for key, value in readings.items():
+    log.info(f"{key}: {value}")
