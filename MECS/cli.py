@@ -182,6 +182,10 @@ def plot():
     from .plot import plot_all
     plot_all(ARCHIVE_FOLDER, PLOTTING_FOLDER)
 
+def plot2():
+    from .plot import plot_as_one
+    plot_as_one(ARCHIVE_FOLDER, PLOTTING_FOLDER)
+
 def update():
     log.info(f"MECS v{__version__} updating installation")
     update_mecs(GIT_PATH, GIT_BRANCH, full=FULL_INSTALL)

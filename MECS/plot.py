@@ -14,6 +14,9 @@ log = logging.getLogger(__name__)
 def plot_file(data_path, image_path):
     log.debug(f"Loading data from {data_path}")
     df = pd.read_json(data_path, orient="split")
+    plot_frame(df, image_path)
+
+def plot_frame(df, image_path):
     cols = df.columns
     fig, axes = plt.subplots(4, 3, figsize=(14, 8))
     fig.suptitle(f"MECS data for file {data_path}")
@@ -37,3 +40,13 @@ def plot_all(source_folder, dest_folder):
         name, ext = os.path.splitext(fname)
         destination_file = os.path.join(dest_folder, f"{name}.png")
         plot_file(source_file, destination_file)
+
+def plot_as_one(source_folder, dest_folder):
+    os.makedirs(dest_folder, exist_ok=True)
+    dfs = []
+    files = sorted(glob.glob(os.path.join(source_folder, "*.json")))
+    for source_file in files:
+        dfs.append(pd.read_json(source_file, orient="split"))
+    destination_file = os.path.join(dest_folder, f"ALL.png")
+    df = pd.concat(dfs)
+    plot_frame(df, destination_file)
