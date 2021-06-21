@@ -19,12 +19,12 @@ def plot_file(data_path, image_path):
 
 def plot_frame(df, title, image_path):
     cols = df.columns
-    fig, axes = plt.subplots(4, 3, figsize=(14, 8))
+    fig, axes = plt.subplots(5, 2, figsize=(14, 12))
     fig.suptitle(title)
     for i, (c, ax) in enumerate(zip(cols, axes.flatten())):
         log.debug(f"Plotting {c}")
         ax.plot(df[c], label=c, lw=1, color=f"C{i}")
-        ax.xaxis.set_major_formatter(mdates.DateFormatter("%H:%M"))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter("%d/%m %H:%M"))
         ax.tick_params(axis='x', labelrotation=45)
         ax.legend()
     plt.tight_layout()
