@@ -113,7 +113,7 @@ class MECSBoard:
         return round(temp, 3)
 
 
-    def getParticulates(self):
+    def get_particulates(self):
         if not self.particulate_sensor:
             return (None, None)
 
@@ -182,7 +182,7 @@ class MECSBoard:
             sensor.label: sensor.correct(self.adc.read_voltage(sensor.channel))
             for sensor in self.analogue_sensors.values()
         }
-        PM2_5, PM10 = self.getParticulates()
+        PM2_5, PM10 = self.get_particulates()
         result['PM2.5'] = PM2_5
         result['PM10'] = PM10
         try:
