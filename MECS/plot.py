@@ -14,12 +14,13 @@ log = logging.getLogger(__name__)
 def plot_file(data_path, image_path):
     log.debug(f"Loading data from {data_path}")
     df = pd.read_json(data_path, orient="split")
-    plot_frame(df, image_path)
+    title = f"MECS data for file {data_path}"
+    plot_frame(df, title, image_path)
 
-def plot_frame(df, image_path):
+def plot_frame(df, title, image_path):
     cols = df.columns
     fig, axes = plt.subplots(4, 3, figsize=(14, 8))
-    fig.suptitle(f"MECS data for file {data_path}")
+    fig.suptitle(title)
     for i, (c, ax) in enumerate(zip(cols, axes.flatten())):
         log.debug(f"Plotting {c}")
         ax.plot(df[c], label=c, lw=1, color=f"C{i}")
@@ -49,4 +50,4 @@ def plot_as_one(source_folder, dest_folder):
         dfs.append(pd.read_json(source_file, orient="split"))
     destination_file = os.path.join(dest_folder, f"ALL.png")
     df = pd.concat(dfs)
-    plot_frame(df, destination_file)
+    plot_frame(df, "ALL MECS data so far", destination_file)
