@@ -9,7 +9,7 @@ from .. import MECSConfigError, MECSHardwareError
 from .ADCPi import ABEHelpers, ADCPi
 from .sds011.SDS011 import SDS011, serial
 from w1thermsensor import W1ThermSensor
-from w1thermsensor.errors import KernelModuleLoadError, NoSensorFoundError
+from w1thermsensor.errors import KernelModuleLoadError, NoSensorFoundError, ResetValueError, SensorNotReadyError
 
 
 log = logging.getLogger(__name__)
