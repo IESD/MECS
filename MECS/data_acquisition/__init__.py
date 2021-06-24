@@ -113,6 +113,16 @@ class MECSBoard:
         temp = (mVolts/lm35_scale_factor) * 1000
         return round(temp, 3)
 
+    def get_temperature(self):
+        if not self.temp_sensor:
+            return None
+        try:
+            return round(self.temp_sensor.get_temperature(), 2)
+        except (ResetValueError, SensorNotReadyError) as exc:
+            log.error(exc)
+            log.warn(f"Sensor is not ready to be read")
+            return None
+
 
     def get_particulates(self):
         if not self.particulate_sensor:
@@ -186,12 +196,7 @@ class MECSBoard:
         PM2_5, PM10 = self.get_particulates()
         result['PM2.5'] = PM2_5
         result['PM10'] = PM10
-        try:
-            result['temperature'] = round(self.temp_sensor.get_temperature(), 2)
-        except (ResetValueError, SensorNotReadyError) as exc:
-            log.error(exc)
-            log.warn(f"Sensor is not ready to be read")
-            result['temperature'] = None
+        result['temperature'] = self.get_temperature()
 
         return {
             "dt": datetime.utcnow(),
