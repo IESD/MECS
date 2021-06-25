@@ -1,0 +1,5 @@
+# MECS crontab file for the pi user
+
+# m h dom mon dow command
+  0 2 *   *   *   cd ~/MECS && python3 setup.py develop
+ 10 2 *   *   *   systemctl restart mecs-generate

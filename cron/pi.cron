@@ -1,0 +1,6 @@
+# MECS crontab file for the pi user
+
+# m h dom mon dow command
+  0 * *   *   *   /usr/local/bin/mecs-aggregate
+  5 * *   *   *   /usr/local/bin/mecs-upload
+  0 1 *   *   *   cd ~/MECS && git pull origin master
