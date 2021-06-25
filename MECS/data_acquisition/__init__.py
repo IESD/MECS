@@ -110,7 +110,7 @@ class MECSBoard:
 
         # INA3221 calibration information
         try:
-            self.power_sensors = {section: INA3221Config(section, self.config[section]['channel'], self.config[section]['type']) for section in self.config if self.config.get(section, 'protocol', fallback=False) == "INA3221"}
+            self.power_sensors = {section: INA3221Config(section, self.config[section].getint('channel'), self.config[section]['type']) for section in self.config if self.config.get(section, 'protocol', fallback=False) == "INA3221"}
         except AssertionError as exc:
             log.error(exc)
             exit(1)
