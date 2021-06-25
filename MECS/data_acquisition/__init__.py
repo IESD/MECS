@@ -194,7 +194,7 @@ class MECSBoard:
 
     def get_power(self):
         return {
-            sensor.label: sensor.read(self.INA3221))
+            sensor.label: sensor.read(self.INA3221)
             for sensor in self.power_sensors.values()
         }
 
