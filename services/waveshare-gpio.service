@@ -1,0 +1,13 @@
+[Unit]
+Description=Waveshare power pin setup
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/waveshare_gpio_init.sh
+WorkingDirectory=/home/pi/
+StandardOutput=inherit
+StandardError=inherit
+User=pi
+
+[Install]
+WantedBy=multi-user.target
