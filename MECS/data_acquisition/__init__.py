@@ -2,6 +2,7 @@ import logging
 import os
 from configparser import ConfigParser, NoOptionError
 from datetime import datetime
+import time
 import math
 
 from w1thermsensor import W1ThermSensor
