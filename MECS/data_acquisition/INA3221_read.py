@@ -1,13 +1,11 @@
 #!/usr/bin/env python
 
 # SDL_Pi_INA3221.py Python Driver Code
-# SwitchDoc Labs March 4, 2015	 
+# SwitchDoc Labs March 4, 2015
 # V 1.2
 
 
 #encoding: utf-8
- 
-from datetime import datetime
 
 import smbus
 
@@ -26,7 +24,7 @@ INA3221_READ    =                         (0x01)
 INA3221_REG_CONFIG            =          (0x00)
 #    /*---------------------------------------------------------------------*/
 INA3221_CONFIG_RESET          =          (0x8000)  # Reset Bit
-	
+
 INA3221_CONFIG_ENABLE_CHAN1   =          (0x4000)  # Enable Channel 1
 INA3221_CONFIG_ENABLE_CHAN2   =          (0x2000)  # Enable Channel 2
 INA3221_CONFIG_ENABLE_CHAN3   =          (0x1000)  # Enable Channel 3
@@ -103,17 +101,17 @@ class SDL_Pi_INA3221():
         return returndata
 
 
-    def _read_register_little_endian(self, register): 
-	
+    def _read_register_little_endian(self, register):
+
         result = self._bus.read_word_data(self._addr,register) & 0xFFFF
-        lowbyte = (result & 0xFF00)>>8 
+        lowbyte = (result & 0xFF00)>>8
         highbyte = (result & 0x00FF) << 8
-        switchresult = lowbyte + highbyte 
+        switchresult = lowbyte + highbyte
         #print "Read 16 bit Word addr =0x%x register = 0x%x switchresult = 0x%x " % (self._addr, register, switchresult)
         return switchresult
-   
-   
-    def _write_register_little_endian(self, register, data): 
+
+
+    def _write_register_little_endian(self, register, data):
 
         data = data & 0xFFFF
         # reverse configure byte for little endian
@@ -122,20 +120,20 @@ class SDL_Pi_INA3221():
         switchdata = lowbyte + highbyte
         self._bus.write_word_data(self._addr, register, switchdata)
         #print "Write  16 bit Word addr =0x%x register = 0x%x data = 0x%x " % (self._addr, register, data)
-       
+
 
 
     def _getBusVoltage_raw(self, channel):
 	#Gets the raw bus voltage (16-bit signed integer, so +-32767)
 
-        value = self._read_register_little_endian(INA3221_REG_BUSVOLTAGE_1+(channel -1) *2) 
+        value = self._read_register_little_endian(INA3221_REG_BUSVOLTAGE_1+(channel -1) *2)
         if value > 32767:
             value -= 65536
         return value
 
     def _getShuntVoltage_raw(self, channel):
 	#Gets the raw shunt voltage (16-bit signed integer, so +-32767)
-	
+
         value = self._read_register_little_endian(INA3221_REG_SHUNTVOLTAGE_1+(channel -1) *2)
         if value > 32767:
             value -= 65536
@@ -158,6 +156,6 @@ class SDL_Pi_INA3221():
 
     def getCurrent_mA(self, channel):
     #Gets the current value in mA, taking into account the config settings and current LSB
-    	
-        valueDec = self.getShuntVoltage_mV(channel)/ SHUNT_RESISTOR_VALUE               
+
+        valueDec = self.getShuntVoltage_mV(channel)/ SHUNT_RESISTOR_VALUE
         return valueDec;

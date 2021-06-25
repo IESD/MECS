@@ -12,6 +12,26 @@ type = current
 zero_point = 2.624202
 milliVoltPerAmp = 117.61066
 
+[usb_load_current2]
+protocol = INA3221
+channel = 2
+type = current
+
+[usb_load_voltage2]
+protocol = INA3221
+channel = 2
+type = busVoltage
+
+[daq_load_current2]
+protocol = INA3221
+channel = 1
+type = current
+
+[daq_load_voltage2]
+protocol = INA3221
+channel = 1
+type = busVoltage
+
 [particulates]
 protocol = serial
 type = SDS011

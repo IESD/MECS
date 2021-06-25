@@ -50,6 +50,32 @@ class ADCSensor:
         else:
             return f"ADCSensor({self.label!r}, channel={self.channel!r}, type={self.type!r})"
 
+class INA3221Config:
+    def __init__(self, label, channel, type):
+        self.callables = {
+            "current": self._current,
+            "busVoltage": self._busVoltage,
+            "shuntVoltage": self._shuntVoltage
+        }
+        assert type in ["current", "busVoltage", "shuntVoltage"]
+        self.label = label
+        self.channel = channel
+        self.type = type
+
+    def _busVoltage(self, sensor):
+      	busvoltage = sensor.getBusVoltage_V(self.channel)
+        return busvoltage
+
+    def _shuntVoltage(self, sensor):
+      	shuntvoltage = sensor.getShuntVoltage_mV(self.channel) / 1000
+        return shuntvoltage
+
+    def _current(self, sensor):
+        return sensor.getCurrent_mA(self.channel) / 1000
+
+    def read(self, sensor):
+        return self.callables[self.type](sensor)
+
 
 class MECSBoard:
     """
@@ -73,11 +99,19 @@ class MECSBoard:
             raise MECSHardwareError("No ADC bus detected")
 
         self.adc = ADCPi(bus, rate=bit_rate)
+        self.INA3221 = SDL_Pi_INA3221()
 
         # ADCPi calibration information
         try:
             self.analogue_sensors = {section: ADCSensor(section, self.config[section], input_impedance) for section in self.config if self.config.get(section, 'protocol', fallback=False) == "adc"}
         except UnknownType as exc:
+            log.error(exc)
+            exit(1)
+
+        # INA3221 calibration information
+        try:
+            self.power_sensors = {section: INA3221Config(section, self.config[section]['channel'], self.config[section]['type']) for section in self.config if self.config.get(section, 'protocol', fallback=False) == "INA3221"}
+        except AssertionError as exc:
             log.error(exc)
             exit(1)
 
@@ -158,6 +192,13 @@ class MECSBoard:
         # we should check if we can pass recognisably invalid data through to the server
         return (None, None)
 
+    def get_power(self):
+        return {
+            sensor.label: sensor.read(self.INA3221))
+            for sensor in self.power_sensors.values()
+        }
+
+
 
     def getSample(self, channel, N):
         self.adc.set_conversion_mode(1)
@@ -197,6 +238,8 @@ class MECSBoard:
         result['PM2.5'] = PM2_5
         result['PM10'] = PM10
         result['temperature'] = self.get_temperature()
+
+        result.update(self.get_power());
 
         return {
             "dt": datetime.utcnow(),
