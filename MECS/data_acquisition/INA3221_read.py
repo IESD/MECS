@@ -42,8 +42,8 @@ INA3221_CONFIG_VSH_CT1  =                (0x0010)  # Vshunt bit 1 Conversion tim
 INA3221_CONFIG_VSH_CT0  =                (0x0008)  # Vshunt bit 0 Conversion time - See table 5 spec
 
 INA3221_CONFIG_MODE_2   =                (0x0004)  # Operating Mode bit 2 - See table 6 spec
-INA3221_CONFIG_MODE_1   = 	         (0x0002)  # Operating Mode bit 1 - See table 6 spec
-INA3221_CONFIG_MODE_0 	=                (0x0001)  # Operating Mode bit 0 - See table 6 spec
+INA3221_CONFIG_MODE_1   =            (0x0002)  # Operating Mode bit 1 - See table 6 spec
+INA3221_CONFIG_MODE_0   =                (0x0001)  # Operating Mode bit 0 - See table 6 spec
 
 #/*=========================================================================*/
 
@@ -73,14 +73,14 @@ class SDL_Pi_INA3221():
     def __init__(self, twi=1, addr=INA3221_ADDRESS, shunt_resistor = SHUNT_RESISTOR_VALUE  ):
         self._bus = smbus.SMBus(twi)
         self._addr = addr
-        config = INA3221_CONFIG_ENABLE_CHAN1 |		\
-                    INA3221_CONFIG_ENABLE_CHAN2 |	\
-                    INA3221_CONFIG_ENABLE_CHAN3 |	\
-                    INA3221_CONFIG_AVG1 |		\
-                    INA3221_CONFIG_VBUS_CT2 |		\
-                    INA3221_CONFIG_VSH_CT2 |		\
-                    INA3221_CONFIG_MODE_2 |		\
-                    INA3221_CONFIG_MODE_1 |		\
+        config = INA3221_CONFIG_ENABLE_CHAN1 |    \
+                    INA3221_CONFIG_ENABLE_CHAN2 |  \
+                    INA3221_CONFIG_ENABLE_CHAN3 |  \
+                    INA3221_CONFIG_AVG1 |    \
+                    INA3221_CONFIG_VBUS_CT2 |    \
+                    INA3221_CONFIG_VSH_CT2 |    \
+                    INA3221_CONFIG_MODE_2 |    \
+                    INA3221_CONFIG_MODE_1 |    \
                     INA3221_CONFIG_MODE_0
 
 
@@ -124,7 +124,7 @@ class SDL_Pi_INA3221():
 
 
     def _getBusVoltage_raw(self, channel):
-	#Gets the raw bus voltage (16-bit signed integer, so +-32767)
+  #Gets the raw bus voltage (16-bit signed integer, so +-32767)
 
         value = self._read_register_little_endian(INA3221_REG_BUSVOLTAGE_1+(channel -1) *2)
         if value > 32767:
@@ -132,7 +132,7 @@ class SDL_Pi_INA3221():
         return value
 
     def _getShuntVoltage_raw(self, channel):
-	#Gets the raw shunt voltage (16-bit signed integer, so +-32767)
+  #Gets the raw shunt voltage (16-bit signed integer, so +-32767)
 
         value = self._read_register_little_endian(INA3221_REG_SHUNTVOLTAGE_1+(channel -1) *2)
         if value > 32767:
@@ -142,14 +142,14 @@ class SDL_Pi_INA3221():
     # public functions
 
     def getBusVoltage_V(self, channel):
-	# Gets the Bus voltage in volts
+  # Gets the Bus voltage in volts
 
         value = self._getBusVoltage_raw(channel)
         return value * 0.001
 
 
     def getShuntVoltage_mV(self, channel):
-	# Gets the shunt voltage in mV (so +-168.3mV)
+  # Gets the shunt voltage in mV (so +-168.3mV)
 
         value = self._getShuntVoltage_raw(channel)
         return value * 0.005

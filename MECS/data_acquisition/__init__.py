@@ -63,11 +63,11 @@ class INA3221Config:
         self.type = type
 
     def _busVoltage(self, sensor):
-      	busvoltage = sensor.getBusVoltage_V(self.channel)
+        busvoltage = sensor.getBusVoltage_V(self.channel)
         return busvoltage
 
     def _shuntVoltage(self, sensor):
-      	shuntvoltage = sensor.getShuntVoltage_mV(self.channel) / 1000
+        shuntvoltage = sensor.getShuntVoltage_mV(self.channel) / 1000
         return shuntvoltage
 
     def _current(self, sensor):
