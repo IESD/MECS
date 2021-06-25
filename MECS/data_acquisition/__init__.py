@@ -10,7 +10,7 @@ from .ADCPi import ABEHelpers, ADCPi
 from .sds011.SDS011 import SDS011, serial
 from w1thermsensor import W1ThermSensor
 from w1thermsensor.errors import KernelModuleLoadError, NoSensorFoundError, ResetValueError, SensorNotReadyError
-
+from INA3221 import SDL_Pi_INA3221
 
 log = logging.getLogger(__name__)
 
