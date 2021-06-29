@@ -25,7 +25,7 @@ pip3 install matplotlib
 
 # 4b. Install MECS
 cd MECS
-python3 MECS/setup.py install
+python3 setup.py install
 cd ..
 
 # 4c. Prepare configuration
