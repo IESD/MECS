@@ -11,6 +11,9 @@ fi
 # 1. modprobe setup
 
 # 2. apt-get install stuff
+apt install git
+
+# 2a. Pull the git repo
 
 # 3. copy scripts to /usr/local/bin
 # Copy the waveshare setup script to /usr/local/bin
