@@ -24,15 +24,21 @@ pip3 install pandas
 pip3 install matplotlib
 
 # 4b. Install MECS
+cd MECS
 python3 MECS/setup.py install
+cd ..
+
+# 4c. Prepare configuration
+cp MECS/MECS.ini.template ./MECS.ini
+cp MECS/calibration.ini.template ./calibration.ini
 
 # 5. register service definitions with systemd
 cp MECS/services/mecs-generate.service /etc/systemd/system
-#cp MECS/services/waveshare-gpio.service /etc/systemd/system
+# cp MECS/services/waveshare-gpio.service /etc/systemd/system
 
 # 6. enable services
 systemctl enable mecs-generate
-#systemctl enable waveshare-gpio
+# systemctl enable waveshare-gpio
 
 # 7. install crontabs
 # specify pi user for the pi user cron
@@ -41,7 +47,7 @@ crontab MECS/cron/root.cron
 
 # 8. copy scripts to /usr/local/bin
 # Copy the waveshare setup script to /usr/local/bin
-#cp MECS/waveshare_gpio_init.sh /usr/local/bin/
-#chmod 777 /usr/local/bin/waveshare_gpio_init.sh
+# cp MECS/waveshare_gpio_init.sh /usr/local/bin/
+# chmod 777 /usr/local/bin/waveshare_gpio_init.sh
 
 # 9. reboot
