@@ -14,6 +14,7 @@ fi
 apt install git
 
 # 2a. Pull the git repo
+git clone https://github.com/IESD/MECS.git
 
 # 3. copy scripts to /usr/local/bin
 # Copy the waveshare setup script to /usr/local/bin
