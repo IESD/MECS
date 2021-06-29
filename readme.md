@@ -4,18 +4,50 @@ A python library for monitoring multiple sensor values on a MECS raspberry PI.
 
 > This is a draft tool at the moment, subject to change
 
-## Installation
+## Set up an sd-card
 
-Installing is via the `setup.py` file for now.
-
+1. Flash raspberry pi OS lite to an sd-card (minimum 32GB).
+1. Enable headless ssh access by adding a file named `ssh` into the boot partition
 ```bash
-python setup.py install
+cd /path/to/boot/partition
+touch ssh
 ```
+> HINT: If you have problems with this, try using putty to connect - this worked for us in the lab
+
+1. Log into the pi via ssh
+
+## Initialise the pi
+
+1. Set the pi user password
+```bash
+passwd
+```
+
+1. Download the installation script
+```bash
+wget https://raw.githubusercontent.com/IESD/MECS/master/scripts/make_mecs.sh
+```
+
+1. Make the script executable
+```bash
+sudo chmod 777 make_mecs.sh
+```
+
+1. Execute the script
+```bash
+sudo ./make_mecs.sh
+```
+
+This will install a lot of stuff.
+You will see lots of output.
+Check for any errors.
+
+## Configuration
 
 A configuration file is needed to use the system.
 A template is provided.
-By default, a copy of this should be placed in `~/.MECS/MECS.ini`.
-For advanced usage, a configuration file can be specified as the first and only argument for the following commands.
+By default, a copy of this will be placed in `~/.MECS/MECS.ini`.
+For advanced usage, a configuration file can be specified as the first and only argument for all the following commands.
 
 ## Usage
 
@@ -34,7 +66,7 @@ mecs-status
 
 ```
 
-To initialise a pi with a unique `HARDWARE_ID` and to set the `UNIT_ID` to a user-specified integer.
+To initialise the `UNIT_ID` to a user-specified integer.
 
 ```bash
 mecs-init
