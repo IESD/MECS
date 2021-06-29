@@ -21,6 +21,7 @@ git clone https://github.com/IESD/MECS.git
 # 4a. pip install some annoying dependencies
 pip3 install numpy
 pip3 install pandas
+pip3 install matplotlib
 
 # 4b. Install MECS
 python3 MECS/setup.py install
