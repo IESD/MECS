@@ -15,6 +15,8 @@ modprobe w1-therm
 # 2. apt-get install stuff
 apt install git
 apt install python3-pip
+apt install python-smbus
+apt install i2c-tools
 
 # 3. Clone the git repo
 git clone https://github.com/IESD/MECS.git
