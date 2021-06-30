@@ -11,6 +11,7 @@ fi
 # 1. modprobe setup
 modprobe w1-gpio
 modprobe w1-therm
+modprobe i2c-dev
 
 # 2. apt-get install stuff
 apt install git
@@ -35,7 +36,10 @@ cd ..
 # 4c. Prepare configuration
 cp MECS/MECS.ini.template ./MECS.ini
 cp MECS/calibration.ini.template ./calibration.ini
+
+#4d. Ensure i2c module is loaded and uart / i2c are enabled at boot
 cp MECS/scripts/config.txt /boot/config.txt
+grep -qxF "i2c-dev" /etc/modules || echo "i2c-dev" >> /etc/modules
 
 # 5. register service definitions with systemd
 cp MECS/services/mecs-generate.service /etc/systemd/system
