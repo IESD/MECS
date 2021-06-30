@@ -9,12 +9,14 @@ if (( $EUID != 0 )); then
 fi
 
 # 1. modprobe setup
+modprobe w1-gpio
+modprobe w1-therm
 
 # 2. apt-get install stuff
 apt install git
 apt install python3-pip
 
-# 2a. Clone the git repo
+# 3. Clone the git repo
 git clone https://github.com/IESD/MECS.git
 
 # 4. Prepare python
