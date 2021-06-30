@@ -35,7 +35,7 @@ cd ..
 # 4c. Prepare configuration
 cp MECS/MECS.ini.template ./MECS.ini
 cp MECS/calibration.ini.template ./calibration.ini
-cp scripts/config.txt /boot/config.txt
+cp MECS/scripts/config.txt /boot/config.txt
 
 # 5. register service definitions with systemd
 cp MECS/services/mecs-generate.service /etc/systemd/system
