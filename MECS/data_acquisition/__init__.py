@@ -124,11 +124,11 @@ class MECSBoard:
 
         # Initialise the SDS011 air particulate density sensor.
         try:
-            self.particulate_sensor = SDS011(self.config['SDS011'].get('serial_port'), use_query_mode=True)
+            self.particulate_sensor = SDS011(self.config['particulates'].get('serial_port'), use_query_mode=True)
             self.particulate_sensor.sleep() # Turn it off (to avoid draining power?)
         except serial.serialutil.SerialException as exc:
             log.error(exc)
-            log.warning(f"Particulate sensor not found at {self.config['SDS011'].get('serial_port')}")
+            log.warning(f"Particulate sensor not found at {self.config['particulates'].get('serial_port')}")
             self.particulate_sensor = None
 
         try:
