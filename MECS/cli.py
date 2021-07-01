@@ -14,6 +14,10 @@ from .communication import MECSServer
 
 log = logging.getLogger(__name__)
 
+# exit codes
+WITH_RESTART = 1    # we have set restart = on-failure in the service
+WITHOUT_RESTART = 0 # so exit successfully if we don't want to restart
+
 # HARDWARE_ID should probably just be calculated every time?
 HARDWARE_ID = hex(uuid.getnode())
 
@@ -42,10 +46,10 @@ try:
     PLOTTING_FOLDER = os.path.join(ROOT, conf.get('MECS', 'plotting_folder', fallback="plots"))
 except NoOptionError as exc:
     log.warning(f"Missing option '{exc.option}' in section [{exc.section}] of config file {args.conf}")
-    exit(1)
+    exit(WITHOUT_RESTART)
 except NoSectionError as exc:
     log.warning(f"Missing section '{exc.section}' in config file {args.conf}")
-    exit(1)
+    exit(WITHOUT_RESTART)
 
 try:
     # these are required for uploading to a server
@@ -73,12 +77,13 @@ def get_board():
     try:
         return MECSBoard(bit_rate, input_impedance, CALIBRATION)
     except MECSError as exc:
+        log.warning("Exiting, could not create MECSBoard")
         log.exception(exc)
-        log.error("Exiting, could not create MECSBoard")
-        exit(1)
+        exit(WITHOUT_RESTART)
     except Exception as exc:
         log.warning("Unexpected Error!")
         log.exception(exc)
+        exit(WITHOUT_RESTART)
 
 def get_readings_function(FAKE):
     if FAKE:
@@ -138,7 +143,7 @@ def aggregate():
 def register():
     if not server:
         log.error("No connection to server!")
-        exit(1)
+        exit(WITHOUT_RESTART)
     log.info(f"MECS v{__version__} registering with server")
     os.makedirs(ARCHIVE_FOLDER, exist_ok=True)
     server.register()
@@ -148,7 +153,7 @@ def register():
 def upload():
     if not server:
         log.error("No connection to server!")
-        exit(1)
+        exit(WITHOUT_RESTART)
     log.info(f"MECS v{__version__} uploading data")
     server.upload(AGGREGATED_FOLDER, REMOTE_FOLDER, ARCHIVE_FOLDER)
 

@@ -7,7 +7,7 @@ ExecStart=mecs-generate
 WorkingDirectory=/home/pi/
 StandardOutput=inherit
 StandardError=inherit
-Restart=always
+Restart=on-failure
 User=pi
 
 [Install]
