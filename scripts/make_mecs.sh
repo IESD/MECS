@@ -16,8 +16,9 @@ modprobe i2c-dev
 # 2. apt-get install stuff
 apt install git
 apt install python3-pip
-apt install python-smbus
-apt install i2c-tools
+apt install python-smbus      # For i2c bus provision
+apt install i2c-tools         # For i2c bus comms
+apt install libatlas-base-dev # for numpy blas issues
 
 # 3. Clone the git repo
 git clone https://github.com/IESD/MECS.git
