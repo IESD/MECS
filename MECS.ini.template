@@ -52,8 +52,8 @@ level = NOTSET
 formatter = generic
 
 [handler_file]
-class = FileHandler
-args = ("/home/pi/logs/MECS.log",)
+class = handlers.RotatingFileHandler
+args = ("/home/pi/logs/MECS.log", 'a', 100000, 5)
 level = NOTSET
 formatter = generic
 
