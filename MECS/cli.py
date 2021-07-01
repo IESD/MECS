@@ -73,9 +73,12 @@ def get_board():
     try:
         return MECSBoard(bit_rate, input_impedance, CALIBRATION)
     except MECSError as exc:
-        log.error(exc)
+        log.exception(exc)
         log.error("Exiting, could not create MECSBoard")
         exit(1)
+    except Exception as exc:
+        log.warning("Unexpected Error!")
+        log.exception(exc)
 
 def get_readings_function(FAKE):
     if FAKE:
