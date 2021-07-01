@@ -57,7 +57,8 @@ class INA3221Config:
             "busVoltage": self._busVoltage,
             "shuntVoltage": self._shuntVoltage
         }
-        assert type in ["current", "busVoltage", "shuntVoltage"]
+        if type not in ["current", "busVoltage", "shuntVoltage"]:
+            raise UnknownType(type)
         self.label = label
         self.channel = channel
         self.type = type
@@ -108,18 +109,10 @@ class MECSBoard:
             self.INA3221 = None
 
         # ADCPi calibration information
-        try:
-            self.analogue_sensors = {section: ADCSensor(section, self.config[section], input_impedance) for section in self.config if self.config.get(section, 'protocol', fallback=False) == "adc"}
-        except UnknownType as exc:
-            log.error(exc)
-            exit(1)
+        self.analogue_sensors = {section: ADCSensor(section, self.config[section], input_impedance) for section in self.config if self.config.get(section, 'protocol', fallback=False) == "adc"}
 
         # INA3221 calibration information
-        try:
-            self.power_sensors = {section: INA3221Config(section, self.config[section].getint('channel'), self.config[section]['type']) for section in self.config if self.config.get(section, 'protocol', fallback=False) == "INA3221"}
-        except AssertionError as exc:
-            log.error(exc)
-            exit(1)
+        self.power_sensors = {section: INA3221Config(section, self.config[section].getint('channel'), self.config[section]['type']) for section in self.config if self.config.get(section, 'protocol', fallback=False) == "INA3221"}
 
         # Initialise the SDS011 air particulate density sensor.
         try:
@@ -203,8 +196,6 @@ class MECSBoard:
             sensor.label: sensor.read(self.INA3221)
             for sensor in self.power_sensors.values()
         }
-
-
 
     def getSample(self, channel, N):
         self.adc.set_conversion_mode(1)
