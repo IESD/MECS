@@ -75,7 +75,7 @@ class INA3221Config:
         return sensor.getCurrent_mA(self.channel) / 1000
 
     def read(self, sensor):
-        return self.callables[self.type](sensor)
+        return self.callables[self.type](sensor) if sensor else None
 
 
 class MECSBoard:
@@ -100,7 +100,13 @@ class MECSBoard:
             raise MECSHardwareError("No ADC bus detected")
 
         self.adc = ADCPi(bus, rate=bit_rate)
-        self.INA3221 = SDL_Pi_INA3221()
+
+        try:
+            self.INA3221 = SDL_Pi_INA3221()
+        except OSError as exc:
+            log.warn("Cannot communicate with INA3221, is it powered and connected to serial?")
+            log.exception(exc)
+            self.INA3221 = None
 
         # ADCPi calibration information
         try:
