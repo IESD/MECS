@@ -16,7 +16,6 @@ from .INA3221 import SDL_Pi_INA3221
 log = logging.getLogger(__name__)
 
 class UnknownType(MECSConfigError): pass
-class MissingSensor(MECSHardwareError): pass
 
 # TODO: test with numpy for speed improvements
 def rms(readings):
