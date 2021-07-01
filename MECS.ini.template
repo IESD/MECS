@@ -16,7 +16,7 @@ aggregated_folder = aggregated
 archive_folder = uploaded
 
 [MECS-SERVER]
-username = 
+username =
 host =
 port = 22
 destination_root = data
@@ -31,7 +31,7 @@ install = False
 keys = root, MECS
 
 [handlers]
-keys = console
+keys = console, file
 
 [formatters]
 keys = generic
@@ -41,13 +41,19 @@ handlers = console
 
 [logger_MECS]
 level = DEBUG
-handlers = console
+handlers = console, file
 qualname = MECS
 propagate = 0
 
 [handler_console]
 class = StreamHandler
 args = (sys.stdout,)
+level = NOTSET
+formatter = generic
+
+[handler_file]
+class = FileHandler
+args = ("/home/pi/logs/MECS.log",)
 level = NOTSET
 formatter = generic
 

@@ -35,8 +35,9 @@ python3 setup.py install
 cd ..
 
 # 4c. Prepare configuration
-cp MECS/MECS.ini.template ./MECS.ini
-cp MECS/calibration.ini.template ./calibration.ini
+sudo -u pi cp MECS/MECS.ini.template ./MECS.ini
+sudo -u pi cp MECS/calibration.ini.template ./calibration.ini
+sudo -u pi mkdir logs
 
 #4d. Ensure i2c module is loaded and uart / i2c are enabled at boot
 cp MECS/scripts/config.txt /boot/config.txt
