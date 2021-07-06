@@ -3,6 +3,7 @@ plotting raw data as images using matplotlib
 """
 import logging
 import glob
+import math
 import os.path
 
 import pandas as pd
@@ -19,7 +20,9 @@ def plot_file(data_path, image_path):
 
 def plot_frame(df, title, image_path):
     cols = df.columns
-    fig, axes = plt.subplots(5, 2, figsize=(14, 12))
+    width = math.ceil(len(cols)**0.5)
+    height = math.ceil(len(cols)/width)
+    fig, axes = plt.subplots(width, height, figsize=(16, 12))
     fig.suptitle(title)
     for i, (c, ax) in enumerate(zip(cols, axes.flatten())):
         log.debug(f"Plotting {c}")
