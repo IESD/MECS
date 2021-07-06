@@ -45,10 +45,12 @@ grep -qxF "i2c-dev" /etc/modules || echo "i2c-dev" >> /etc/modules
 
 # 5. register service definitions with systemd
 cp MECS/services/mecs-generate.service /etc/systemd/system
+cp MECS/services/ppp.service /etc/systemd/system
 # cp MECS/services/waveshare-gpio.service /etc/systemd/system
 
 # 6. enable services
 systemctl enable mecs-generate
+systemctl enable ppp
 # systemctl enable waveshare-gpio
 
 # 7. install crontabs
