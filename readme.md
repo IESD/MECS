@@ -59,7 +59,6 @@ mecs-status
 > *********************************************
 > * MECS version: 0.1.0                       *
 > *         conf: /home/graeme/.MECS/MECS.ini *
-> *  HARDWARE_ID: unidentified                *
 > *      UNIT_ID: unidentified                *
 > *           DT: 2021-05-22 09:34:37 (UTC)   *
 > *********************************************
