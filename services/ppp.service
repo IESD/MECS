@@ -1,0 +1,14 @@
+[Unit]
+Description=ppp daemon
+After=network.target
+
+[Service]
+ExecStart=pppd call gprs
+WorkingDirectory=/home/pi/
+StandardOutput=inherit
+StandardError=inherit
+Restart=on-failure
+User=root
+
+[Install]
+WantedBy=multi-user.target
