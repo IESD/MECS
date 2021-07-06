@@ -4,7 +4,7 @@ it should be scheduled to run every hour,
 it merges the available files into one file per day
 and saves it in a folder ready for uploading.
 """
-from datetime import date
+from datetime import datetime
 import glob
 import json
 import os.path
@@ -26,7 +26,6 @@ def aggregate(source_folder, destination_folder):
     Converts minutely files for a day into a single file
     Creates an aggregated file in the destination directory for each folder in the source directory
     """
-    today = date.today().strftime("%Y%m%d")
     os.makedirs(destination_folder, exist_ok=True)
     folders = sorted(next(os.walk(source_folder))[1])
     for folder in folders:
@@ -37,6 +36,7 @@ def aggregate(source_folder, destination_folder):
         df.to_json(aggregated_path, orient="split", date_format="iso")
 
         # archiving when the data is from before today
+        today = datetime.utcnow().strftime("%Y%m%d")
         if(folder < today):
             archive_path = os.path.join(source_folder, f"{folder}.tar.gz")
             log.info(f"archiving {source_path} to {archive_path}")

@@ -30,15 +30,11 @@ def initialise_unit_id(path, conf):
     """Write a user-specified identifier to the config file"""
     log = logging.getLogger(__name__)
     existing_unit_id = conf.getint('MECS', 'unit_id', fallback=False)
-    try:
-        requested_unit_id = int(input(f"Enter a new Unit ID (currently {existing_unit_id if existing_unit_id else 'not set'}): "))
-    except ValueError:
-        log.error("Invalid, user_id must be integer")
-        exit(1)
+    requested_unit_id = input(f"Enter a new Unit ID (currently {existing_unit_id if existing_unit_id else 'not set'}): ")
     confirm = f"Change unit_id from {existing_unit_id}? (y/n) "
     if existing_unit_id and requested_unit_id != existing_unit_id and input(confirm).lower() != "y":
         return
-    conf['MECS']['unit_id'] = str(requested_unit_id)
+    conf['MECS']['unit_id'] = requested_unit_id
     save_config(path, conf)
     log.info(f"unit_id set: {requested_unit_id}")
 

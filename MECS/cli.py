@@ -18,14 +18,11 @@ log = logging.getLogger(__name__)
 WITH_RESTART = 1    # we have set restart = on-failure in the service
 WITHOUT_RESTART = 0 # so exit successfully if we don't want to restart
 
-# HARDWARE_ID should probably just be calculated every time?
-HARDWARE_ID = hex(uuid.getnode())
-
 # UNIT_ID can be unset but is required for upload as it determines the folder
-UNIT_ID = conf.get('MECS', 'unit_id', fallback="unidentified").zfill(5)
+UNIT_ID = conf.get('MECS', 'unit_id', fallback="unidentified")
 
 # we store the data under the hardware id and the unit_id
-REMOTE_FOLDER = f"{HARDWARE_ID}/{UNIT_ID}"
+REMOTE_FOLDER = f"{UNIT_ID}"
 
 # Are we recording fake values?
 # TODO: set the default to False so that configuration makes more sense?
@@ -118,7 +115,6 @@ def status():
     data = OrderedDict({
         "MECS version": __version__,
         "conf": args.conf,
-        "HARDWARE_ID": HARDWARE_ID,
         "UNIT_ID": UNIT_ID,
         "DT": datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S (UTC)'),
         "FAKE": str(FAKE),
@@ -147,7 +143,6 @@ def register():
     log.info(f"MECS v{__version__} registering with server")
     os.makedirs(ARCHIVE_FOLDER, exist_ok=True)
     server.register()
-    server.create_remote_folder(HARDWARE_ID)
     server.create_remote_folder(REMOTE_FOLDER)
 
 def upload():
