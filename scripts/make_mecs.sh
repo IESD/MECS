@@ -40,7 +40,7 @@ sudo -u pi cp MECS/calibration.ini.template ./calibration.ini
 sudo -u pi mkdir logs
 
 #4d. Ensure i2c module is loaded and uart / i2c are enabled at boot
-cp MECS/scripts/config.txt /boot/config.txt
+cp MECS/config/config.txt /boot/config.txt
 grep -qxF "i2c-dev" /etc/modules || echo "i2c-dev" >> /etc/modules
 
 # 5. register service definitions with systemd
