@@ -45,12 +45,10 @@ def plot_all(source_folder, dest_folder):
         destination_file = os.path.join(dest_folder, f"{name}.png")
         plot_file(source_file, destination_file)
 
-def plot_as_one(source_folder, dest_folder):
-    os.makedirs(dest_folder, exist_ok=True)
+def plot_as_one(source_folder, destination_file):
     dfs = []
     files = sorted(glob.glob(os.path.join(source_folder, "*.json")))
     for source_file in files:
         dfs.append(pd.read_json(source_file, orient="split"))
-    destination_file = os.path.join(dest_folder, f"ALL.png")
     df = pd.concat(dfs)
     plot_frame(df, "ALL MECS data so far", destination_file)
