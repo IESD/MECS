@@ -19,6 +19,7 @@ apt install python3-pip
 apt install python-smbus      # For i2c bus provision
 apt install i2c-tools         # For i2c bus comms
 apt install libatlas-base-dev # for numpy blas issues
+apt install nginx             # For data transfer over local wifi
 
 # 3. Clone the git repo
 git clone https://github.com/IESD/MECS.git
@@ -27,7 +28,7 @@ git clone https://github.com/IESD/MECS.git
 # 4a. pip install some annoying dependencies
 pip3 install numpy
 pip3 install pandas
-pip3 install matplotlib
+pip3 install matplotlib   # matplotlib could be removed - its not used on the pi (yet)
 
 # 4b. Install MECS
 cd MECS
@@ -43,6 +44,10 @@ sudo -u pi mkdir logs
 cp MECS/config/config.txt /boot/config.txt
 grep -qxF "i2c-dev" /etc/modules || echo "i2c-dev" >> /etc/modules
 
+# 4e. Configure nginx
+cp MECS/config/nginx.conf /etc/nginx/sites-available/mecs.conf
+ln -s /etc/nginx/sites-available/mecs.conf /etc/nginx/sites-enabled/mecs.conf
+
 # 5. register service definitions with systemd
 cp MECS/services/mecs-generate.service /etc/systemd/system
 cp MECS/services/ppp.service /etc/systemd/system
@@ -51,6 +56,7 @@ cp MECS/services/ppp.service /etc/systemd/system
 # 6. enable services
 systemctl enable mecs-generate
 systemctl enable ppp
+systemctl enable nginx
 # systemctl enable waveshare-gpio
 
 # 7. install crontabs
