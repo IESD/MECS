@@ -20,6 +20,8 @@ apt install python-smbus      # For i2c bus provision
 apt install i2c-tools         # For i2c bus comms
 apt install libatlas-base-dev # for numpy blas issues
 apt install nginx             # For data transfer over local wifi
+apt instal hostapd            # for hosting access point
+# apt install dnsmasq           # basic domain name lookup
 
 # 3. Clone the git repo
 git clone https://github.com/IESD/MECS.git
@@ -57,6 +59,8 @@ cp MECS/services/ppp.service /etc/systemd/system
 systemctl enable mecs-generate
 systemctl enable ppp
 systemctl enable nginx
+systemctl unmask hostapd
+systemctl enable hostapd
 # systemctl enable waveshare-gpio
 
 # 7. install crontabs
