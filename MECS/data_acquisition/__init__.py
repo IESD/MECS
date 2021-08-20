@@ -109,6 +109,7 @@ class MECSBoard:
 
         try:
             self.INA3221 = SDL_Pi_INA3221()
+            log.debug("Added INA3221 sensor")
         except OSError as exc:
             log.warn("Cannot communicate with INA3221, is it powered and connected to serial?")
             log.exception(exc)
