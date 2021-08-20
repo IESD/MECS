@@ -61,9 +61,8 @@ channel = 1
 type = busVoltage
 
 [particulates]
-protocol = serial
-type = SDS011
-serial_port = /dev/ttyUSB0
+protocol = i2c
+type = SNGCJA5
 
 [temperature]
 protocol = GPIO
