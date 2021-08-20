@@ -1,3 +1,3 @@
-[submodule ".\\MECS\\data_acquisition\\PanasonicSNGCJA5"]
-	path = .\\MECS\\data_acquisition\\PanasonicSNGCJA5
+[submodule "MECS/data_acquisition/PanasonicSNGCJA5"]
+	path = MECS/data_acquisition/PanasonicSNGCJA5
 	url = https://github.com/IESD/PanasonicSNGCJA5
