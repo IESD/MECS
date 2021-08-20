@@ -15,15 +15,15 @@ modprobe i2c-dev
 
 # 2. apt-get install stuff
 apt update
-apt install git
-apt install python3-pip
-apt install python-smbus      # For i2c bus provision
-apt install i2c-tools         # For i2c bus comms
-apt install libatlas-base-dev # for numpy blas issues
-apt install nginx             # For data transfer over local wifi
-apt install hostapd            # for hosting access point
-# apt install dnsmasq           # basic domain name lookup
-apt install ufw
+apt install -y git
+apt install -y python3-pip
+apt install -y python-smbus      # For i2c bus provision
+apt install -y i2c-tools         # For i2c bus comms
+apt install -y libatlas-base-dev # for numpy blas issues
+apt install -y nginx             # For data transfer over local wifi
+apt install -y hostapd            # for hosting access point
+apt install -y dnsmasq           # basic domain name lookup
+apt install -y ufw
 
 # 3. Clone the git repo
 git clone https://github.com/IESD/MECS.git
