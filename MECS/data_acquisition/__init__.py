@@ -63,6 +63,8 @@ class INA3221Config:
         self.label = label
         self.channel = channel
         self.type = type
+        log.debug(f"{self} registered")
+
 
     def _busVoltage(self, sensor):
         busvoltage = sensor.getBusVoltage_V(self.channel)
@@ -77,6 +79,9 @@ class INA3221Config:
 
     def read(self, sensor):
         return self.callables[self.type](sensor) if sensor else None
+
+    def __repr__(self):
+        return f"INA3221Config({self.label!r}, channel={self.channel!r}, type={self.type!r})"
 
 
 class MECSBoard:
@@ -119,6 +124,7 @@ class MECSBoard:
         try:
             if self.config['particulates'].get('type',fallback=False) == 'SNGCJA5':
                 self.particulate_sensor = SNGCJA5(i2c_bus_no=1, logger=log)
+                log.debug(f"Add SNGCJA5 particulate sensor")
             else:
                 log.warn(f"Unknown particulate sensor type specified : {self.config['particulates'].get('type',fallback=False)}")
         except serial.serialutil.SerialException as exc:
