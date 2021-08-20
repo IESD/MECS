@@ -14,14 +14,16 @@ modprobe w1-therm
 modprobe i2c-dev
 
 # 2. apt-get install stuff
+apt update
 apt install git
 apt install python3-pip
 apt install python-smbus      # For i2c bus provision
 apt install i2c-tools         # For i2c bus comms
 apt install libatlas-base-dev # for numpy blas issues
 apt install nginx             # For data transfer over local wifi
-apt instal hostapd            # for hosting access point
+apt install hostapd            # for hosting access point
 # apt install dnsmasq           # basic domain name lookup
+apt install ufw
 
 # 3. Clone the git repo
 git clone https://github.com/IESD/MECS.git
@@ -75,3 +77,9 @@ crontab MECS/cron/root.cron
 
 # 9. reboot
 # reboot
+
+# lock down the firewall
+ufw allow in on eth0 to any port 22
+ufw allow in on wlan0 to any port 80
+ufw allow in on wlan0 to any port 443
+ufw enable

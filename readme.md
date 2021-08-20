@@ -12,9 +12,10 @@ A python library for monitoring multiple sensor values on a MECS raspberry PI.
 cd /path/to/boot/partition
 touch ssh
 ```
-> HINT: If you have problems with this, try using putty to connect - this worked for us in the lab
+3. Insert sd card into your raspberry pi
 
-1. Log into the pi via ssh
+4. Log into the pi via ssh
+> HINT: If you have problems with this, try using putty to connect - this worked for us in the lab
 
 ## Initialise the pi
 
