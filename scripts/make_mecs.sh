@@ -52,6 +52,15 @@ grep -qxF "i2c-dev" /etc/modules || echo "i2c-dev" >> /etc/modules
 cp MECS/config/nginx.conf /etc/nginx/sites-available/mecs.conf
 ln -s /etc/nginx/sites-available/mecs.conf /etc/nginx/sites-enabled/mecs.conf
 
+# 4f configure hostapd
+cp MECS/config/hostapd.conf /etc/hostapd/hostapd.conf
+
+# 4g configure dhcpcd
+cp MECS/config/dhcpcd.conf /etc/dhcpcd.conf
+
+# 4h configure dhcpcd
+cp MECS/config/dnsmasq.conf /etc/dnsmasq.conf
+
 # 5. register service definitions with systemd
 cp MECS/services/mecs-generate.service /etc/systemd/system
 cp MECS/services/ppp.service /etc/systemd/system
