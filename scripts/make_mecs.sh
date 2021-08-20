@@ -72,6 +72,7 @@ systemctl enable ppp
 systemctl enable nginx
 systemctl unmask hostapd
 systemctl enable hostapd
+systemctl enable dnsmasq
 # systemctl enable waveshare-gpio
 
 # 7. install crontabs
