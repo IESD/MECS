@@ -12,6 +12,7 @@ from .. import MECSConfigError, MECSHardwareError
 from .ADCPi import ABEHelpers, ADCPi
 from .sds011.SDS011 import SDS011, serial
 from .INA3221 import SDL_Pi_INA3221
+from .PanasonicSNGCJA5.sngcja5 import SNGCJA5
 
 log = logging.getLogger(__name__)
 
@@ -62,6 +63,8 @@ class INA3221Config:
         self.label = label
         self.channel = channel
         self.type = type
+        log.debug(f"{self} registered")
+
 
     def _busVoltage(self, sensor):
         busvoltage = sensor.getBusVoltage_V(self.channel)
@@ -76,6 +79,9 @@ class INA3221Config:
 
     def read(self, sensor):
         return self.callables[self.type](sensor) if sensor else None
+
+    def __repr__(self):
+        return f"INA3221Config({self.label!r}, channel={self.channel!r}, type={self.type!r})"
 
 
 class MECSBoard:
@@ -103,6 +109,7 @@ class MECSBoard:
 
         try:
             self.INA3221 = SDL_Pi_INA3221()
+            log.debug("Added INA3221 sensor")
         except OSError as exc:
             log.warn("Cannot communicate with INA3221, is it powered and connected to serial?")
             log.exception(exc)
@@ -116,11 +123,14 @@ class MECSBoard:
 
         # Initialise the SDS011 air particulate density sensor.
         try:
-            self.particulate_sensor = SDS011(self.config['particulates'].get('serial_port'), use_query_mode=True)
-            self.particulate_sensor.sleep() # Turn it off (to avoid draining power?)
+            if self.config['particulates'].get('type',fallback=False) == 'SNGCJA5':
+                self.particulate_sensor = SNGCJA5(i2c_bus_no=1)
+                log.debug(f"Add SNGCJA5 particulate sensor")
+            else:
+                log.warn(f"Unknown particulate sensor type specified : {self.config['particulates'].get('type',fallback=False)}")
         except serial.serialutil.SerialException as exc:
             log.error(exc)
-            log.warning(f"Particulate sensor not found at {self.config['particulates'].get('serial_port')}")
+            log.warning(f"Particulate sensor not found")
             self.particulate_sensor = None
 
         try:
@@ -160,9 +170,14 @@ class MECSBoard:
     def get_particulates(self):
         if not self.particulate_sensor:
             return (None, None)
+        all_data = self.particulate_sensor.get_measurement()
+        counts = all_data['sensor_data']['particle_count']
+        return counts['pm2.5'],counts['pm10']
+
+    # Old get_particulates for SDS011 sensor.
 
         # Wake the sensor up
-        self.particulate_sensor.sleep(sleep=False)
+ #       self.particulate_sensor.sleep(sleep=False)
 
         # possibly wait a moment before using it?
         # time.sleep(0.05)
@@ -171,25 +186,25 @@ class MECSBoard:
         # while(self.particulate_sensor.sleep(read=False, sleep=False)):
         #     time.sleep(0.01)
 
-        for attempt in range(10): # could be while((now - start_timestamp) < timeout)
-            values = self.particulate_sensor.query()
-            if bool(values) and len(values) == 2:
-                return values
+ #       for attempt in range(10): # could be while((now - start_timestamp) < timeout)
+  #          values = self.particulate_sensor.query()
+   #         if bool(values) and len(values) == 2:
+   #             return values
 
             # This is a classic "turning it off and on again" move
-            self.particulate_sensor.sleep()
-            self.particulate_sensor.sleep(sleep=False)
+    #        self.particulate_sensor.sleep()
+     #       self.particulate_sensor.sleep(sleep=False)
 
             # Can we afford to wait five seconds each try?
             # This adds up to a maximum of 50 seconds!
             # Alternative is get a timestamp and while((now - start_timestamp) < timeout)
-            time.sleep(5)
-
+ #           time.sleep(5)
+#
         # Put the sensor back to sleep before returning
-        self.particulate_sensor.sleep()
+  #      self.particulate_sensor.sleep()
 
         # we should check if we can pass recognisably invalid data through to the server
-        return (None, None)
+   #     return (None, None)
 
     def get_power(self):
         return {
