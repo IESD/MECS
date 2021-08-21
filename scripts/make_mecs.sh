@@ -90,5 +90,5 @@ crontab MECS/cron/root.cron
 # lock down the firewall
 ufw allow in on eth0 to any port 22
 ufw allow in on wlan0 to any port 80
-ufw allow in on wlan0 to any port 443
+ufw allow in on wlan0 to any port 53
 ufw enable
