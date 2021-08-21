@@ -49,8 +49,7 @@ cp MECS/config/config.txt /boot/config.txt
 grep -qxF "i2c-dev" /etc/modules || echo "i2c-dev" >> /etc/modules
 
 # 4e. Configure nginx
-cp MECS/config/nginx.conf /etc/nginx/sites-available/mecs.conf
-ln -s /etc/nginx/sites-available/mecs.conf /etc/nginx/sites-enabled/mecs.conf
+cp MECS/config/nginx.conf /etc/nginx/sites-available/default
 
 # 4f configure hostapd
 cp MECS/config/hostapd.conf /etc/hostapd/hostapd.conf
