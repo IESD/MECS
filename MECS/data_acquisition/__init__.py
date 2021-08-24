@@ -171,8 +171,9 @@ class MECSBoard:
         if not self.particulate_sensor:
             return (None, None)
         all_data = self.particulate_sensor.get_measurement()
-        counts = all_data['sensor_data']['particle_count']
-        return counts['pm2.5'],counts['pm10']
+        counts = all_data['sensor_data']['particle_count'] # Units in counts/sec according to documentation.  Unclear utility
+        densities = all_data['sensor_data']['particle_count'] # in ug/m3
+        return densities['pm2.5'],densities['pm10']
 
     # Old get_particulates for SDS011 sensor.
 
