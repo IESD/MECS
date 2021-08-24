@@ -124,7 +124,7 @@ class MECSBoard:
         # Initialise the SDS011 air particulate density sensor.
         try:
             if self.config['particulates'].get('type',fallback=False) == 'SNGCJA5':
-                self.particulate_sensor = SNGCJA5(i2c_bus_no=1)
+                self.particulate_sensor = SNGCJA5(i2c_bus_no=1,logger='MECS')
                 log.debug(f"Add SNGCJA5 particulate sensor")
             else:
                 log.warn(f"Unknown particulate sensor type specified : {self.config['particulates'].get('type',fallback=False)}")
