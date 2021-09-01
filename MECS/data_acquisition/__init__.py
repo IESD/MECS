@@ -169,41 +169,9 @@ class MECSBoard:
 
     def get_particulates(self):
         if not self.particulate_sensor:
-            return (None, None)
+            return {}
         return self.particulate_sensor.get_mass_density_data() # in ug/m3
         #counts = self.particulate_sensor.get_count_data()# Units in counts/sec according to documentation.  Unclear utility
-
-    # Old get_particulates for SDS011 sensor.
-
-        # Wake the sensor up
- #       self.particulate_sensor.sleep(sleep=False)
-
-        # possibly wait a moment before using it?
-        # time.sleep(0.05)
-
-        # or can we do this to read the status?
-        # while(self.particulate_sensor.sleep(read=False, sleep=False)):
-        #     time.sleep(0.01)
-
- #       for attempt in range(10): # could be while((now - start_timestamp) < timeout)
-  #          values = self.particulate_sensor.query()
-   #         if bool(values) and len(values) == 2:
-   #             return values
-
-            # This is a classic "turning it off and on again" move
-    #        self.particulate_sensor.sleep()
-     #       self.particulate_sensor.sleep(sleep=False)
-
-            # Can we afford to wait five seconds each try?
-            # This adds up to a maximum of 50 seconds!
-            # Alternative is get a timestamp and while((now - start_timestamp) < timeout)
- #           time.sleep(5)
-#
-        # Put the sensor back to sleep before returning
-  #      self.particulate_sensor.sleep()
-
-        # we should check if we can pass recognisably invalid data through to the server
-   #     return (None, None)
 
     def get_power(self):
         return {
