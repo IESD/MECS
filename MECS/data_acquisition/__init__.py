@@ -170,9 +170,8 @@ class MECSBoard:
     def get_particulates(self):
         if not self.particulate_sensor:
             return (None, None)
-        densities = self.particulate_sensor.get_mass_density_data() # in ug/m3
+        return self.particulate_sensor.get_mass_density_data() # in ug/m3
         #counts = self.particulate_sensor.get_count_data()# Units in counts/sec according to documentation.  Unclear utility
-        return densities['PM2.5'],densities['PM10']
 
     # Old get_particulates for SDS011 sensor.
 
@@ -246,9 +245,8 @@ class MECSBoard:
             sensor.label: sensor.correct(self.adc.read_voltage(sensor.channel))
             for sensor in self.analogue_sensors.values()
         }
-        PM2_5, PM10 = self.get_particulates()
-        result['PM2.5'] = PM2_5
-        result['PM10'] = PM10
+        result.update(self.get_particulates())
+
         result['temperature'] = self.get_temperature()
 
         result.update(self.get_power());
