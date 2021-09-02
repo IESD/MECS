@@ -29,7 +29,7 @@ def save_config(path, conf):
 def initialise_unit_id(path, conf):
     """Write a user-specified identifier to the config file"""
     log = logging.getLogger(__name__)
-    existing_unit_id = conf.getint('MECS', 'unit_id', fallback=False)
+    existing_unit_id = conf.get('MECS', 'unit_id', fallback=False)
     requested_unit_id = input(f"Enter a new Unit ID (currently {existing_unit_id if existing_unit_id else 'not set'}): ")
     confirm = f"Change unit_id from {existing_unit_id}? (y/n) "
     if existing_unit_id and requested_unit_id != existing_unit_id and input(confirm).lower() != "y":
