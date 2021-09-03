@@ -22,7 +22,7 @@ class ADCThing:
 
         bus = ABEHelpers().get_smbus()
         if bus:
-            self.adc = ADCPi(bus, rate=bit_rate)
+            self.adc = ADCPi(bus, rate=self.bit_rate)
         else:
             self.adc = None
             log.warning(f"ABEHelpers().get_smbus() returned {bus}")
