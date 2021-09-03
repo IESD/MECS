@@ -87,6 +87,11 @@ crontab MECS/cron/root.cron
 # 9. reboot
 # reboot
 
+# Initialise the MECS board name and match the Wifi name to it
+# sudo mecs-init?
+# Fold that into mecs-init?
+# sudo sed -i 's/ssid=.*/ssid=NewMECSWifiID/g' /etc/hostapd/hostapd.conf
+
 # lock down the firewall
 ufw allow in on eth0 to any port 22
 ufw allow in on wlan0 to any port 80
