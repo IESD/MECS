@@ -40,6 +40,9 @@ def aggregated_minutely_readings(get_readings, delay=1):
         log.debug(f"reading taken at {readings['dt']}")
         if last_minute != readings['dt'].replace(second=0, microsecond=0):
             result = pd.DataFrame(data).mean().to_dict()
+            if result['PM1.0']>2000 or result['PM2.5']>2000 or result['PM10']>2000:
+                raw = pd.DataFrame(data).to_dict()
+                log.debug(f"Dodgy particulate values: 1.0:{raw['PM1.0']};2.5:{raw['PM2.5']};10:{raw['PM10']}")
             result['dt'] = last_minute
             log.debug(f"minutely output: {result}")
             yield result
