@@ -69,6 +69,8 @@ CALIBRATION_SAMPLES = conf.getint('board', 'calibration_samples', fallback=25)
 
 def get_board():
     from .data_acquisition.board import MECSBoard
+    from configparser import ConfigParser
+    
     calibration_conf = ConfigParser()
     calibration_conf.read(CALIBRATION)
     try:
