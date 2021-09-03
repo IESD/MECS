@@ -68,11 +68,11 @@ CALIBRATION = os.path.expanduser(conf.get('data-acquisition', 'calibration_file'
 CALIBRATION_SAMPLES = conf.getint('board', 'calibration_samples', fallback=25)
 
 def get_board():
-    from .data_acquisition import MECSBoard
-    bit_rate = conf.getint('ADCPi', 'bit_rate')
-    input_impedance = conf.getfloat('ADCPi', 'input_impedance')
+    from .data_acquisition.board import MECSBoard
+    calibration_conf = ConfigParser()
+    calibration_conf.read(CALIBRATION)
     try:
-        return MECSBoard(bit_rate, input_impedance, CALIBRATION)
+        return MECSBoard(conf, calibration_conf)
     except MECSError as exc:
         log.warning("Exiting, could not create MECSBoard")
         log.exception(exc)
@@ -166,6 +166,7 @@ def test():
     data = get_readings_function(FAKE)()
     output = _prepare_output(data)
     pretty_print(output)
+
 
 def test2():
     log.info(f"MECS v{__version__} testing data continuously")
