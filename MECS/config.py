@@ -18,7 +18,7 @@ def load_config(path):
     # Configure logging and return
     logging.config.fileConfig(config)
     log = logging.getLogger(__name__)
-    log.info(f"Configuration loaded from {path}")
+    log.debug(f"Configuration loaded from {path}")
     return config
 
 def save_config(path, conf):
