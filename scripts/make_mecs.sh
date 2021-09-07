@@ -92,8 +92,10 @@ crontab MECS/cron/root.cron
 # Fold that into mecs-init?
 # sudo sed -i 's/ssid=.*/ssid=NewMECSWifiID/g' /etc/hostapd/hostapd.conf
 
-# lock down the firewall
-ufw allow in on eth0 to any port 22
-ufw allow in on wlan0 to any port 80
-ufw allow in on wlan0 to any port 53
+# lock down the firewall : TODO check that outgoing is always allowed on all interfaces (particularly ppp0)
+ufw allow in on eth0 to any port 22 # Allows SSH access only on ethernet (i.e. wire connected)
+ufw allow in on wlan0 to any port 80 # Allows HTTP requests on WiFi
+ufw allow in on wlan0 to any port 443 # Allows HTTPS requests on WiFi
+ufw allow in on wlan0 to any port 53 # Allows DNS requests on WiFi (enables use of "https://mecs.data" instead of raw IP
+ufw allow in on wlan0 to any port 67 # Allows DHCP to get IP when device connects to Access Point.
 ufw enable
