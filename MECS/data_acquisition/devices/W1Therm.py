@@ -3,43 +3,49 @@ import logging
 from w1thermsensor.errors import KernelModuleLoadError, NoSensorFoundError, ResetValueError, SensorNotReadyError
 from w1thermsensor import W1ThermSensor
 
+from ... import MECSConfigError, MECSHardwareError
+
 log = logging.getLogger(__name__)
 
-class TemperatureThing:
+class W1ThermError(MECSConfigError): pass
 
-    def __init__(self):
-        self.sensors = {}
-
-    def register(self, label, config):
+class W1ThermDevice:
+    def __init__(self, hardware_required=True, **kwargs):
+        self.label = kwargs['label']
         try:
-            self.sensors[label] = W1ThermSensor()
+            self.sensor = W1ThermSensor()
         except KernelModuleLoadError as exc:
             log.error(exc)
             log.warning(f"Either the kernel does not have the required one wire modules, or they can't be loaded : temp sensor unavailable")
-            self.sensors[label] = None
+            self.sensor = None
         except NoSensorFoundError as exc:
             log.error(exc)
             log.warning(f"No temp sensor found on the gpio one-wire interface")
-            self.sensors[label] = None
+            self.sensor = None
         except FileNotFoundError as exc:
             log.error(exc)
             log.warning(f"There's something wrong here - possibly run with NO_KERNAL_MODULE?")
-            self.sensors[label] = None
+            self.sensor = None
+        if hardware_required and not self.sensor:
+            raise MECSHardwareError("Can't access w1therm sensor")
+        log.debug(f"{self} created")
 
 
-    def _read_sensor(self, label):
-        if not self.sensors[label]:
+    def _read(self):
+        if not self.sensor:
             return None
         try:
-            return round(self.sensors[label].get_temperature(), 2)
+            return round(self.sensor.get_temperature(), 2)
         except (ResetValueError, SensorNotReadyError) as exc:
             log.error(exc)
             log.warn(f"Sensor is not ready to be read")
             return None
 
+    def read(self):
+        yield self.label, self._read()    
 
     def readings(self):
-        return {
-            label: self._read_sensor(label)
-            for label in self.sensors
-        }
+        return dict(self.read())
+
+    def __repr__(self):
+        return f"W1ThermDevice({self.label!r})"

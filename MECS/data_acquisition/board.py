@@ -4,68 +4,83 @@ This is the entry point for normal usage of the MECS system.
 """
 
 import logging
-from configparser import ConfigParser
 from datetime import datetime
 
-from .. import MECSConfigError, MECSHardwareError
-from .adc import ADCThing
-from .ina import INA3221Thing
-from .particulates import SDS011Thing
-from .temperature import TemperatureThing
+from .. import MECSConfigError
+
+from .devices import (
+    ADCDevice, 
+    INA3221Device,
+    SNGCJA5Device,
+    SDS011Device,
+    W1ThermDevice
+)
 
 log = logging.getLogger(__name__)
 
+known_devices = {
+    # These string keys are the devices that can be specified in the config dictionary
+    "ADCPi": ADCDevice,
+    "INA3221": INA3221Device,
+    "SNGCJA5": SNGCJA5Device,
+    "SDS011": SDS011Device,
+    "W1THERM": W1ThermDevice,
+}
+
 class MECSBoard:
-    def __init__(self, conf, calibration):
-        self.adc = ADCThing(conf["ADCPi"]) # config determines bit_rate and impedance
-        self.ina3221 = INA3221Thing()
-        self.sds011 = SDS011Thing()
-        self.w1_therm = TemperatureThing()
-        self.registerables = {
-            "adc": self.adc,
-            "INA3221": self.ina3221,
-            "SDS011": self.sds011,
-            "W1THERM": self.w1_therm
-        }
-        self.calibration_config = calibration
-        for key in self.calibration_config:
-            if key == "DEFAULT": continue
-            cal = self.calibration_config[key]
-            protocol = cal.get("protocol", fallback="unknown")
+    def __init__(self, hardware_required=True, **kwargs):
+        """
+        Ingest configuration data
+        Raise a configuration error if anything goes wrong
+        """
+        self.devices = {}
+        for key, config in kwargs.items():
+            if not isinstance(config, dict):
+                raise MECSConfigError(f"section [{key}] must contain a dictionary")
+            if "device" not in config:
+                raise MECSConfigError(f"section [{key}] must specify a 'device' from [{', '.join(known_devices.keys())}]")
+            device = config.pop('device')
+            if device not in known_devices:
+                raise MECSConfigError(f"section [{key}] includes unsupported device '{device}', try one of [{', '.join(known_devices.keys())}]")
             try:
-                self.registerables[protocol].register(key, cal)
-            except KeyError as ex:
-                log.warning(f"ignoring [{key}] unsupported protocol: {protocol}")
-            except MECSConfigError as exc:
-                log.warning(f"ignoring [{key}]: {exc}")
+                self.devices[key] = known_devices[device](hardware_required, **config)
+            except MECSConfigError as e:
+                raise MECSConfigError(f"[{key}]{e}")
+            except TypeError as e:
+                raise MECSConfigError(f"[{key}]: {e}")
+
+        labels = set()
+        for device_label, device in self.devices.items():
+            for data_label, _ in device.read():
+                if data_label in labels:
+                    raise MECSConfigError(f"[{device_label!r}] produced duplicate label: {data_label!r}")
+                labels.add(data_label)
 
     def calibrate(self, N):
-        log.info("Calibrating ADC current sensors")
-        return self.adc.calibrate(self.calibration_config)
+        for label, device in self.devices.items():
+            try:
+                device.calibrate(N)
+                log.info(f"calibrated device {label!r}")
+                yield label, device.config()
+            except NameError:
+                log.debug(f"device {label!r} has no calibrate method")
+
+    def read(self):
+        """All the readings"""
+        for _, device in self.devices.items():
+            for label, value in device.read():
+                yield label, value
 
     def readings(self):
         """Bring all the data together into a neat packet with a timestamp"""
-        data = self.adc.readings()
-        data.update(self.ina3221.readings())
-        data.update(self.sds011.readings())
-        data.update(self.w1_therm.readings())
+        data = {k: v for k, v in self.read()}
         return {
             "dt": datetime.utcnow(),
             "data": data
         }
 
-    def __repr__(self):
-        return f"MECSBoard(\n{self.adc}, \n{self.ina3221}\n)"
+    def config(self):
+        return {label: module.config() for label, module in self.registerables.items()}
 
-    def __str__(self):
-        return f"""
-***************************************************************************
-MECSBoard configuration
-***************************************************************************
-{self.adc}
-***************************************************************************
-{self.ina3221}
-***************************************************************************
-{self.sds011}
-***************************************************************************
-        """
+    def __repr__(self):
+        return f"MECSBoard({', '.join(self.devices.keys())})"
