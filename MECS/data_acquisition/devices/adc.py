@@ -67,6 +67,8 @@ class ADCDevice:
         self.sensors[label] = ADCSensor(impedance=self.input_impedance, **conf)
 
     def getSample(self, channel, N):
+        if not self.adc:
+            return [0 for _ in range(N)]
         self.adc.set_conversion_mode(1)
         readings = [self.adc.read_voltage(channel) for i in range(N)]
         self.adc.set_conversion_mode(0)
@@ -85,7 +87,6 @@ class ADCDevice:
             if sensor.type == "current":
                 log.info(f"Calibrating zero_point for [{label}]")
                 sensor.zero_point = self.getAverageSample(sensor.channel, N)
-            yield label, sensor
 
     def read(self):
         for label, sensor in self.sensors.items():
@@ -152,11 +153,14 @@ class ADCSensor:
 
     def config(self):
         """return config data for recreating me"""
-        return {key: value for key, value in vars(self).items() if key != 'sensitivity'}
+        result = {key: value for key, value in vars(self).items() if key != 'sensitivity'}
+        if self.type == "current":
+            result['milliVoltPerAmp'] = result['milli_volt_per_amp']
+            del result['milli_volt_per_amp']
+        return result
 
     def __repr__(self):
         if self.type == "current":
             return f"ADCSensor(channel {self.channel}: {self.type!r}, zero_point: {self.zero_point})"
         else:
             return f"ADCSensor(channel {self.channel}: {self.type!r})"
-

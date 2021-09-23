@@ -62,7 +62,7 @@ class MECSBoard:
                 device.calibrate(N)
                 log.info(f"calibrated device {label!r}")
                 yield label, device.config()
-            except NameError:
+            except AttributeError:
                 log.debug(f"device {label!r} has no calibrate method")
 
     def read(self):
