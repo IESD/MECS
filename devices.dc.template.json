@@ -42,42 +42,40 @@
       }
     }
   },
+  "INA3221Board":{
+    "device":"INA3221",
+    "data_points":{
+      "usb_load_current" : {
+        "channel":2,
+        "type":"current"
+      },
 
-    "INA3221Board":{
-      "device":"INA3221",
-      "data_points":{
-        "usb_load_current" : {
-          "channel":2,
-          "type":"current"
-        },
+      "load_bus_voltage" : {
+        "channel":2,
+        "type":"busVoltage"
+      },
 
-        "load_bus_voltage" : {
-          "channel":2,
-          "type":"busVoltage"
-        },
+      "daq_load_current" : {
+        "channel":1,
+        "type":"current"
+      },
 
-        "daq_load_current" : {
-          "channel":1,
-          "type":"current"
-        },
-
-        "daq_bus_voltage" : {
-          "channel":1,
-          "type":"busVoltage"
-        }
+      "daq_bus_voltage" : {
+        "channel":1,
+        "type":"busVoltage"
       }
-    },
-
-    "particulates" : {
-      "device":"SNGCJA5",
-      "label":"particulates",
-      "i2c_bus_no":1,
-      "comms_protocol":"i2c"
-    },
-
-    "temperature" : {
-      "device":"W1THERM",
-      "label":"temperature",
-      "type":"DS18B20"
     }
+  },
+  "particulates" : {
+    "device":"SNGCJA5",
+    "label":"particulates",
+    "i2c_bus_no":1,
+    "comms_protocol":"i2c"
+  },
+
+  "temperature" : {
+    "device":"W1THERM",
+    "label":"temperature",
+    "type":"DS18B20"
   }
+}
