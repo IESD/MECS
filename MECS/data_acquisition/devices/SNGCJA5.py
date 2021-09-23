@@ -27,7 +27,7 @@ class SNGCJA5Device:
 
     def read(self):
         if self.sensor:
-            for label, value in self.sensor.get_mass_density_data():
+            for label, value in self.sensor.get_mass_density_data().items():
                 yield f"{self.label}_{label}", value
         else:
             yield f"{self.label}_PM1.0", None
