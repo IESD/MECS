@@ -1,0 +1,83 @@
+{
+  "FirstADC": {
+    "device": "ADCPi",
+    "input_impedance": 16000,
+    "bit_rate": 16,
+    "sensors": {
+      "battery_voltage": {
+        "channel":1,
+        "type": "voltage",
+        "zero_point":0,
+        "resistance":91000
+      },
+      "pv_voltage": {
+        "channel":2,
+        "type": "voltage",
+        "zero_point":0,
+        "resistance":133000
+      },
+      "load_voltage": {
+        "channel":3,
+        "type": "voltage",
+        "zero_point":0,
+        "resistance":91000
+      },
+      "battery_current": {
+        "channel":7,
+        "type": "current",
+        "zero_point":2.5,
+        "milliVoltPerAmp":31.25
+      },
+      "main_load_current": {
+        "channel":8,
+        "type": "current",
+        "zero_point":2.5,
+        "milliVoltPerAmp":31.25
+      },
+      "pv_current": {
+        "channel":5,
+        "type": "current",
+        "zero_point":2.5,
+        "milliVoltPerAmp":62.5
+      }
+    }
+  },
+
+    "INA3221Board":{
+      "device":"INA3221",
+      "data_points":{
+        "usb_load_current" : {
+          "channel":2,
+          "type":"current"
+        },
+
+        "load_bus_voltage" : {
+          "channel":2,
+          "type":"busVoltage"
+        },
+
+        "daq_load_current" : {
+          "channel":1,
+          "type":"current"
+        },
+
+        "daq_bus_voltage" : {
+          "channel":1,
+          "type":"busVoltage"
+        }
+      }
+    },
+
+    "particulates" : {
+      "device":"SNGCJA5",
+      "label":"particulates",
+      "i2c_bus_no":1,
+      "comms_protocol":"i2c"
+    },
+
+    "temperature" : {
+      "device":"W1THERM",
+      "label":"temperature",
+      "type":"DS18B20"
+    }
+  }
