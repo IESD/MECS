@@ -9,7 +9,7 @@ from datetime import datetime
 from .. import MECSConfigError
 
 from .devices import (
-    ADCDevice, 
+    ADCDevice,
     INA3221Device,
     SNGCJA5Device,
     SDS011Device,
