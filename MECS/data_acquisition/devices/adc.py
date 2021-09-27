@@ -158,5 +158,5 @@ class ADCSensor:
         if self.type == "current":
             return f"ADCSensor(channel {self.channel}: {self.type!r}, zero_point: {self.zero_point})"
         else:
-            return f"ADCSensor(channel {self.channel}: {self.type!r})"
+            return f"ADCSensor(channel {self.channel}: {self.type!r}, input_resistance: {self.resistance})"
 
