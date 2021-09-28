@@ -26,6 +26,24 @@ class ADCDevice:
         except KeyError as e:
             raise ADCError(f"Missing parameter: {e}")
 
+        self.address1 = 0x68
+        self.address2 = 0x69
+        try:
+            self.address1 = hex(kwargs['address1'])
+        except KeyError as e:
+            log.info("ADC address1 is unspecified, using default")
+            pass
+        except ValueError as e:
+            log.warn("Value for ADC address1 must be hex if present, using default")
+
+        try:
+            self.address2 = hex(kwargs['address2'])
+        except KeyError as e:
+            log.info("ADC address2 is unspecified, using default")
+            pass
+        except ValueError as e:
+            log.warn("Value for ADC address2 must be hex if present, using default")
+
         try:
             self.input_impedance = float(input_impedance)
         except ValueError as e:
@@ -52,7 +70,7 @@ class ADCDevice:
 
         bus = ABEHelpers().get_smbus()
         if bus:
-            self.adc = ADCPi(bus, rate=self.bit_rate)
+            self.adc = ADCPi(bus, address1=self.address1, address2=self.address2, rate=self.bit_rate)
         else:
             self.adc = None
             log.warning(f"ABEHelpers().get_smbus() returned {bus}")
