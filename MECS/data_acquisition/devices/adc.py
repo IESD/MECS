@@ -70,7 +70,7 @@ class ADCDevice:
 
         bus = ABEHelpers().get_smbus()
         if bus:
-            self.adc = ADCPi(bus, address1=self.address1, address2=self.address2, rate=self.bit_rate)
+            self.adc = ADCPi(bus, address=self.address1, address2=self.address2, rate=self.bit_rate)
         else:
             self.adc = None
             log.warning(f"ABEHelpers().get_smbus() returned {bus}")

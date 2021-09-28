@@ -19,6 +19,7 @@ apt install -y git
 apt install -y python3-pip
 apt install -y python-smbus      # For i2c bus provision
 apt install -y i2c-tools         # For i2c bus comms
+apt install -y pigpio            # For "bit banging" second i2c bus and direct python control of gpio pins
 apt install -y libatlas-base-dev # for numpy blas issues
 apt install -y nginx             # For data transfer over local wifi
 apt install -y hostapd            # for hosting access point
@@ -32,6 +33,7 @@ git clone https://github.com/IESD/MECS.git
 # 4a. pip install some annoying dependencies
 pip3 install numpy
 pip3 install pandas
+pip3 install pigpio
 pip3 install matplotlib   # matplotlib could be removed - its not used on the pi (yet)
 
 # 4b. Install MECS
