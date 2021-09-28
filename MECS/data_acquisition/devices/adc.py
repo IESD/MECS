@@ -29,7 +29,7 @@ class ADCDevice:
         self.address1 = 0x68
         self.address2 = 0x69
         try:
-            self.address1 = hex(kwargs['address1'])
+            self.address1 = int(kwargs['address1'],16)
         except KeyError as e:
             log.info("ADC address1 is unspecified, using default")
             pass
@@ -37,7 +37,7 @@ class ADCDevice:
             log.warn("Value for ADC address1 must be hex if present, using default")
 
         try:
-            self.address2 = hex(kwargs['address2'])
+            self.address2 = int(kwargs['address2'],16)
         except KeyError as e:
             log.info("ADC address2 is unspecified, using default")
             pass
