@@ -44,7 +44,7 @@ class HM3301Device(object):
             self.SCL = kwargs['SCL']
         except KeyError:
             log.warning(f'No SCL pin specified, using default {HM3301Device.default_SCL_pin}')
-            self.SDA = HM3301Device.default_SCL_pin
+            self.SCL = HM3301Device.default_SCL_pin
 
         try:
             self.i2c_address = kwargs['i2c_address']
@@ -80,6 +80,8 @@ class HM3301Device(object):
             try_count += 1
         if h < 0:
             log.error('Pigpio cannot open i2c for particulate sensor')
+            if hardware_required:
+                raise MECSHardwareError("Couldn't access INA3221 device")
             return
 
         pigpio.exceptions = True
