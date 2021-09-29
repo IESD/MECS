@@ -16,11 +16,11 @@ class HM3301Device(object):
     fully_initialised = False
 
     offsets = {
-        'PM_1.0': 4,  # PM1.0 Standard particulate matter concentration Unit:ug/m3
-        'PM_2.5': 6,  # PM2.5 Standard particulate matter concentration Unit:ug/m3
-        'PM_10': 8,  # PM10  Standard particulate matter concentration Unit:ug/m3
-        'PM_1_0_conctrt_atmosph': 10,  # PM1.0 Atmospheric environment concentration ,unit:ug/m3
-        'PM_2_5_conctrt_atmosph': 12,  # PM2.5 Atmospheric environment concentration ,unit:ug/m3
+        'PM1.0': 4,  # PM1.0 Standard particulate matter concentration Unit:ug/m3
+        'PM2.5': 6,  # PM2.5 Standard particulate matter concentration Unit:ug/m3
+        'PM10': 8,  # PM10  Standard particulate matter concentration Unit:ug/m3
+        'PM_1.0_conctrt_atmosph': 10,  # PM1.0 Atmospheric environment concentration ,unit:ug/m3
+        'PM_2.5_conctrt_atmosph': 12,  # PM2.5 Atmospheric environment concentration ,unit:ug/m3
         'PM_10_conctrt_atmosph': 14,  # PM10  Atmospheric environment concentration ,unit:ug/m3
         'Count 0.3um+ in 1l air': 16,  # The number of particles with diameter 0.3um or above in 1 liter of air
         'Count 0.5um+ in 1l air': 18,  # The number of particles with diameter 0.5um or above in 1 liter of air
