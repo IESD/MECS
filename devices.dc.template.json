@@ -79,5 +79,10 @@
     "device":"W1THERM",
     "label":"temperature",
     "type":"DS18B20"
+  },
+
+  "new_particulate" : {
+    "device": "HM3301",
+    "label": "MECS_particulate_sensor"
   }
 }
