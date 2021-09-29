@@ -1,6 +1,7 @@
 import pigpio
 from time import sleep
 import logging
+from ... import MECSConfigError, MECSHardwareError
 
 log = logging.getLogger(__name__)
 
@@ -117,10 +118,11 @@ class HM3301Device(object):
             self.latest_data[key] = data[val] << 8 | data[val + 1]
         return self.latest_data
 
-    def readings(self):
+    def read(self):
         data = self.read_HM3301_data()
         all_vals = self.parse_data(data)
-        return {k: all_vals[k] for k in self.return_keys}
+        for k in self.return_keys:
+            yield k, all_vals[k]
 
     def __repr__(self):
         return f"HM3301Device({self.label!r}, i2c on pins {self.SDA!r} and {self.SCL!r}, address {self.i2c_address!r})"
