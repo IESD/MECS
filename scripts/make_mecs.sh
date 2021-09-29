@@ -65,6 +65,7 @@ cp MECS/config/dnsmasq.conf /etc/dnsmasq.conf
 # 5. register service definitions with systemd
 cp MECS/services/mecs-generate.service /etc/systemd/system
 cp MECS/services/ppp.service /etc/systemd/system
+cp MECS/services/hwclock-start.service /etc/systemd/system
 # cp MECS/services/waveshare-gpio.service /etc/systemd/system
 
 # 6. enable services
@@ -74,6 +75,7 @@ systemctl enable nginx
 systemctl unmask hostapd
 systemctl enable hostapd
 systemctl enable dnsmasq
+systemctl enable pigpiod
 # systemctl enable waveshare-gpio
 
 # 7. install crontabs
@@ -93,6 +95,13 @@ crontab MECS/cron/root.cron
 # sudo mecs-init?
 # Fold that into mecs-init?
 # sudo sed -i 's/ssid=.*/ssid=NewMECSWifiID/g' /etc/hostapd/hostapd.conf
+
+#Initialise the Real Time Clock (RTC)
+hwclock -w  # Writes the system time to the RTC.  Note Pi *must* be synced to real time somehow to make this work
+apt-get -y remove fake-hwclock
+update-rc.d -f fake-hwclock remove
+systemctl disable fake-hwclock
+systemctl enable hwclock-start
 
 # lock down the firewall : TODO check that outgoing is always allowed on all interfaces (particularly ppp0)
 ufw allow in on eth0 to any port 22 # Allows SSH access only on ethernet (i.e. wire connected)
