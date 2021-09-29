@@ -1,0 +1,12 @@
+# https://github.com/mattwire/upspico/blob/master/systemd/hwclock-start.service
+[Unit]
+Description=Set time from RTC on startup
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/sbin/hwclock -s
+TimeoutSec=0
+
+[Install]
+WantedBy=multi-user.target

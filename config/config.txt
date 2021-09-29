@@ -74,3 +74,9 @@ dtoverlay=w1-gpio,gpiopin=4
 # Added by Henrik 2021-06-09
 # Required to communicate with Pi Zero directly over USB
 dtoverlay=dwc2
+
+# Added by JRS to enable Hardware Real Time Clock (RTC)
+# Note last parameter is the actual chip used, uncomment as required for final design
+#dtoverlay=i2c-rtc,ds1307
+#dtoverlay=i2c-rtc,ds3231
+dtoverlay=i2c-rtc,pcf8523
