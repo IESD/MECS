@@ -111,11 +111,10 @@ class HM3301Device(object):
         return chksum == data[28]
 
     def parse_data(self, data):
-        if not self.checksum(data):
-            return {}
+        check_ok = self.checksum(data)
 
         for key, val in self.offsets.items():
-            self.latest_data[key] = data[val] << 8 | data[val + 1]
+            self.latest_data[key] = data[val] << 8 | data[val + 1] if check_ok else None
         return self.latest_data
 
     def read(self):
