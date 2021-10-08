@@ -145,6 +145,14 @@ class ADCSensor:
         except ValueError:
             raise ADCError(f"zero_point: {zero_point!r} (expected float)")
 
+        try:
+            self.ref_channel = int(conf['ref_channel'])
+        except KeyError as e:
+            log.info(f'No ref_channel specified for sensor on channel {self.channel}, readings use fixed zero point')
+            self.ref_channel = None
+        except ValueError as e:
+            raise ADCError(f'ref_channel for channel {self.channel!r}: expected integer')
+
         self.type = type
 
         if type == "voltage":
@@ -159,6 +167,7 @@ class ADCSensor:
                 self.milli_volt_per_amp = conf['milliVoltPerAmp']
             except KeyError as e:
                 raise ADCError("current sensors require 'milliVoltPerAmp' field to be set")
+
             self.sensitivity = 1000 / self.milli_volt_per_amp
 
         log.debug(f"{self} created")
@@ -167,7 +176,10 @@ class ADCSensor:
         if not device:
             return None
         raw = device.read_voltage(self.channel)
-        return (raw - self.zero_point) * self.sensitivity
+        zero = self.zero_point
+        if self.ref_channel:
+            zero = device.read_voltage(self.ref_channel)
+        return (raw - zero) * self.sensitivity
 
     def config(self):
         """return config data for recreating me"""
