@@ -105,10 +105,14 @@ class HM3301Device(object):
 
     def checksum(self, data):
         chksum = 0
+        if len(data) < self.DATA_CNT:
+            # In here if we haven't got enough data (often no data at all) - this cannot be good!
+            return False
+
         for i in range(self.DATA_CNT - 1):
             chksum += data[i]
         chksum = chksum & 0xff
-        return chksum == data[28]
+        return chksum == data[self.DATA_CNT - 1]
 
     def parse_data(self, data):
         check_ok = self.checksum(data)
