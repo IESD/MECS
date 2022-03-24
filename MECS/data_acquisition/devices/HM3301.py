@@ -6,7 +6,7 @@ from ... import MECSConfigError, MECSHardwareError
 log = logging.getLogger(__name__)
 
 
-class HM3301Device(object):
+class HM3301Device:
     DATA_CNT = 29
     default_SDA_pin = 20
     default_SCL_pin = 21
