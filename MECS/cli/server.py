@@ -4,9 +4,10 @@ Should get user input if no details are specified
 """
 import logging
 import os
+from configparser import NoOptionError
 
 from .. import __version__
-from ..config import conf, args, NoOptionError
+from ..config import conf, args
 from ..communication import MECSServer
 
 log = logging.getLogger(__name__)

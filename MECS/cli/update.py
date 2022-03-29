@@ -1,9 +1,10 @@
 
 import logging
 import os
+from configparser import NoOptionError
 
 from .. import __version__, update_mecs
-from ..config import conf, args, NoOptionError
+from ..config import conf, args
 
 log = logging.getLogger(__name__)
 
