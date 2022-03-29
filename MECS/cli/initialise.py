@@ -8,7 +8,7 @@ import logging
 
 from .. import __version__
 
-from ..config import args, conf, initialise_unit_id
+from ..config import args, conf, initialise_unit_id, initialise_type
 
 log = logging.getLogger(__name__)
 
@@ -16,3 +16,4 @@ log = logging.getLogger(__name__)
 def initialise():
     log.debug(f"MECS v{__version__} initialising")
     initialise_unit_id(args.conf, conf)
+    initialise_type(args.conf, conf)
