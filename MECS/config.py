@@ -5,8 +5,7 @@ MECS configuration handling
 import os.path
 import logging.config
 import argparse
-import uuid
-from configparser import ConfigParser, NoOptionError, NoSectionError
+from configparser import ConfigParser
 
 def load_config(path):
     """load configuration from file"""
