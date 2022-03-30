@@ -21,8 +21,6 @@ known_devices = {
     # These string keys are the devices that can be specified in the config dictionary
     "ADCPi": ADCDevice,
     "INA3221": INA3221Device,
-    "SNGCJA5": SNGCJA5Device,
-    "SDS011": SDS011Device,
     "W1THERM": W1ThermDevice,
     "HM3301": HM3301Device
 }
