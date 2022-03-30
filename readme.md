@@ -6,7 +6,7 @@ A python library for monitoring multiple sensor values on a MECS raspberry PI.
 
 ## Set up an sd-card
 
-1. Flash raspberry pi OS lite to an sd-card (minimum 32GB).
+1. Flash raspberry pi OS (32bit lite) to an sd-card (minimum 32GB).
 1. Enable headless ssh access by adding a file named `ssh` into the boot partition
 ```bash
 cd /path/to/boot/partition

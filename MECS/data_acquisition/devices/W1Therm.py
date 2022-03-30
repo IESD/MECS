@@ -1,7 +1,10 @@
+import os
 import logging
 
+os.environ['W1THERMSENSOR_NO_KERNEL_MODULE'] = '1'
+
 from w1thermsensor.errors import KernelModuleLoadError, NoSensorFoundError, ResetValueError, SensorNotReadyError
-from w1thermsensor import W1ThermSensor
+from w1thermsensor import W1ThermSensor, load_kernel_modules
 
 from ... import MECSConfigError, MECSHardwareError
 
@@ -13,6 +16,7 @@ class W1ThermDevice:
     def __init__(self, hardware_required=True, **kwargs):
         self.label = kwargs['label']
         try:
+            load_kernel_modules()
             self.sensor = W1ThermSensor()
         except KernelModuleLoadError as exc:
             log.error(exc)

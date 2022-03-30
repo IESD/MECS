@@ -19,9 +19,12 @@ class MECSHardwareError(MECSError): pass
 
 def update_mecs(path, branch, full=False):
     """This function will:
-        pull the latest commits from github and
+        ping google to restart comms
+        pull the latest commits from github
         run setup.py to reinstall the software
     """
     os.chdir(path)
+    subprocess.run(["ping", "8.8.8.8"])
     subprocess.run(["git", "pull", "origin", branch])
     subprocess.run(["python3", "setup.py", "install" if full else "develop"])
+
