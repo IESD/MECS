@@ -24,6 +24,11 @@ class INA3221Device:
             self.device = None
             if hardware_required:
                 raise MECSHardwareError("Couldn't access INA3221 device")
+        except OSError:
+            log.warning("Couldn't establish I/O with INA3221 - is it present?")
+            self.device = None
+            if hardware_required:
+                raise MECSHardwareError("Couldn't establish I/O with INA3221 - is it present?")
 
         data_points = kwargs['data_points']
 
