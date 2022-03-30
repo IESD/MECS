@@ -68,12 +68,6 @@
       }
     }
   },
-  "particulates" : {
-    "device":"SNGCJA5",
-    "label":"particulates",
-    "i2c_bus_no":1,
-    "comms_protocol":"i2c"
-  },
 
   "temperature" : {
     "device":"W1THERM",
