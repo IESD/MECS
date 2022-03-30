@@ -17,7 +17,7 @@ modprobe i2c-dev
 apt update
 apt install -y git
 apt install -y python3-pip
-apt install -y python-smbus      # For i2c bus provision
+apt install -y python3-smbus      # For i2c bus provision
 apt install -y i2c-tools         # For i2c bus comms
 apt install -y pigpio            # For "bit banging" second i2c bus and direct python control of gpio pins
 apt install -y libatlas-base-dev # for numpy blas issues
@@ -90,7 +90,7 @@ crontab MECS/cron/root.cron
 
 # 8. copy scripts to /usr/local/bin
 # Copy the waveshare setup script to /usr/local/bin
-cp MECS/waveshare_gpio_init.sh /usr/local/bin/
+cp MECS/scripts/waveshare_gpio_init.sh /usr/local/bin/
 chmod 777 /usr/local/bin/waveshare_gpio_init.sh
 
 # 9. reboot
