@@ -8,7 +8,7 @@ setup(
   install_requires=[
     'numpy',
     'pandas',
-    'matplotlib',
+    #'matplotlib',
     'smbus',
     'pyserial',
     'w1thermsensor',
