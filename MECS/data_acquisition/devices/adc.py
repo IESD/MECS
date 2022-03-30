@@ -70,7 +70,13 @@ class ADCDevice:
 
         bus = ABEHelpers().get_smbus()
         if bus:
-            self.adc = ADCPi(bus, address=self.address1, address2=self.address2, rate=self.bit_rate)
+            try:
+                self.adc = ADCPi(bus, address=self.address1, address2=self.address2, rate=self.bit_rate)
+            except OSError as e:
+                log.warning("Couldn't access ADC, no device detected")
+                self.adc = None
+                if hardware_required:
+                    raise MECSHardwareError("No ADC device detected")
         else:
             self.adc = None
             log.warning(f"ABEHelpers().get_smbus() returned {bus}")
