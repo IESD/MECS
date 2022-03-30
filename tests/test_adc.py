@@ -40,17 +40,34 @@ def test_with_valid_voltage_channel():
     assert vars(sensor) == {
         "type": "voltage",
         "channel": 1,
-        "zero_point": 0,
+        "zero_point": 0.0,
+        "ref_channel": None,
         "resistance": 50.5,
         "sensitivity": 6.05
     }
     assert sensor.config() == {
         "type": "voltage",
         "channel": 1,
-        "zero_point": 0,
+        "zero_point": 0.0,
+        "ref_channel": None,
         "resistance": 50.5,
     }
-    assert adc.config() == config
+    assert adc.config() == {
+        "device": "ADCPi",
+        "address1": 104,
+        "address2": 105,
+        "input_impedance": 10.0,
+        "bit_rate": 12,
+        "sensors": {
+            "your label": {
+                "type": "voltage",
+                "channel": 1,
+                "ref_channel": None,
+                "zero_point": 0,
+                "resistance": 50.5
+            }
+        }
+    }
 
 
 def test_with_valid_current_channel():
