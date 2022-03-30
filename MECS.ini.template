@@ -14,7 +14,7 @@ destination_root = data
 
 [git]
 branch = master
-source_folder =
+source_folder = /home/pi/MECS
 install = False
 
 [loggers]
