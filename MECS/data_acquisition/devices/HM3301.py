@@ -33,39 +33,25 @@ class HM3301Device:
     return_keys = ['PM2.5','PM10']
 
     def __init__(self, hardware_required, **kwargs):
-        print("Initialising the HM3301")
+        log.info("Initialising the HM3301")
         self.pi = pigpio.pi()
-        try:
-            self.SDA = kwargs['SDA']
-        except KeyError:
-            log.warning(f'No SDA pin specified, using default {HM3301Device.default_SDA_pin}')
-            self.SDA = HM3301Device.default_SDA_pin
 
-        try:
-            self.SCL = kwargs['SCL']
-        except KeyError:
-            log.warning(f'No SCL pin specified, using default {HM3301Device.default_SCL_pin}')
-            self.SCL = HM3301Device.default_SCL_pin
-
-        try:
-            self.i2c_address = kwargs['i2c_address']
-        except KeyError:
-            log.warning(f'No SDA pin specified, using default {HM3301Device.default_i2c_address}')
-            self.i2c_address = HM3301Device.default_i2c_address
-
-        try:
-            self.label = kwargs['label']
-        except KeyError:
-            log.warning('No label specified, using default HM3301_Sensor')
-            self.label = 'HM3301_Sensor'
+        self.SDA = kwargs.get('SDA', HM3301Device.default_SDA_pin)
+        self.SDA = kwargs.get('SCL', HM3301Device.default_SCL_pin)
+        self.SDA = kwargs.get('i2c_address', HM3301Device.default_i2c_address)
+        self.label = kwargs.get('label', 'HM3301_Sensor')
 
         # Set up an empty dictionary to hold the latest readings
         self.latest_data = {}
 
         # set pullups - not necessary with Pi2Grover
         log.info("Set the comms lines to pull up")
-        self.pi.set_pull_up_down(self.SDA, pigpio.PUD_UP)
-        self.pi.set_pull_up_down(self.SCL, pigpio.PUD_UP)
+        try:
+            self.pi.set_pull_up_down(self.SDA, pigpio.PUD_UP)
+            self.pi.set_pull_up_down(self.SCL, pigpio.PUD_UP)
+        except AttributeError:
+            raise MECSHardwareError("pigpio can't find the pi")
+
 
         # pigpio spits ungraceful error if channel left open on SDA, so
         # as precaution handle errors here as they may be common
