@@ -11,8 +11,6 @@ from .. import MECSConfigError, MECSHardwareError
 from .devices import (
     ADCDevice,
     INA3221Device,
-    SNGCJA5Device,
-    SDS011Device,
     W1ThermDevice,
     HM3301Device
 )
