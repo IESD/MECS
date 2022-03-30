@@ -6,7 +6,7 @@ This is the entry point for normal usage of the MECS system.
 import logging
 from datetime import datetime
 
-from .. import MECSConfigError
+from .. import MECSConfigError, MECSHardwareError
 
 from .devices import (
     ADCDevice,
@@ -50,6 +50,8 @@ class MECSBoard:
                 raise MECSConfigError(f"[{key}]{e}")
             except TypeError as e:
                 raise MECSConfigError(f"[{key}]: {e}")
+            except MECSHardwareError as e:
+                log.error(f"[{key}]: {e}")
 
         labels = set()
         for device_label, device in self.devices.items():
