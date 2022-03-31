@@ -45,6 +45,7 @@ class HM3301Device:
         self.latest_data = {}
 
         # set pullups - not necessary with Pi2Grover
+        # TODO: pigpio can throw a pigpio.error here as well - need to catch this and deal
         log.info("Set the comms lines to pull up")
         try:
             self.pi.set_pull_up_down(self.SDA, pigpio.PUD_UP)
