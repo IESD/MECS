@@ -10,6 +10,10 @@ import pkg_resources
 import subprocess
 import os
 
+import logging
+
+log = logging.getLogger(__name__)
+
 __version__ = pkg_resources.get_distribution('MECS').version
 
 class MECSError(Exception): pass
@@ -24,7 +28,11 @@ def update_mecs(path, branch, full=False):
         run setup.py to reinstall the software
     """
     os.chdir(path)
-    subprocess.run(["ping", "8.8.8.8"])
+    ping_stat = subprocess.run(["ping", "8.8.8.8","-w","5"], capture_output=True)
+    if ping_stat.returncode != 0:
+        log.warning('Ping did not exit cleanly, outside network connectivity lost?')
+        log.warning('StdOut:' + ping_stat.stdout)
+        log.warning('StdErr:' + ping_stat.stderr)
     subprocess.run(["git", "pull", "origin", branch])
     subprocess.run(["python3", "setup.py", "install" if full else "develop"])
 
