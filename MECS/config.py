@@ -49,6 +49,9 @@ def initialise_type(path, conf):
     if existing_type and requested_type != existing_type and input(confirm).lower() != "y":
         return
     conf['MECS']['unit_type'] = requested_type
+    # TODO: also set configured devices_config_path?
+    # The devices_config_path setting is what is used by the system for config
+    # e.g. conf['MECS']['devices_config_path'] = f'/home/pi/{requested_type.lower()}.json'
     save_config(path, conf)
     log.info(f"unit_type set: {requested_type}")
 
