@@ -34,6 +34,7 @@ if [ ! -d "$folder" ] ; then
 else
     cd "$folder"
     git pull $repo
+    cd ..
 fi
 
 # 4. Prepare python
@@ -43,7 +44,7 @@ pip3 install pandas
 pip3 install pigpio
 
 # 4b. Install MECS
-cd MECS
+cd "$folder"
 python3 setup.py install
 cd ..
 
