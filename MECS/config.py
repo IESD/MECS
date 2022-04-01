@@ -37,6 +37,21 @@ def initialise_unit_id(path, conf):
     save_config(path, conf)
     log.info(f"unit_id set: {requested_unit_id}")
 
+def initialise_type(path, conf):
+    """Write AC or DC to the config file"""
+    log = logging.getLogger(__name__)
+    existing_type = conf.get('MECS', 'unit_type', fallback=False)
+    requested_type = input(f"Unit type (AC or DC, currently {existing_type if existing_type else 'not set'}): ").upper()
+    if requested_type not in ["AC", "DC"]:
+        print(f"Invalid type [{requested_type}] (should be AC or DC")
+        return
+    confirm = f"Change type from {existing_type} to {requested_type}? (y/n) "
+    if existing_type and requested_type != existing_type and input(confirm).lower() != "y":
+        return
+    conf['MECS']['unit_type'] = requested_type
+    save_config(path, conf)
+    log.info(f"unit_type set: {requested_type}")
+
 # The parser accepts an optional configuration file argument
 parser = argparse.ArgumentParser(epilog="For more information see https://github.com/IESD/MECS", description='MECS monitoring system command-line tools')
 parser.add_argument('-c', '--conf', default=os.path.expanduser("/home/pi/MECS.ini"), help='configuration file (default ~/.MECS/MECS.ini)')

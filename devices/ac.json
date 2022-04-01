@@ -1,0 +1,36 @@
+{
+  "INA3221Board":{
+    "device":"INA3221",
+    "data_points":{
+      "usb_load_current" : {
+        "channel":2,
+        "type":"current"
+      },
+
+      "load_bus_voltage" : {
+        "channel":2,
+        "type":"busVoltage"
+      },
+
+      "daq_load_current" : {
+        "channel":1,
+        "type":"current"
+      },
+
+      "daq_bus_voltage" : {
+        "channel":1,
+        "type":"busVoltage"
+      }
+    }
+  },
+  "temperature" : {
+    "device":"W1THERM",
+    "label":"temperature",
+    "type":"DS18B20"
+  },
+
+  "new_particulate" : {
+    "device": "HM3301",
+    "label": "MECS_particulate_sensor"
+  }
+}
