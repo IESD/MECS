@@ -25,6 +25,7 @@ apt install -y nginx             # For data transfer over local wifi
 apt install -y hostapd            # for hosting access point
 apt install -y dnsmasq           # basic domain name lookup
 apt install -y ufw
+apt install -y ppp
 
 # 3. Clone the git repo (or pull if it already exists)
 repo="https://github.com/IESD/MECS.git"
