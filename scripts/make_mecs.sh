@@ -26,27 +26,33 @@ apt install -y hostapd            # for hosting access point
 apt install -y dnsmasq           # basic domain name lookup
 apt install -y ufw
 
-# 3. Clone the git repo
-git clone https://github.com/IESD/MECS.git
+# 3. Clone the git repo (or pull if it already exists)
+repo="https://github.com/IESD/MECS.git"
+folder="MECS"
+if [ ! -d "$folder" ] ; then
+    git clone "$repo" "$folder"
+else
+    cd "$folder"
+    git pull $repo
+    cd ..
+fi
 
 # 4. Prepare python
 # 4a. pip install some annoying dependencies
 pip3 install numpy
 pip3 install pandas
 pip3 install pigpio
-# pip3 install matplotlib   # matplotlib could be removed - its not used on the pi (yet)
 
 # 4b. Install MECS
-cd MECS
+cd "$folder"
 python3 setup.py install
 cd ..
 
 # 4c. Prepare configuration
 sudo -u pi cp MECS/MECS.ini.template ./MECS.ini
-sudo -u pi cp MECS/calibration.ini.template ./calibration.ini
 sudo -u pi mkdir logs
-sudo -u pi cp MECS/devices.ac.template.json ./ac_devices.json
-sudo -u pi cp MECS/devices.dc.template.json ./dc_devices.json
+sudo -u pi cp MECS/devices/ac.json ./ac_devices.json
+sudo -u pi cp MECS/devices/dc.json ./dc_devices.json
 
 #4d. Ensure i2c module is loaded and uart / i2c are enabled at boot
 cp MECS/config/config.txt /boot/config.txt
