@@ -12,7 +12,8 @@ from .devices import (
     ADCDevice,
     INA3221Device,
     W1ThermDevice,
-    HM3301Device
+    HM3301Device,
+    EP3000Device
 )
 
 log = logging.getLogger(__name__)
@@ -22,7 +23,8 @@ known_devices = {
     "ADCPi": ADCDevice,
     "INA3221": INA3221Device,
     "W1THERM": W1ThermDevice,
-    "HM3301": HM3301Device
+    "HM3301": HM3301Device,
+    "EP3000": EP3000Device
 }
 
 class MECSBoard:

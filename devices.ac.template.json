@@ -32,5 +32,9 @@
   "new_particulate" : {
     "device": "HM3301",
     "label": "MECS_particulate_sensor"
-  }
+  },
+    "Inverter" : {
+    "device": "EP3000",
+    "label": "EP3000_inverter"
+    }
 }
