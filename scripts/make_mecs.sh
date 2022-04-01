@@ -41,7 +41,6 @@ fi
 pip3 install numpy
 pip3 install pandas
 pip3 install pigpio
-# pip3 install matplotlib   # matplotlib could be removed - its not used on the pi (yet)
 
 # 4b. Install MECS
 cd MECS
