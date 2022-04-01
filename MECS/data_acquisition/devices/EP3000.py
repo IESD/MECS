@@ -127,5 +127,5 @@ class EP3000Device:
         return dict(self.read())
 
     def __repr__(self):
-        vars = ", ".join([f"ch_{sensor.channel}: {label!r}" for label, sensor in self.read_vars.items()])
-        return f"EP3000Pr0, configure to read ({})"
+        read_vars = ", ".join(['Input voltage','Output voltage','Output_current','Battery voltage','Inverter temp','Charge current'])
+        return f"EP3000 Device, configured to read ({read_vars})"
