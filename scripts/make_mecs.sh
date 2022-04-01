@@ -49,10 +49,9 @@ cd ..
 
 # 4c. Prepare configuration
 sudo -u pi cp MECS/MECS.ini.template ./MECS.ini
-sudo -u pi cp MECS/calibration.ini.template ./calibration.ini
 sudo -u pi mkdir logs
-sudo -u pi cp MECS/devices.ac.template.json ./ac_devices.json
-sudo -u pi cp MECS/devices.dc.template.json ./dc_devices.json
+sudo -u pi cp MECS/devices/ac.json ./ac_devices.json
+sudo -u pi cp MECS/devices/dc.json ./dc_devices.json
 
 #4d. Ensure i2c module is loaded and uart / i2c are enabled at boot
 cp MECS/config/config.txt /boot/config.txt
