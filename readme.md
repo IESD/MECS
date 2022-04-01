@@ -8,13 +8,21 @@ A python library for monitoring multiple sensor values on a MECS raspberry PI.
 
 1. Flash raspberry pi OS (32bit lite) to an sd-card (minimum 32GB).
 1. Enable headless ssh access by adding a file named `ssh` into the boot partition
-```bash
-cd /path/to/boot/partition
-touch ssh
-```
+
+   To do this when flashing card from Windows:
+
+    1. Open My Computer in Windows Explorer
+    1. Navigate to SD card boot partition (will show as a drive)
+    1. Right click, create new text file, rename as ssh with no file suffix
+
+    from Linux: 
+    ```bash
+    cd /path/to/boot/partition
+    touch ssh
+    ```
 3. Insert sd card into your raspberry pi
 
-4. Log into the pi via ssh
+4. Log into the pi via ssh with default password: `raspberry`
 > HINT: If you have problems with this, try using putty to connect - this worked for us in the lab
 
 ## Initialise the pi
