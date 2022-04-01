@@ -26,8 +26,15 @@ apt install -y hostapd            # for hosting access point
 apt install -y dnsmasq           # basic domain name lookup
 apt install -y ufw
 
-# 3. Clone the git repo
-git clone https://github.com/IESD/MECS.git
+# 3. Clone the git repo (or pull if it already exists)
+repo="https://github.com/IESD/MECS.git"
+folder="MECS"
+if [ ! -d "$folder" ] ; then
+    git clone "$repo" "$folder"
+else
+    cd "$folder"
+    git pull $repo
+fi
 
 # 4. Prepare python
 # 4a. pip install some annoying dependencies
