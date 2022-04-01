@@ -20,9 +20,9 @@ A python library for monitoring multiple sensor values on a MECS raspberry PI.
     cd /path/to/boot/partition
     touch ssh
     ```
-3. Insert sd card into your raspberry pi
+1. Insert sd card into your raspberry pi
 
-4. Log into the pi via ssh with default password: `raspberry`
+1. Log into the pi via ssh with default password: `raspberry`
 > HINT: If you have problems with this, try using putty to connect - this worked for us in the lab
 
 ## Initialise the pi
@@ -50,6 +50,12 @@ sudo ./make_mecs.sh
 This will install a lot of stuff.
 You will see lots of output.
 Check for any errors.
+
+A nice way to check for errors is to append the following to the above command, which sends output to a log file that you can search as well as echoing to the terminal
+
+```bash
+|& tee -a log.txt
+```
 
 ## Configuration
 
