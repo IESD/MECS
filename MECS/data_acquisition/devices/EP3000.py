@@ -2,6 +2,8 @@
 For managing a MUST EP 3000 Pro AC Inverter device to read via serial (RS232 via USB)
 Most of the code is error handling
 The key things are to create the sensors and calculate the readings correctly
+
+TODO!!! Check the drivers on Pi Zero W - might need https://github.com/juliagoda/CH341SER
 """
 
 import logging
