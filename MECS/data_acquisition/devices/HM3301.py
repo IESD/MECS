@@ -37,8 +37,8 @@ class HM3301Device:
         self.pi = pigpio.pi()
 
         self.SDA = kwargs.get('SDA', HM3301Device.default_SDA_pin)
-        self.SDA = kwargs.get('SCL', HM3301Device.default_SCL_pin)
-        self.SDA = kwargs.get('i2c_address', HM3301Device.default_i2c_address)
+        self.SCL = kwargs.get('SCL', HM3301Device.default_SCL_pin)
+        self.i2c_address = kwargs.get('i2c_address', HM3301Device.default_i2c_address)
         self.label = kwargs.get('label', 'HM3301_Sensor')
 
         # Set up an empty dictionary to hold the latest readings
