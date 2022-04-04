@@ -1,5 +1,6 @@
 import logging
 import os
+from pathlib import Path
 import json
 from collections import OrderedDict
 
@@ -10,8 +11,8 @@ log = logging.getLogger(__name__)
 
 
 def get_devices_config(conf):
-    devices_config_path = os.path.expanduser(conf.get('MECS', 'devices_config_path'))
-    with open(devices_config_path) as f:
+    devices_config_path = Path(conf.get('MECS', 'devices_config_path')).expanduser()
+    with devices_config_path.open('r') as f:
         devices_config = json.load(f)
     return devices_config
 
