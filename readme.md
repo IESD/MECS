@@ -34,7 +34,7 @@ passwd
 
 1. Download the installation script
 ```bash
-wget https://raw.githubusercontent.com/IESD/MECS/master/scripts/make_mecs.sh
+wget https://raw.githubusercontent.com/IESD/MECS/master/scripts/make_mecs.sh -O make_mecs.sh
 ```
 
 1. Make the script executable
