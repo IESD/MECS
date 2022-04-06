@@ -31,7 +31,11 @@ def update_mecs(path, branch, full=False):
         run setup.py to reinstall the software
     """
     os.chdir(path)
-    ping_stat = subprocess.run(["ping", "8.8.8.8","-w","5"], capture_output=True)
+    ping_stat = subprocess.run(
+        ["ping", "8.8.8.8","-w","5"], 
+        capture_output=True,
+        text=True
+    )
     if ping_stat.returncode != 0:
         log.warning('Ping did not exit cleanly, outside network connectivity lost?')
         log.warning('StdOut:' + ping_stat.stdout)
