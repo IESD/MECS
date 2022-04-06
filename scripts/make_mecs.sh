@@ -73,7 +73,7 @@ cp MECS/config/dnsmasq.conf /etc/dnsmasq.conf
 
 # 4i configure waveshare chat script for GPRS connection (for ppp to use)
 sudo cp MECS/config/mecs_gprs_peers /etc/ppp/peers/gprs
-sudo cp MES/config/mecs_gprs_chatscripts /etc/chatscripts/gprs
+sudo cp MECS/config/mecs_gprs_chatscripts /etc/chatscripts/gprs
 
 
 # 5. register service definitions with systemd
