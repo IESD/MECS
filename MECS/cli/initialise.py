@@ -8,7 +8,7 @@ import logging
 
 from .. import __version__
 
-from ..config import args, conf, initialise_unit_id, save_config
+from ..config import args, conf, save_config
 
 log = logging.getLogger(__name__)
 
