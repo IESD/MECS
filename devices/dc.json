@@ -25,24 +25,32 @@
         "resistance":91000
       },
       "battery_current": {
-        "channel":7,
-        "type": "current",
-        "zero_point":2.5,
-        "milliVoltPerAmp":31.25
-      },
-      "main_load_current": {
         "channel":8,
         "type": "current",
+        "ref_channel":7,
         "zero_point":2.5,
-        "milliVoltPerAmp":31.25
+        "milliVoltPerAmp":40
+      },
+      "main_load_current": {
+        "channel":4,
+        "ref_channel":7,
+        "type": "current",
+        "zero_point":2.5,
+        "milliVoltPerAmp":80
       },
       "pv_current": {
         "channel":5,
+        "ref_channel":7,
         "type": "current",
         "zero_point":2.5,
-        "milliVoltPerAmp":62.5
+        "milliVoltPerAmp":80
       }
     }
+  },
+
+  "new_particulate" : {
+    "device": "HM3301",
+    "label": "MECS_particulate_sensor"
   },
   "INA3221Board":{
     "device":"INA3221",
@@ -68,15 +76,9 @@
       }
     }
   },
-
   "temperature" : {
     "device":"W1THERM",
     "label":"temperature",
     "type":"DS18B20"
-  },
-
-  "new_particulate" : {
-    "device": "HM3301",
-    "label": "MECS_particulate_sensor"
   }
 }
