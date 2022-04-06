@@ -24,7 +24,7 @@ def initialise_unit_id(path, conf):
     """Write a user-specified identifier to the config file"""
     existing_unit_id = conf.get('MECS', 'unit_id', fallback=False)
     requested_unit_id = input(f"Enter a new Unit ID (currently {existing_unit_id if existing_unit_id else 'not set'}): ")
-    confirm = f"Change unit_id from {existing_unit_id}? (y/n) "
+    confirm = f"Change unit_id from {existing_unit_id} to {requested_unit_id}? (y/n) "
     if existing_unit_id and requested_unit_id != existing_unit_id and input(confirm).lower() != "y":
         return
     conf['MECS']['unit_id'] = requested_unit_id
@@ -36,7 +36,7 @@ def initialise_type(path, conf):
     existing_type = conf.get('MECS', 'unit_type', fallback=False)
     requested_type = input(f"Unit type (AC or DC, currently {existing_type if existing_type else 'not set'}): ").upper()
     if requested_type not in ["AC", "DC"]:
-        print(f"Invalid type [{requested_type}] (should be AC or DC")
+        print(f"Invalid type [{requested_type}] (should be AC or DC)")
         return
     confirm = f"Change type from {existing_type} to {requested_type}? (y/n) "
     if existing_type and requested_type != existing_type and input(confirm).lower() != "y":
