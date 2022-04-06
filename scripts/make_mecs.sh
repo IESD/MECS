@@ -72,7 +72,9 @@ cp MECS/config/dhcpcd.conf /etc/dhcpcd.conf
 cp MECS/config/dnsmasq.conf /etc/dnsmasq.conf
 
 # 4i configure waveshare chat script for GPRS connection (for ppp to use)
-# TODO : must copy the files from working Pi and put them here to be copied.
+sudo cp ../config/mecs_gprs_peers /etc/ppp/peers/gprs
+sudo cp ../config/mecs_gprs_chatscripts /etc/chatscripts/gprs
+
 
 # 5. register service definitions with systemd
 cp MECS/services/mecs-generate.service /etc/systemd/system
