@@ -2,13 +2,12 @@ from setuptools import setup, find_packages
 
 setup(
   name='MECS',
-  version="0.2.6",
+  version="0.3.0",
   packages=find_packages(),
   include_package_data=True,
   install_requires=[
     'numpy',
     'pandas',
-    #'matplotlib',
     'smbus',
     'pyserial',
     'w1thermsensor',
