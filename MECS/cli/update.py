@@ -4,7 +4,7 @@ import os
 import subprocess
 from configparser import NoOptionError
 
-from .. import __version__, update_mecs
+from .. import __version__
 from ..config import conf, args
 
 log = logging.getLogger(__name__)
