@@ -17,11 +17,11 @@ def initialise():
     log.debug(f"MECS v{__version__} initialising")
     initialise_unit_id(args.conf, conf)
     initialise_type(args.conf, conf)
-
+    initialise_host(args.conf, conf)
+    initialise_username(args.conf, conf)
 
 def initialise_unit_id(path, conf):
     """Write a user-specified identifier to the config file"""
-    log = logging.getLogger(__name__)
     existing_unit_id = conf.get('MECS', 'unit_id', fallback=False)
     requested_unit_id = input(f"Enter a new Unit ID (currently {existing_unit_id if existing_unit_id else 'not set'}): ")
     confirm = f"Change unit_id from {existing_unit_id}? (y/n) "
@@ -33,7 +33,6 @@ def initialise_unit_id(path, conf):
 
 def initialise_type(path, conf):
     """Write AC or DC to the config file"""
-    log = logging.getLogger(__name__)
     existing_type = conf.get('MECS', 'unit_type', fallback=False)
     requested_type = input(f"Unit type (AC or DC, currently {existing_type if existing_type else 'not set'}): ").upper()
     if requested_type not in ["AC", "DC"]:
@@ -48,3 +47,25 @@ def initialise_type(path, conf):
     save_config(path, conf)
     log.info(f"unit_type set: {requested_type}")
     log.info(f"using {requested_type} config file: {device_filename}")
+
+def initialise_host(path, conf):
+    """Setup server host"""
+    existing_host = conf.get('MECS-SERVER', 'host', fallback=False)
+    requested_host = input(f"Host (currently {existing_host or 'not set'}): ")
+    confirm = f"Change host from {existing_host} to {requested_host}? (y/n) "
+    if existing_host and requested_host != existing_host and input(confirm).lower() != "y":
+        return
+    conf['MECS-SERVER']['host'] = requested_host
+    save_config(path, conf)
+    log.info(f"host set: {requested_host}")
+
+def initialise_username(path, conf):
+    """Setup server username"""
+    existing_username = conf.get('MECS-SERVER', 'username', fallback=False)
+    requested_username = input(f"Username (currently {existing_username or 'not set'}): ")
+    confirm = f"Change username from {existing_username} to {requested_username}? (y/n) "
+    if existing_username and requested_username != existing_username and input(confirm).lower() != "y":
+        return
+    conf['MECS-SERVER']['username'] = requested_username
+    save_config(path, conf)
+    log.info(f"username set: {requested_username}")
