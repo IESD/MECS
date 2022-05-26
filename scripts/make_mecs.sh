@@ -75,6 +75,8 @@ cp MECS/config/dnsmasq.conf /etc/dnsmasq.conf
 sudo cp MECS/config/mecs_gprs_peers /etc/ppp/peers/gprs
 sudo cp MECS/config/mecs_gprs_chatscripts /etc/chatscripts/gprs
 
+# 4j configure ppp options
+sudo cp MECS/config/ppp_options /etc/ppp/options
 
 # 5. register service definitions with systemd
 cp MECS/services/mecs-generate.service /etc/systemd/system
