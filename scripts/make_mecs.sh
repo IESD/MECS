@@ -82,7 +82,7 @@ sudo cp MECS/config/ppp_options /etc/ppp/options
 cp MECS/services/mecs-generate.service /etc/systemd/system
 cp MECS/services/ppp.service /etc/systemd/system
 cp MECS/services/hwclock-start.service /etc/systemd/system
-cp MECS/services/waveshare-gpio.service /etc/systemd/system
+# cp MECS/services/waveshare-gpio.service /etc/systemd/system
 
 # 6. enable services
 systemctl enable mecs-generate
@@ -92,17 +92,27 @@ systemctl unmask hostapd
 systemctl enable hostapd
 systemctl enable dnsmasq
 systemctl enable pigpiod
-systemctl enable waveshare-gpio
+# systemctl enable waveshare-gpio
 
 # 7. install crontabs
 # specify pi user for the pi user cron
 sudo -u pi crontab MECS/cron/pi.cron
 crontab MECS/cron/root.cron
 
-# 8. copy scripts to /usr/local/bin
+# 8a. copy scripts to /usr/local/bin
+
+# OLD APROACH WAS NOT STARTING
 # Copy the waveshare setup script to /usr/local/bin
-cp MECS/scripts/waveshare_gpio_init.sh /usr/local/bin/
-chmod 777 /usr/local/bin/waveshare_gpio_init.sh
+# cp MECS/scripts/waveshare_gpio_init.sh /usr/local/bin/
+# chmod 777 /usr/local/bin/waveshare_gpio_init.sh
+
+# New approach using python for convenience
+# No need to make executable as it is python that executes
+cp MECS/scripts/waveshare_gpio_init.py /usr/local/bin/
+
+# 8b. rc.local triggers waveshare_gpio_init.py on startup
+cp MECS/scripts/rc.local /etc/rc.local
+
 
 # 9. reboot
 reboot
