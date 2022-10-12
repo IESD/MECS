@@ -12,7 +12,7 @@
 # By default this script does nothing.
 
 # initialise the waveshare gpio pin
-python /usr/local/bin/waveshare_gpio_init.py
+python3 /usr/local/bin/waveshare_gpio_init.py
 
 # Print the IP address
 # _IP=$(hostname -I) || true
