@@ -66,26 +66,57 @@ For advanced usage, a configuration file can be specified as the first and only 
 
 ## Usage
 
+### mecs-status
+
 To get a readout of the current status
 
 ```bash
 mecs-status
 
-> *********************************************
-> * MECS version: 0.1.0                       *
-> *         conf: /home/graeme/.MECS/MECS.ini *
-> *      UNIT_ID: unidentified                *
-> *           DT: 2021-05-22 09:34:37 (UTC)   *
-> *********************************************
+>***************************************************
+>* MECS version: 0.3.0                             *
+>***************************************************
+>*         conf: /home/pi/MECS/MECS.ini            *
+>*      UNIT_ID: unidentified                      *
+>*           DT: 2022-10-24 13:35:40 (UTC)         *
+>*       Server: username@host.com:22              *
+>***************************************************
 
 ```
 
-To initialise the `UNIT_ID` to a user-specified value.
+> You may get an error message regarding the server configuration
+> In which case, you should run mecs-init
+
+### mecs-init
+
+This is essential to initialise the unit identifier, type and server configuration.
 
 ```bash
 mecs-init
 > Enter a new Unit ID (currently not set): MECS-0001
+> Unit type (AC or DC, currently AC): AC
+> Host (currently not set): my.server.com
+> Username (currently not set): mecs_0001
 ```
+
+### mecs-register
+
+Calling `mecs-register` will set up a public key on the server and create the necessary folders on the server and locally.
+
+To communicate with a server requires the `username` and `host` settings to be configured using the `mecs-init` script.
+
+```bash
+mecs-register
+```
+> You will be asked to authenticate on the server.
+> This won't work if you don't have a server configured and ready.
+
+
+>In order to register, you also need `destination_root` and `archive_folder` to be set in the configuration file.
+> the default values are fine for this
+
+
+### mecs-generate
 
 To begin a long-running monitoring process which saves data files every minute.
 
@@ -95,12 +126,14 @@ mecs-generate
 
 > mecs-generate is automatically enabled as a service (i.e. will always be running)
 > To manage it, use `systemctl`
-```
-sudo systemctl stop mecs-generate
-sudo systemctl start mecs-generate
-sudo systemctl disable mecs-generate
-sudo systemctl enable mecs-generate
-```
+>```
+>sudo systemctl stop mecs-generate
+>sudo systemctl start mecs-generate
+>sudo systemctl disable mecs-generate
+>sudo systemctl enable mecs-generate
+>```
+
+### mecs-aggregate
 
 To aggregate generated files into a single file for upload.
 
@@ -113,20 +146,7 @@ if you want to tweak it, edit the crontab for the pi user
 crontab -e
 ```
 
-To communicate with a server requires `username`, `host` and `port` to be set in configuration file.
-
-> these need to be set to a user and server that will receive the data via ssh
-
-In order to register, you also need `destination_root` and `archive_folder` to be set in the configuration file.
-
-> the defaults are fine for this
-
-Calling `mecs-register` will set up a public key on the server and create the necessary folders on the server and locally.
-
-```bash
-mecs-register
-```
-> This won't work if you don't have a server configured and ready
+### mecs-upload
 
 To upload aggregated data to the server
 
