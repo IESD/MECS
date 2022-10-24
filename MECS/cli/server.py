@@ -30,9 +30,10 @@ def get_server(conf):
         HOST = conf.get('MECS-SERVER', 'host')
         PORT = conf.get('MECS-SERVER', 'port')
     except NoOptionError as exc:
-        log.warning(args.conf)
+        log.warning(f"error in configuration file {args.conf}")
         log.warning(exc)
         log.warning("required for server upload")
+        log.warning("Run mecs-init to set the values")
         log.error("No connection to server!")
         exit(0)
     return MECSServer(USERNAME, HOST, PORT, DESTINATION_ROOT)

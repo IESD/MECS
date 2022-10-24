@@ -7,8 +7,7 @@ archive_folder = uploaded
 calibration_samples = 25
 
 [MECS-SERVER]
-username =
-host =
+# must include values for username and host
 port = 22
 destination_root = data
 
