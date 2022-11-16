@@ -25,18 +25,18 @@
         "resistance":91000
       },
       "battery_current": {
-        "channel":8,
-        "type": "current",
-        "ref_channel":7,
-        "zero_point":2.5,
-        "milliVoltPerAmp":40
-      },
-      "main_load_current": {
         "channel":4,
-        "ref_channel":7,
         "type": "current",
+        "ref_channel":7,
         "zero_point":2.5,
         "milliVoltPerAmp":80
+      },
+      "main_load_current": {
+        "channel":8,
+        "ref_channel":7,
+        "type": "current",
+        "zero_point":2.5,
+        "milliVoltPerAmp":20
       },
       "pv_current": {
         "channel":5,
