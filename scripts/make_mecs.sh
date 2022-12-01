@@ -78,6 +78,9 @@ sudo cp MECS/config/mecs_gprs_chatscripts /etc/chatscripts/gprs
 # 4j configure ppp options
 sudo cp MECS/config/ppp_options /etc/ppp/options
 
+# 4k configure hardware clock
+sudo cp MECS/scripts/hwclock-set /lib/udev
+
 # 5. register service definitions with systemd
 cp MECS/services/mecs-generate.service /etc/systemd/system
 cp MECS/services/ppp.service /etc/systemd/system
