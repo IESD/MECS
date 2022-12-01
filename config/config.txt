@@ -79,4 +79,7 @@ dtoverlay=dwc2
 # Note last parameter is the actual chip used, uncomment as required for final design
 #dtoverlay=i2c-rtc,ds1307
 #dtoverlay=i2c-rtc,ds3231
-dtoverlay=i2c-rtc,pcf8523
+#dtoverlay=i2c-rtc,pcf8523
+
+# modified by Ross
+dtoverlay=i2c-rtc,pcf2127
