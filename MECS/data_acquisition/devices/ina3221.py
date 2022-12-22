@@ -77,8 +77,8 @@ class INA3221DataPoint:
 
     def _current(self, sensor):
         # removing 0.0056 offset based on calibration data
-        offset = 0.0056
-        return (sensor.getCurrent_mA(self.channel) / 1000) - offset
+        offset = -0.0056
+        return (sensor.getCurrent_mA(self.channel) / 1000) + offset
 
     def read(self, sensor):
         return self.callables[self.type](sensor) if sensor else None
