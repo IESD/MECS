@@ -29,21 +29,21 @@
         "type": "current",
         "ref_channel":7,
         "zero_point":2.5,
-        "milliVoltPerAmp":80
+        "milliVoltPerAmp":40
       },
       "main_load_current": {
         "channel":8,
         "ref_channel":7,
         "type": "current",
         "zero_point":2.5,
-        "milliVoltPerAmp":20
+        "milliVoltPerAmp":40
       },
       "pv_current": {
         "channel":5,
         "ref_channel":7,
         "type": "current",
         "zero_point":2.5,
-        "milliVoltPerAmp":80
+        "milliVoltPerAmp":40
       }
     }
   },
